@@ -2,11 +2,11 @@
   "name": "sequra-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "nodemon --exec ts-node src/server.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/server.js",
     "test": "jest"
   },
   "keywords": [],
@@ -34,6 +34,7 @@
     "@fastify/swagger-ui": "^5.2.3",
     "axios": "^1.6.8",
     "fastify": "^5.4.0",
+    "nodemon": "^3.1.10",
     "pino-pretty": "^13.0.0"
   }
 }

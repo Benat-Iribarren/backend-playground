@@ -1,18 +1,19 @@
-import Fastify, { fastify, FastifyInstance } from "fastify";
-import swagger from "@fastify/swagger";
-import swaggerUI from "@fastify/swagger-ui";
+import Fastify, { fastify, FastifyInstance } from 'fastify';
+import swagger from '@fastify/swagger';
+import swaggerUI from '@fastify/swagger-ui';
+import { registerRoutes } from '../routes';
 
 export function build(): FastifyInstance {
   const app = Fastify({
     logger:
-      process.env.NODE_ENV !== "test"
+      process.env.NODE_ENV !== 'test'
         ? {
             transport: {
-              target: "pino-pretty",
+              target: 'pino-pretty',
               options: {
                 colorize: true,
-                translateTime: "SYS:standard",
-                ignore: "pid,hostname",
+                translateTime: 'SYS:standard',
+                ignore: 'pid,hostname',
               },
             },
           }
@@ -29,8 +30,8 @@ function registerSwagger(app: FastifyInstance) {
   app.register(swagger, {
     swagger: {
       info: {
-        title: "SeQura Backend",
-        version: "1.0.0",
+        title: 'SeQura Backend',
+        version: '1.0.0',
       },
     },
   });
@@ -38,9 +39,9 @@ function registerSwagger(app: FastifyInstance) {
 
 function registerSwaggerUI(app: FastifyInstance) {
   app.register(swaggerUI, {
-    routePrefix: "/docs",
+    routePrefix: '/docs',
     uiConfig: {
-      docExpansion: "full",
+      docExpansion: 'full',
       deepLinking: false,
     },
     staticCSP: true,
@@ -51,11 +52,9 @@ function registerSwaggerUI(app: FastifyInstance) {
   });
 }
 
-function registerRoutes(app: FastifyInstance) {}
-
 export const start = async (fastify: FastifyInstance, PORT: number) => {
   try {
-    await fastify.listen({ port: PORT, host: "0.0.0.0" });
+    await fastify.listen({ port: PORT, host: '0.0.0.0' });
     console.log(`Server is running on http://localhost:${PORT}`);
   } catch (err) {
     fastify.log.error(err);

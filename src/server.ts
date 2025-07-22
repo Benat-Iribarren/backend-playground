@@ -1,7 +1,6 @@
-import { build, start } from './utils/build';
+import { build, start } from './endpoints/utils/serverBuild';
 
 const fastify = build();
-
 export default fastify;
 
 if (require.main === module) {
