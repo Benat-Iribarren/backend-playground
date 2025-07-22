@@ -2,8 +2,6 @@ import Fastify, { fastify, FastifyInstance } from "fastify";
 import swagger from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
 
-// import top10 from "../endpoints/top10";
-
 export function build(): FastifyInstance {
   const app = Fastify({
     logger:
@@ -53,9 +51,8 @@ function registerSwaggerUI(app: FastifyInstance) {
   });
 }
 
-function registerRoutes(app: FastifyInstance) {
-  //app.register(top10);
-}
+function registerRoutes(app: FastifyInstance) {}
+
 export const start = async (fastify: FastifyInstance, PORT: number) => {
   try {
     await fastify.listen({ port: PORT, host: "0.0.0.0" });
