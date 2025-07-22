@@ -6,9 +6,10 @@ import { User } from '../../domain/userType';
 
 const MAIN_LOGIN_ENDPOINT = '/login';
 const MESSAGES = {
-  INVALID_OR_MISSING_NIN_OR_PHONE: 'Invalid or missing nin or phone number',
-  SUCCESSFULL_RESULT: 'Main login completed successfully',
-  USER_BLOCKED: 'User is blocked',
+  INVALID_OR_MISSING_NIN_OR_PHONE: 'Invalid or missing nin or phone number.',
+  SUCCESSFULL_RESULT: 'Main login completed successfully.',
+  USER_BLOCKED: 'User is blocked.',
+  USER_NOT_FOUND: 'User not found.',
 };
 
 const BLOCKED_PHONE = '666666667';
@@ -33,7 +34,7 @@ async function mainLogin(fastify: FastifyInstance) {
       return reply.status(200).send({ message: MESSAGES.SUCCESSFULL_RESULT });
     }
 
-    return reply.status(400).send({ error: MESSAGES.INVALID_OR_MISSING_NIN_OR_PHONE });
+    return reply.status(404).send({ error: MESSAGES.USER_NOT_FOUND });
   });
 
   function blockedUser(user: User) {
