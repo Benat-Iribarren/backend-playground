@@ -4,6 +4,7 @@ import { isValidNin } from '../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../domain/helpers/validators/phoneValidator';
 import { User } from '../../domain/userType';
 import { generateSixDigitCode } from '../../domain/helpers/randomCodeGenerator';
+import { saveOtp } from '../../domain/otpStore';
 
 const MAIN_LOGIN_ENDPOINT = '/login';
 const MESSAGES = {
@@ -33,10 +34,11 @@ async function mainLogin(fastify: FastifyInstance) {
 
     if (validUser({ nin, phone })) {
       if (incorrectPhoneNumber(phone)) {
-        return reply.status(200).send({ verificationCode: "" });
+        return reply.status(200).send({ verificationCode: '' });
       }
 
       const VERIFICATION_CODE = generateSixDigitCode();
+      saveOtp(phone, VERIFICATION_CODE);
       return reply.status(200).send({ verificationCode: VERIFICATION_CODE });
     }
 
