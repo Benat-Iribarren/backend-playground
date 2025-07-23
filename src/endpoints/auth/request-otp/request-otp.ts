@@ -4,7 +4,7 @@ import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
 import { User } from '../../../domain/model/userType';
 import { generateSixDigitCode } from '../../../domain/helpers/randomCodeGenerator';
-import { saveOtp } from '../../../domain/otpStore';
+import { saveOtp } from '../../../infrastructure/otpStore';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
