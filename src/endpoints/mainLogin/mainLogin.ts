@@ -3,7 +3,7 @@ import { mainLoginSchema } from './schema';
 import { isValidNin } from '../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../domain/helpers/validators/phoneValidator';
 import { User } from '../../domain/userType';
-import { generateSixDigitCode } from '../utils/randomCodeGenerator';
+import { generateSixDigitCode } from '../../domain/helpers/randomCodeGenerator';
 
 const MAIN_LOGIN_ENDPOINT = '/login';
 const MESSAGES = {
