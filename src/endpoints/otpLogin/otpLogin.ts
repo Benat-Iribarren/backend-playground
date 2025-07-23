@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { otpLoginSchema } from './schema';
-import { User } from '../../domain/userType';
+import { User } from '../../domain/model/userType';
 
 const OTP_LOGIN_ENDPOINT = '/login/otp';
 const MESSAGES = {

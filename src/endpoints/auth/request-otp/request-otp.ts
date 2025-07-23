@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
-import { User } from '../../../domain/userType';
+import { User } from '../../../domain/model/userType';
 import { generateSixDigitCode } from '../../../domain/helpers/randomCodeGenerator';
 import { saveOtp } from '../../../domain/otpStore';
 
