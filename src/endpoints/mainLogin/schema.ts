@@ -6,12 +6,13 @@ export const mainLoginSchema = {
       200: {
         type: 'object',
         properties: {
-          message: { type: 'string' },
+          verificationCode: { type: 'string' },
         },
-        required: ['message'],
+        required: ['verificationCode'],
       },
       400: errorSchema,
       402: errorSchema,
+      404: errorSchema,
       500: errorSchema,
     },
   },

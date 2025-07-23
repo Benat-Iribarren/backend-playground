@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { otpLoginSchema } from './schema';
-import { isValidNin } from '../utils/validators/ninValidator';
-import { isValidPhone } from '../utils/validators/phoneValidator';
+import { isValidNin } from '../../domain/helpers/validators/ninValidator';
+import { isValidPhone } from '../../domain/helpers/validators/phoneValidator';
 import { User } from '../../domain/userType';
 
 const OTP_LOGIN_ENDPOINT = '/login/otp';

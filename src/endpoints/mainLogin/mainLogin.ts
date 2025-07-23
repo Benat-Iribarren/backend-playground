@@ -1,8 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { mainLoginSchema } from './schema';
-import { isValidNin } from '../utils/validators/ninValidator';
-import { isValidPhone } from '../utils/validators/phoneValidator';
+import { isValidNin } from '../../domain/helpers/validators/ninValidator';
+import { isValidPhone } from '../../domain/helpers/validators/phoneValidator';
 import { User } from '../../domain/userType';
+import { generateSixDigitCode } from '../utils/randomCodeGenerator';
 
 const MAIN_LOGIN_ENDPOINT = '/login';
 const MESSAGES = {
@@ -31,21 +32,29 @@ async function mainLogin(fastify: FastifyInstance) {
     }
 
     if (validUser({ nin, phone })) {
-      return reply.status(200).send({ message: MESSAGES.SUCCESSFULL_RESULT });
+      if (incorrectPhoneNumber(phone)) {
+        return reply.status(200).send({ verificationCode: "" });
+      }
+
+      const VERIFICATION_CODE = generateSixDigitCode();
+      return reply.status(200).send({ verificationCode: VERIFICATION_CODE });
     }
 
     return reply.status(404).send({ error: MESSAGES.USER_NOT_FOUND });
   });
-
-  function blockedUser(user: User) {
-    return user.nin === BLOCKED_NIN && user.phone === BLOCKED_PHONE;
-  }
-
-  function validUser(user: User) {
-    return user.nin === VALID_NIN && user.phone === VALID_PHONE;
-  }
 }
 
+function incorrectPhoneNumber(phone: string): boolean {
+  return phone === BLOCKED_PHONE;
+}
+
+function blockedUser(user: User): boolean {
+  return user.nin === BLOCKED_NIN && user.phone === BLOCKED_PHONE;
+}
+
+function validUser(user: User): boolean {
+  return user.nin === VALID_NIN && (user.phone === VALID_PHONE || user.phone === BLOCKED_PHONE);
+}
 function invalidOrMissingParameters(nin: string, phone: string): boolean {
   return !nin || !phone || !isValidNin(nin) || !isValidPhone(phone);
 }

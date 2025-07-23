@@ -1,7 +1,7 @@
 import Fastify, { fastify, FastifyInstance } from 'fastify';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
-import { registerRoutes } from '../routes';
+import { registerRoutes } from '../endpoints/routes';
 
 export function build(): FastifyInstance {
   const app = Fastify({
@@ -23,6 +23,7 @@ export function build(): FastifyInstance {
   registerSwagger(app);
   registerSwaggerUI(app);
   registerRoutes(app);
+  
   return app;
 }
 
@@ -55,6 +56,7 @@ function registerSwaggerUI(app: FastifyInstance) {
 export const start = async (fastify: FastifyInstance, PORT: number) => {
   try {
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
+    console.log(`Server is running on http://localhost:${PORT}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
