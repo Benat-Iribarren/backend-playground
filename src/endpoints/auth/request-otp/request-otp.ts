@@ -1,15 +1,14 @@
 import { FastifyInstance } from 'fastify';
-import { mainLoginSchema } from './schema';
-import { isValidNin } from '../../domain/helpers/validators/ninValidator';
-import { isValidPhone } from '../../domain/helpers/validators/phoneValidator';
-import { User } from '../../domain/userType';
-import { generateSixDigitCode } from '../../domain/helpers/randomCodeGenerator';
-import { saveOtp } from '../../domain/otpStore';
+import { requestOtpSchema } from './schema';
+import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
+import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
+import { User } from '../../../domain/userType';
+import { generateSixDigitCode } from '../../../domain/helpers/randomCodeGenerator';
+import { saveOtp } from '../../../domain/otpStore';
 
-const MAIN_LOGIN_ENDPOINT = '/login';
+const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
   INVALID_OR_MISSING_NIN_OR_PHONE: 'Invalid or missing nin or phone number.',
-  SUCCESSFULL_RESULT: 'Main login completed successfully.',
   USER_BLOCKED: 'User is blocked.',
   USER_NOT_FOUND: 'User not found.',
 };
@@ -20,8 +19,8 @@ const BLOCKED_NIN = '12345678B';
 const VALID_NIN = '12345678A';
 const VALID_PHONE = '666666666';
 
-async function mainLogin(fastify: FastifyInstance) {
-  fastify.post(MAIN_LOGIN_ENDPOINT, mainLoginSchema, async (request, reply) => {
+async function requestOtp(fastify: FastifyInstance) {
+  fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
     const { nin, phone } = request.body as User;
 
     if (invalidOrMissingParameters(nin, phone)) {
@@ -61,4 +60,4 @@ function invalidOrMissingParameters(nin: string, phone: string): boolean {
   return !nin || !phone || !isValidNin(nin) || !isValidPhone(phone);
 }
 
-export default mainLogin;
+export default requestOtp;
