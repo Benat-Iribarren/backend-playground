@@ -55,7 +55,6 @@ function registerSwaggerUI(app: FastifyInstance) {
 export const start = async (fastify: FastifyInstance, PORT: number) => {
   try {
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
-    console.log(`Server is running on http://localhost:${PORT}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
