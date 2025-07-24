@@ -3,8 +3,9 @@ import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
 import { User } from '../../../domain/model/userType';
-import { generateOtp } from '../../../application/otp/OtpService';
+import { generateHash, generateOtp } from '../../../application/otp/OtpService';
 import { HashCode } from '../../../domain/model/hashCode';
+import { Otp } from '../../../domain/model/otpType';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
@@ -38,11 +39,12 @@ async function requestOtp(fastify: FastifyInstance) {
 
     if (validUser({ nin, phone })) {
       if (incorrectPhoneNumber(phone)) {
-        return reply.status(200).send({ verificationCode: '' });
+        return reply.status(200).send({ hash: '', verificationCode: '' });
       }
-      const VALID_HASH: HashCode = '1234567890';
-      const VERIFICATION_CODE = generateOtp(VALID_HASH);
-      return reply.status(200).send({ verificationCode: VERIFICATION_CODE });
+
+      const hash: HashCode = generateHash();
+      const verificationCode: Otp = generateOtp(hash);
+      return reply.status(200).send({ hash: hash, verificationCode: verificationCode });
     }
 
     return reply.status(404).send({ error: MESSAGES.USER_NOT_FOUND });
@@ -60,6 +62,7 @@ function blockedUser(user: User): boolean {
 function validUser(user: User): boolean {
   return user.nin === VALID_NIN && (user.phone === VALID_PHONE || user.phone === BLOCKED_PHONE);
 }
+
 function missingParameters(nin: string, phone: string): boolean {
   return !nin || !phone;
 }

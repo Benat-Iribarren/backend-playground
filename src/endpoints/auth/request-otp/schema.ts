@@ -6,12 +6,13 @@ export const requestOtpSchema = {
       200: {
         type: 'object',
         properties: {
+          hash: { type: 'string' },
           verificationCode: { type: 'string' },
         },
-        required: ['verificationCode'],
+        required: ['hash', 'verificationCode'],
       },
       400: errorSchema,
-      402: errorSchema,
+      403: errorSchema,
       404: errorSchema,
       500: errorSchema,
     },
