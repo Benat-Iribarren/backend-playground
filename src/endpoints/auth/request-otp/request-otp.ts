@@ -36,7 +36,7 @@ async function requestOtp(fastify: FastifyInstance) {
         return reply.status(200).send({ verificationCode: '' });
       }
 
-      const VERIFICATION_CODE = generateSixDigitCode();
+      const VERIFICATION_CODE = generateSixDigitCode(phone);
       saveOtp(phone, VERIFICATION_CODE);
       return reply.status(200).send({ verificationCode: VERIFICATION_CODE });
     }
