@@ -7,7 +7,8 @@ import { generateOtp } from '../../../application/otp/OtpService';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
-  INVALID_OR_MISSING_NIN_OR_PHONE: 'Invalid or missing nin or phone number.',
+  MISSING_NIN_OR_PHONE: 'Missing nin or phone number.',
+  INVALID_NIN_OR_PHONE: 'Invalid nin or phone number.',
   USER_BLOCKED: 'User is blocked.',
   USER_NOT_FOUND: 'User not found.',
 };
@@ -22,12 +23,16 @@ async function requestOtp(fastify: FastifyInstance) {
   fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
     const { nin, phone } = request.body as User;
 
-    if (invalidOrMissingParameters(nin, phone)) {
-      return reply.status(400).send({ error: MESSAGES.INVALID_OR_MISSING_NIN_OR_PHONE });
+    if (missingParameters(nin, phone)) {
+      return reply.status(400).send({ error: MESSAGES.MISSING_NIN_OR_PHONE });
+    }
+
+    if (invalidParameters(nin, phone)) {
+      return reply.status(400).send({ error: MESSAGES.INVALID_NIN_OR_PHONE });
     }
 
     if (blockedUser({ nin, phone })) {
-      return reply.status(402).send({ error: MESSAGES.USER_BLOCKED });
+      return reply.status(403).send({ error: MESSAGES.USER_BLOCKED });
     }
 
     if (validUser({ nin, phone })) {
@@ -54,8 +59,12 @@ function blockedUser(user: User): boolean {
 function validUser(user: User): boolean {
   return user.nin === VALID_NIN && (user.phone === VALID_PHONE || user.phone === BLOCKED_PHONE);
 }
-function invalidOrMissingParameters(nin: string, phone: string): boolean {
-  return !nin || !phone || !isValidNin(nin) || !isValidPhone(phone);
+function missingParameters(nin: string, phone: string): boolean {
+  return !nin || !phone;
+}
+
+function invalidParameters(nin: string, phone: string): boolean {
+  return !isValidNin(nin) || !isValidPhone(phone);
 }
 
 export default requestOtp;
