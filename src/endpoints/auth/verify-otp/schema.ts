@@ -11,8 +11,6 @@ export const verifyOtpSchema = {
         required: ['message'],
       },
       400: errorSchema,
-      403: errorSchema,
-      404: errorSchema,
       500: errorSchema,
     },
   },
