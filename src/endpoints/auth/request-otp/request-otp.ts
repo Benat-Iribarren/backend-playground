@@ -3,8 +3,7 @@ import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
 import { User } from '../../../domain/model/userType';
-import { generateSixDigitCode } from '../../../domain/helpers/randomCodeGenerator';
-import { saveOtp } from '../../../infrastructure/otpStore';
+import { generateOtp } from '../../../application/otp/OtpService';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
@@ -36,8 +35,7 @@ async function requestOtp(fastify: FastifyInstance) {
         return reply.status(200).send({ verificationCode: '' });
       }
 
-      const VERIFICATION_CODE = generateSixDigitCode(phone);
-      saveOtp(phone, VERIFICATION_CODE);
+      const VERIFICATION_CODE = generateOtp(phone as keyof User);
       return reply.status(200).send({ verificationCode: VERIFICATION_CODE });
     }
 
