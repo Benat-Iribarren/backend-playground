@@ -6,9 +6,9 @@ export const verifyOtpSchema = {
       200: {
         type: 'object',
         properties: {
-          message: { type: 'string' },
+          token: { type: 'string' },
         },
-        required: ['message'],
+        required: ['token'],
       },
       400: errorSchema,
       500: errorSchema,

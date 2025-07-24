@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
-import { User } from '../../../domain/model/userType';
+import { generateToken } from '../../../application/token/TokenService';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 const MESSAGES = {
@@ -15,7 +15,7 @@ const VALID_CODE = '123456';
 
 async function verifyOtp(fastify: FastifyInstance) {
   fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
-    const { hash, verificationCode } = request.body as User & {
+    const { hash, verificationCode } = request.body as {
       hash: string;
       verificationCode: string;
     };
@@ -28,7 +28,7 @@ async function verifyOtp(fastify: FastifyInstance) {
       return reply.status(400).send({ error: MESSAGES.INVALID_HASH_OR_CODE });
     }
 
-    return reply.status(200).send({ message: MESSAGES.SUCCESSFULL_RESULT });
+    return reply.status(200).send({ token: generateToken(hash) });
   });
 }
 
