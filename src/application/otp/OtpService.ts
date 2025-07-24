@@ -1,10 +1,10 @@
 import { otpStorage } from '../../infrastructure/otpStorage';
 import { generateSixDigitCode } from '../../domain/helpers/randomCodeGenerator';
 import { Otp } from '../../domain/model/otpType';
-import { User } from '../../domain/model/userType';
+import { HashCode } from '../../domain/model/hashCode';
 
-export const generateOtp: (phone: keyof User) => Otp = (phone: keyof User) => {
+export const generateOtp: (hash: HashCode) => Otp = (hash: HashCode) => {
   const otpCode = generateSixDigitCode(otpStorage);
-  otpStorage.saveOtp(phone, otpCode);
+  otpStorage.saveOtp(hash, otpCode);
   return otpCode;
 };

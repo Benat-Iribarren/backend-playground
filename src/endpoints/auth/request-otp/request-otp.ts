@@ -4,6 +4,7 @@ import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
 import { User } from '../../../domain/model/userType';
 import { generateOtp } from '../../../application/otp/OtpService';
+import { HashCode } from '../../../domain/model/hashCode';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
@@ -39,8 +40,8 @@ async function requestOtp(fastify: FastifyInstance) {
       if (incorrectPhoneNumber(phone)) {
         return reply.status(200).send({ verificationCode: '' });
       }
-
-      const VERIFICATION_CODE = generateOtp(phone as keyof User);
+      const VALID_HASH: HashCode = '1234567890';
+      const VERIFICATION_CODE = generateOtp(VALID_HASH);
       return reply.status(200).send({ verificationCode: VERIFICATION_CODE });
     }
 

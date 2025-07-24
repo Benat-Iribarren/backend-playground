@@ -1,4 +1,6 @@
 import { Otp, OtpStorage } from "../domain/model/otpType";
+import { HashCode } from "../domain/model/hashCode";
+
 export const otpStorage: OtpStorage = {
   saveOtp,
   codeExists,
@@ -9,11 +11,12 @@ type OtpValue = {
   otp: Otp;
   expirationDate: Date;
 };
-const Storage = new Map<string, OtpValue>();
 
-function saveOtp(phone: string, otp: Otp) {
+const Storage = new Map<HashCode, OtpValue>();
+
+function saveOtp(hash: HashCode, otp: Otp) {
   const expirationDate = obtainOtpExpirationDate();
-  Storage.set(phone, { otp: otp, expirationDate });
+  Storage.set(hash, { otp: otp, expirationDate });
 }
 
 const fiveMinutesInMilliseconds = 1000 * 60 * 5;
@@ -25,31 +28,31 @@ function codeExists(otp: Otp): boolean {
   return Storage.has(otp);
 }
 
-function useOtp(phone: string, otp: Otp): boolean {
-  if (otpNotExpired(phone, otp)) {
-    deleteOtp(phone);
+function useOtp(hash: HashCode, otp: Otp): boolean {
+  if (otpNotExpired(hash, otp)) {
+    deleteOtp(hash);
     return true;
   }
-  if (otpExpired(phone, otp)) {
-    deleteOtp(phone);
+  if (otpExpired(hash, otp)) {
+    deleteOtp(hash);
   }
   return false;
 
-  function otpExpired(phone: string, otp: Otp): boolean {
-    return otpMatchesPhone(phone, otp) && isOtpExpired(phone);
+  function otpExpired(hash: HashCode, otp: Otp): boolean {
+    return otpMatchesPhone(hash, otp) && isOtpExpired(hash);
   }
 
-  function otpNotExpired(phone: string, otp: Otp): boolean {
-    return otpMatchesPhone(phone, otp) && isOtpValid(phone);
+  function otpNotExpired(hash: HashCode, otp: Otp): boolean {
+    return otpMatchesPhone(hash, otp) && isOtpValid(hash);
   }
 }
 
-function isOtpExpired(phone: string): boolean {
-  return !isOtpValid(phone);
+function isOtpExpired(hash: HashCode): boolean {
+  return !isOtpValid(hash);
 }
 
-function isOtpValid(phone: string): boolean {
-  const otpValue = Storage.get(phone);
+function isOtpValid(hash: HashCode): boolean {
+  const otpValue = Storage.get(hash);
   if (otpNotFound(otpValue)) return false;
   return isExpirationDateValid(otpValue!);
 }
@@ -62,10 +65,10 @@ function otpNotFound(value: OtpValue | undefined): boolean {
   return value === undefined;
 }
 
-function otpMatchesPhone(phone: string, otp: Otp): boolean {
-  return Storage.has(phone) && Storage.get(phone)?.otp === otp;
+function otpMatchesPhone(hash: HashCode, otp: Otp): boolean {
+  return Storage.has(hash) && Storage.get(hash)?.otp === otp;
 }
 
-function deleteOtp(phone: string) {
-  Storage.delete(phone);
+function deleteOtp(hash: HashCode) {
+  Storage.delete(hash);
 }
