@@ -1,6 +1,6 @@
-import { errorSchema } from '../common/errorSchema';
+import { errorSchema } from '../../common/errorSchema';
 
-export const otpLoginSchema = {
+export const verifyOtpSchema = {
   schema: {
     response: {
       200: {

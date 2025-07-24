@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import { otpLoginSchema } from './schema';
-import { User } from '../../domain/model/userType';
+import { verifyOtpSchema } from './schema';
+import { User } from '../../../domain/model/userType';
 
-const OTP_LOGIN_ENDPOINT = '/login/otp';
+const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 const MESSAGES = {
   MISSING_HASH_OR_CODE: 'Missing hash or verification code.',
   INVALID_HASH_OR_CODE: 'Invalid hash or verification code.',
@@ -13,8 +13,8 @@ const MESSAGES = {
 const VALID_HASH = '1234567890';
 const VALID_CODE = '123456';
 
-async function otpLogin(fastify: FastifyInstance) {
-  fastify.post(OTP_LOGIN_ENDPOINT, otpLoginSchema, async (request, reply) => {
+async function verifyOtp(fastify: FastifyInstance) {
+  fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
     const { hash, verificationCode } = request.body as User & {
       hash: string;
       verificationCode: string;
@@ -49,4 +49,4 @@ function invalidCode(verificationCode: string): boolean {
   return !codeRegex.test(verificationCode) || verificationCode !== VALID_CODE;
 }
 
-export default otpLogin;
+export default verifyOtp;

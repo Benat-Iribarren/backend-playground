@@ -1,4 +1,4 @@
-import { codeExists } from '../otpStore';
+import { codeExists } from '../../infrastructure/otpStore';
 
 export function generateSixDigitCode(phone: string): string {
   let result: string;
