@@ -17,9 +17,8 @@ const MESSAGES = {
 
 async function verifyOtp(fastify: FastifyInstance) {
   fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
-    const { hash, verificationCode } = request.body as {
+    const { hash, verificationCode } = request.body as User & {
       hash: HashCode;
-      hash: string;
       verificationCode: string;
     };
 
