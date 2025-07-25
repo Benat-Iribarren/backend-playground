@@ -4,11 +4,9 @@ import { Otp } from '../../domain/model/otpType';
 import { HashCode } from '../../domain/model/hashCode';
 import { generateRandomHash } from '../../domain/helpers/randomHashGenerator';
 
-export const generateOtp: (hash: HashCode) => Otp = (hash: HashCode) => {
-  const otpCode = generateSixDigitCode(otpStorage);
-  otpStorage.saveOtp(hash, otpCode);
-  return otpCode;
-};
+export const createOtp = (): Otp => generateSixDigitCode(otpStorage);
+
+export const saveOtp = (hash: HashCode, otp: Otp) => otpStorage.saveOtp(hash, otp);
 
 export const otpCodeExists = otpStorage.otpCodeExists;
 
