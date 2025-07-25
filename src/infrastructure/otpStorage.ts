@@ -3,8 +3,11 @@ import { HashCode } from "../domain/model/hashCode";
 
 export const otpStorage: OtpStorage = {
   saveOtp,
-  codeExists,
-  useOtp,
+  otpCodeExists,
+  hashCodeExists,
+  deleteOtp,
+  otpExpired,
+  otpMatchesHash,
 };
 
 type OtpValue = {
@@ -13,6 +16,12 @@ type OtpValue = {
 };
 
 const Storage = new Map<HashCode, OtpValue>();
+export function printStorage() {
+  console.log("Current OTP Storage:");
+  Storage.forEach((value, key) => {
+    console.log(`Hash: ${key}, OTP: ${value.otp}, Expiration Date: ${value.expirationDate}`);
+  });
+}
 
 function saveOtp(hash: HashCode, otp: Otp) {
   const expirationDate = obtainOtpExpirationDate();
@@ -24,30 +33,21 @@ function obtainOtpExpirationDate(): Date {
   return new Date(Date.now() + fiveMinutesInMilliseconds);
 }
 
-function codeExists(otp: Otp): boolean {
-  return Storage.has(otp);
-}
-
-function useOtp(hash: HashCode, otp: Otp): boolean {
-  if (otpNotExpired(hash, otp)) {
-    deleteOtp(hash);
-    return true;
-  }
-  if (otpExpired(hash, otp)) {
-    deleteOtp(hash);
+function otpCodeExists(otp: Otp): boolean {
+  for (const { otp: storedOtp } of Storage.values()) {
+    if (storedOtp === otp) return true;
   }
   return false;
-
-  function otpExpired(hash: HashCode, otp: Otp): boolean {
-    return otpMatchesPhone(hash, otp) && isOtpExpired(hash);
-  }
-
-  function otpNotExpired(hash: HashCode, otp: Otp): boolean {
-    return otpMatchesPhone(hash, otp) && isOtpValid(hash);
-  }
 }
 
-function isOtpExpired(hash: HashCode): boolean {
+
+function hashCodeExists(hash: HashCode): boolean {
+  return Storage.has(hash);
+}
+function otpExpired(hash: HashCode, otp: Otp): boolean {
+  return otpMatchesHash(hash, otp) && isOtpInvalid(hash);
+}
+function isOtpInvalid(hash: HashCode): boolean {
   return !isOtpValid(hash);
 }
 
@@ -65,7 +65,7 @@ function otpNotFound(value: OtpValue | undefined): boolean {
   return value === undefined;
 }
 
-function otpMatchesPhone(hash: HashCode, otp: Otp): boolean {
+function otpMatchesHash(hash: HashCode, otp: Otp): boolean {
   return Storage.has(hash) && Storage.get(hash)?.otp === otp;
 }
 

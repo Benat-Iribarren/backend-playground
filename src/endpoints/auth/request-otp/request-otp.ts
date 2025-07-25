@@ -19,7 +19,8 @@ const BLOCKED_PHONE = '666666667';
 const BLOCKED_NIN = '12345678B';
 
 const VALID_NIN = '12345678A';
-const VALID_PHONE = '666666666';
+const VALID_PHONE1 = '666666666';
+const VALID_PHONE2 = '111111111';
 
 async function requestOtp(fastify: FastifyInstance) {
   fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
@@ -41,7 +42,6 @@ async function requestOtp(fastify: FastifyInstance) {
       if (incorrectPhoneNumber(phone)) {
         return reply.status(200).send({ hash: '', verificationCode: '' });
       }
-
       const hash: HashCode = generateHash();
       const verificationCode: Otp = generateOtp(hash);
       return reply.status(200).send({ hash: hash, verificationCode: verificationCode });
@@ -60,7 +60,7 @@ function blockedUser(user: User): boolean {
 }
 
 function validUser(user: User): boolean {
-  return user.nin === VALID_NIN && (user.phone === VALID_PHONE || user.phone === BLOCKED_PHONE);
+  return user.nin === VALID_NIN && (user.phone === VALID_PHONE1 || user.phone === VALID_PHONE2 || user.phone === BLOCKED_PHONE);
 }
 
 function missingParameters(nin: string, phone: string): boolean {

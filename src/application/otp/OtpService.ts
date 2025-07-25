@@ -10,6 +10,16 @@ export const generateOtp: (hash: HashCode) => Otp = (hash: HashCode) => {
   return otpCode;
 };
 
+export const otpCodeExists = otpStorage.otpCodeExists;
+
+export const hashCodeExists = otpStorage.hashCodeExists;
+
+export const useOtpCode = otpStorage.deleteOtp;
+
+export const otpExpired = otpStorage.otpExpired;
+
+export const otpMatchesHash = otpStorage.otpMatchesHash;
+
 export const generateHash: () => HashCode = () => {
   return generateRandomHash();
 };

@@ -9,6 +9,6 @@ export function generateSixDigitCode(otpStorage: OtpStorage): string {
       const randomIndex = Math.floor(Math.random() * 10);
       result += randomIndex.toString();
     }
-  } while (otpStorage.codeExists(result));
+  } while (otpStorage.otpCodeExists(result));
   return result;
 }
