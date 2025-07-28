@@ -1,8 +1,8 @@
 import { otpStorage } from '../../infrastructure/otpStorage';
-import { generateSixDigitCode } from '../../domain/helpers/randomCodeGenerator';
+import { generateSixDigitCode } from '../../infrastructure/helpers/randomCodeGenerator';
 import { Otp } from '../../domain/model/otpType';
 import { HashCode } from '../../domain/model/hashCode';
-import { generateRandomHash } from '../../domain/helpers/randomHashGenerator';
+import { generateRandomHash } from '../../infrastructure/helpers/randomHashGenerator';
 
 export const createOtp = (): Otp => generateSixDigitCode(otpStorage);
 

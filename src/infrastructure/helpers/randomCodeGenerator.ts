@@ -1,5 +1,5 @@
-import { OtpStorage } from "../model/otpType";
-import { Otp } from "../model/otpType";
+import { OtpStorage } from "../../domain/model/otpType";
+import { Otp } from "../../domain/model/otpType";
 
 export function generateSixDigitCode(otpStorage: OtpStorage): string {
   let result: Otp;
