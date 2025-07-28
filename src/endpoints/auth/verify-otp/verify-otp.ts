@@ -1,9 +1,15 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
 import { User } from '../../../domain/model/userType';
-import { otpCodeExists, hashCodeExists, useOtpCode, otpExpired, otpMatchesHash } from '../../../application/otp/OtpService';
+import {
+  otpCodeExists,
+  hashCodeExists,
+  useOtpCode,
+  otpExpired,
+  otpMatchesHash,
+} from '../../../application/service/OtpService';
 import { HashCode } from '../../../domain/model/hashCode';
-import { generateToken } from '../../../application/token/TokenService';
+import { generateToken } from '../../../application/service/TokenService';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 const MESSAGES = {
@@ -11,9 +17,7 @@ const MESSAGES = {
   INVALID_HASH_OR_CODE: 'Invalid hash or verification code.',
   INCORRECT_HASH_OR_CODE: 'Incorrect hash or verification code.',
   SUCCESSFULL_RESULT: 'User logged in successfully',
-
 };
-
 
 async function verifyOtp(fastify: FastifyInstance) {
   fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
@@ -45,7 +49,9 @@ function missingParameters(hash: string, verificationCode: string): boolean {
 }
 
 function invalidParameters(hash: string, verificationCode: string): boolean {
-  return invalidHash(hash) || invalidCode(verificationCode) || !otpMatchesHash(hash, verificationCode);
+  return (
+    invalidHash(hash) || invalidCode(verificationCode) || !otpMatchesHash(hash, verificationCode)
+  );
 }
 
 function invalidHash(hash: string): boolean {

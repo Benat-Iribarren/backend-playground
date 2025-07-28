@@ -3,7 +3,7 @@ import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
 import { User } from '../../../domain/model/userType';
-import { generateHash, createOtp, saveOtp } from '../../../application/otp/OtpService';
+import { generateHash, createOtp, saveOtp } from '../../../application/service/OtpService';
 import { HashCode } from '../../../domain/model/hashCode';
 import { Otp } from '../../../domain/model/otpType';
 
@@ -46,7 +46,7 @@ async function requestOtp(fastify: FastifyInstance) {
       const hash: HashCode = generateHash();
       const verificationCode: Otp = createOtp();
       saveOtp(hash, verificationCode);
-      
+
       return reply.status(200).send({ hash: hash, verificationCode: verificationCode });
     }
 
@@ -63,7 +63,10 @@ function blockedUser(user: User): boolean {
 }
 
 function validUser(user: User): boolean {
-  return user.nin === VALID_NIN && (user.phone === VALID_PHONE1 || user.phone === VALID_PHONE2 || user.phone === BLOCKED_PHONE);
+  return (
+    user.nin === VALID_NIN &&
+    (user.phone === VALID_PHONE1 || user.phone === VALID_PHONE2 || user.phone === BLOCKED_PHONE)
+  );
 }
 
 function missingParameters(nin: string, phone: string): boolean {
