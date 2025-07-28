@@ -16,12 +16,6 @@ type OtpValue = {
 };
 
 const Storage = new Map<HashCode, OtpValue>();
-export function printStorage() {
-  console.log("Current OTP Storage:");
-  Storage.forEach((value, key) => {
-    console.log(`Hash: ${key}, OTP: ${value.otp}, Expiration Date: ${value.expirationDate}`);
-  });
-}
 
 function saveOtp(hash: HashCode, otp: Otp) {
   const expirationDate = obtainOtpExpirationDate();
