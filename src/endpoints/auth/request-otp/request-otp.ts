@@ -44,8 +44,8 @@ async function requestOtp(fastify: FastifyInstance) {
       }
 
       const hash: HashCode = generateHash();
-      const verificationCode: Otp = createOtp();
-      saveOtp(hash, verificationCode);
+      const verificationCode: Otp = await createOtp();
+      await saveOtp(hash, verificationCode);
 
       return reply.status(200).send({ hash: hash, verificationCode: verificationCode });
     }

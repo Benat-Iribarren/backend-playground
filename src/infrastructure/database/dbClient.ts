@@ -4,7 +4,7 @@ import { Database as DBTypes } from './schema';
 
 const db = new Kysely<DBTypes>({
   dialect: new SqliteDialect({
-    database: new Database('sequraBackendDB.sqlite'),
+    database: new Database('./data/sequraBackendDB.sqlite'),
   }),
 });
 
