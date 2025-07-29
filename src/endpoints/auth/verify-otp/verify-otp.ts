@@ -1,12 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
-import {
-  otpCodeExists,
-  hashCodeExists,
-  useOtpCode,
-  otpExpired,
-  otpMatchesHash,
-} from '../../../application/service/OtpService';
+import { OtpServiceImpl as OtpService } from '../../../application/service/OtpService';
 import { HashCode } from '../../../domain/model/hashCode';
 import { generateToken } from '../../../application/service/TokenService';
 
@@ -33,12 +27,12 @@ async function verifyOtp(fastify: FastifyInstance) {
       return reply.status(400).send({ error: MESSAGES.INVALID_HASH_OR_CODE });
     }
 
-    if (await otpExpired(hash, verificationCode)) {
-      useOtpCode(hash);
+    if (await OtpService.otpExpired(hash, verificationCode)) {
+      OtpService.useOtpCode(hash);
       return reply.status(400).send({ error: MESSAGES.INCORRECT_HASH_OR_CODE });
     }
 
-    useOtpCode(hash);
+    OtpService.useOtpCode(hash);
     return reply.status(200).send({ token: generateToken(hash) });
   });
 }
@@ -49,17 +43,19 @@ function missingParameters(hash: string, verificationCode: string): boolean {
 
 async function invalidParameters(hash: string, verificationCode: string): Promise<boolean> {
   return (
-    await invalidHash(hash) || await invalidCode(verificationCode) || !await otpMatchesHash(hash, verificationCode)
+    (await invalidHash(hash)) ||
+    (await invalidCode(verificationCode)) ||
+    !(await OtpService.otpMatchesHash(hash, verificationCode))
   );
 }
 
 async function invalidHash(hash: string): Promise<boolean> {
-  return !(await hashCodeExists(hash));
+  return !(await OtpService.hashCodeExists(hash));
 }
 
 async function invalidCode(verificationCode: string): Promise<boolean> {
   const codeRegex = /^[0-9]{6}$/;
-  return !codeRegex.test(verificationCode) || !(await otpCodeExists(verificationCode));
+  return !codeRegex.test(verificationCode) || !(await OtpService.otpCodeExists(verificationCode));
 }
 
 export default verifyOtp;

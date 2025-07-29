@@ -3,9 +3,9 @@ import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
 import { User } from '../../../domain/model/userType';
-import { generateHash, createOtp, saveOtp } from '../../../application/service/OtpService';
 import { HashCode } from '../../../domain/model/hashCode';
 import { Otp } from '../../../domain/model/otpType';
+import { OtpServiceImpl as OtpService} from '../../../application/service/OtpService';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
@@ -43,9 +43,9 @@ async function requestOtp(fastify: FastifyInstance) {
         return reply.status(200).send({ hash: '', verificationCode: '' });
       }
 
-      const hash: HashCode = generateHash();
-      const verificationCode: Otp = await createOtp();
-      await saveOtp(hash, verificationCode);
+      const hash: HashCode = OtpService.generateHash();
+      const verificationCode: Otp = await OtpService.createOtp();
+      await OtpService.saveOtp(hash, verificationCode);
 
       return reply.status(200).send({ hash: hash, verificationCode: verificationCode });
     }

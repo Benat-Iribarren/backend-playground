@@ -6,7 +6,7 @@ export const otpStorage: OtpStorage = {
   saveOtp,
   otpCodeExists,
   hashCodeExists,
-  deleteOtp,
+  deleteOtpFromHash,
   otpExpired,
   otpMatchesHash,
 };
@@ -56,9 +56,9 @@ async function isExpirationDateValid(expirationDate: string | undefined): Promis
 }
 
 async function otpNotFound(otp: Otp | undefined): Promise<boolean> {
-  return otp === undefined || !await otpRepository.otpCodeExistsInDb(otp);
+  return otp === undefined || !(await otpRepository.otpCodeExistsInDb(otp));
 }
 
-async function deleteOtp(hash: HashCode) {
+async function deleteOtpFromHash(hash: HashCode) {
   await otpRepository.deleteOtpFromHashCode(hash);
 }

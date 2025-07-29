@@ -1,5 +1,5 @@
-import { HashCode } from "./hashCode";
-import { Otp } from "./otpType";
+import { HashCode } from '../model/hashCode';
+import { Otp } from '../model/otpType';
 
 export interface OtpRepository {
   saveOtpToDb(hash: HashCode, otp: Otp, expirationDate: string): Promise<void>;

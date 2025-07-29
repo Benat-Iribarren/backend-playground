@@ -1,7 +1,7 @@
 import db from '../dbClient';
 import { Otp } from '../../../domain/model/otpType';
 import { HashCode } from '../../../domain/model/hashCode';
-import { OtpRepository } from '../../../domain/model/otpRepository';
+import { OtpRepository } from '../../../domain/interfaces/otpRepository';
 
 export const otpRepository: OtpRepository = {
   saveOtpToDb,
@@ -35,12 +35,12 @@ async function otpCodeExistsInDb(otp: Otp): Promise<boolean> {
 
 async function hashCodeExistsInDb(hash: HashCode): Promise<boolean> {
   const HashValueFound = await db
-  .selectFrom('otp')
-  .selectAll()
-  .where('hash', '=', hash)
-  .executeTakeFirst();
+    .selectFrom('otp')
+    .selectAll()
+    .where('hash', '=', hash)
+    .executeTakeFirst();
 
-  return HashValueFound !== undefined && HashValueFound !== null; 
+  return HashValueFound !== undefined && HashValueFound !== null;
 }
 
 async function getOtpByHash(hash: HashCode): Promise<Otp | null> {
@@ -60,14 +60,8 @@ async function getExpirationDate(hash: HashCode): Promise<string | null> {
     .where('hash', '=', hash)
     .executeTakeFirst();
   return result?.expirationDate ?? null;
-
 }
 
 async function deleteOtpFromHashCode(hash: HashCode) {
-  await db
-    .deleteFrom('otp')
-    .where('hash', '=', hash)
-    .execute();
+  await db.deleteFrom('otp').where('hash', '=', hash).execute();
 }
-
-
