@@ -5,7 +5,7 @@ import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator'
 import { User } from '../../../domain/model/userType';
 import { HashCode } from '../../../domain/model/hashCode';
 import { Otp } from '../../../domain/model/otpType';
-import { OtpServiceImpl as OtpService} from '../../../application/service/OtpService';
+import { OtpServiceImpl as OtpService } from '../../../application/service/OtpService';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {

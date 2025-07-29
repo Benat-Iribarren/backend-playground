@@ -9,5 +9,10 @@ db.exec(
         hash TEXT PRIMARY KEY,
         otp TEXT NOT NULL,
         expirationDate TEXT NOT NULL
-    );`
+    );
+    CREATE TABLE IF NOT EXISTS token (
+        hash TEXT PRIMARY KEY,
+        token TEXT NOT NULL
+    );
+    `
 )
