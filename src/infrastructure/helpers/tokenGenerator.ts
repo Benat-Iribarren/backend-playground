@@ -1,4 +1,4 @@
-import { Token } from '../../domain/model/token';
+import { Token } from '../../domain/model/tokenType';
 import { HashCode } from '../../domain/model/hashCode';
 import crypto from 'crypto';
 

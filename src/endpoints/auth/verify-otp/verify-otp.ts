@@ -2,7 +2,8 @@ import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
 import { OtpServiceImpl as OtpService } from '../../../application/service/OtpService';
 import { HashCode } from '../../../domain/model/hashCode';
-import { generateToken } from '../../../application/service/TokenService';
+import { TokenServiceImpl as TokenService } from '../../../application/service/TokenService';
+import { Token } from '../../../domain/model/tokenType';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 const MESSAGES = {
@@ -33,7 +34,10 @@ async function verifyOtp(fastify: FastifyInstance) {
     }
 
     OtpService.useOtpCode(hash);
-    return reply.status(200).send({ token: generateToken(hash) });
+    const token: Token = TokenService.generateToken(hash);
+    await TokenService.saveToken(hash, token);
+
+    return reply.status(200).send({ token: token });
   });
 }
 

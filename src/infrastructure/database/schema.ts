@@ -1,6 +1,6 @@
-import { HashCode } from "../../domain/model/hashCode";
-import { Otp } from "../../domain/model/otpType";
-import { Token } from "../../domain/model/token";
+import { HashCode } from '../../domain/model/hashCode';
+import { Otp } from '../../domain/model/otpType';
+import { Token } from '../../domain/model/tokenType';
 
 export interface otpTable {
   hash: HashCode;
