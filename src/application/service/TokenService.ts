@@ -8,7 +8,7 @@ export const TokenServiceImpl: TokenService = {
   async saveToken(hash, token) {
     return tokenStorage.saveToken(hash, token);
   },
-  generateToken(hash: HashCode): Token{
+  generateToken(hash: HashCode): Token {
     return generateTokenGivenHash(hash);
   }
 };
