@@ -13,5 +13,9 @@ db.exec(
     CREATE TABLE IF NOT EXISTS token (
         token TEXT PRIMARY KEY
     );
+    CREATE TABLE IF NOT EXISTS user (
+        nin TEXT PRIMARY KEY,
+        phone TEXT NOT NULL
+    );
     `
 )
