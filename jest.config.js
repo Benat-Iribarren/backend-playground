@@ -10,6 +10,6 @@ module.exports = {
   },
   roots: ['<rootDir>/src'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
-  testMatch: ['**/__tests__/**/*.test.ts'],
+  testMatch: ['**/__tests__/**/*.(test|spec).ts'],
   clearMocks: true,
 };

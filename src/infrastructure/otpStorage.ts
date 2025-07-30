@@ -32,11 +32,11 @@ async function hashCodeExists(hash: HashCode): Promise<boolean> {
 }
 
 async function otpExpired(hash: HashCode, otp: Otp): Promise<boolean> {
-  return (await otpMatchesHash(hash, otp)) && !(await isOtpValid(hash, otp));
+  return (await otpStorage.otpMatchesHash(hash, otp)) && !(await isOtpValid(hash, otp));
 }
 
 async function otpMatchesHash(hash: HashCode, otp: Otp): Promise<boolean> {
-  return (await hashCodeExists(hash)) && (await otpRepository.getOtpByHash(hash)) === otp;
+  return (await otpRepository.getOtpByHash(hash)) === otp;
 }
 
 async function isOtpValid(hash: HashCode, otp: Otp): Promise<boolean> {
