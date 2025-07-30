@@ -5,7 +5,7 @@
     ```bash
     docker compose build
     ```
-4. Levantar el contenedor en el puerto 3000;
+4. Levantar los servicios de backend y base de datos;
     ```bash
     docker compose up
     ```
