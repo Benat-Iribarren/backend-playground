@@ -11,8 +11,7 @@ db.exec(
         expirationDate TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS token (
-        hash TEXT PRIMARY KEY,
-        token TEXT NOT NULL
+        token TEXT PRIMARY KEY
     );
     `
 )

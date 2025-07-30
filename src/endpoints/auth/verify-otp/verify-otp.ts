@@ -35,7 +35,7 @@ async function verifyOtp(fastify: FastifyInstance) {
 
     OtpService.useOtpCode(hash);
     const token: Token = TokenService.generateToken(hash);
-    await TokenService.saveToken(hash, token);
+    await TokenService.saveToken(token);
 
     return reply.status(200).send({ token: token });
   });

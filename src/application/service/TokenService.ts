@@ -5,8 +5,8 @@ import { TokenService } from '../../domain/interfaces/tokenService';
 import { tokenStorage } from '../../infrastructure/tokenStorage';
 
 export const TokenServiceImpl: TokenService = {
-  async saveToken(hash, token) {
-    return tokenStorage.saveToken(hash, token);
+  async saveToken(token) {
+    return tokenStorage.saveToken(token);
   },
   generateToken(hash: Hash): Token {
     return generateTokenGivenHash(hash);
