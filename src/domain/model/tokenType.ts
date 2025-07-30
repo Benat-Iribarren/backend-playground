@@ -1,7 +1,7 @@
-import { HashCode } from './hashCode';
+import { Hash } from './hashType';
 
 export type Token = string;
 
 export type TokenStorage = {
-  saveToken: (hash: HashCode, token: Token) => Promise<void>;
+  saveToken: (hash: Hash, token: Token) => Promise<void>;
 };

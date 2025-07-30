@@ -1,11 +1,11 @@
-import { HashCode } from '../model/hashCode';
+import { Hash } from '../model/hashType';
 import { Otp } from '../model/otpType';
 
 export interface OtpRepository {
-  saveOtpToDb(hash: HashCode, otp: Otp, expirationDate: string): Promise<void>;
+  saveOtpToDb(hash: Hash, otp: Otp, expirationDate: string): Promise<void>;
   otpCodeExistsInDb(otp: Otp): Promise<boolean>;
-  hashCodeExistsInDb(hash: HashCode): Promise<boolean>;
-  getOtpByHash(hash: HashCode): Promise<Otp | null>;
-  getExpirationDate(hash: HashCode): Promise<string | null>;
-  deleteOtpFromHashCode(hash: HashCode): Promise<void>;
+  hashCodeExistsInDb(hash: Hash): Promise<boolean>;
+  getOtpByHash(hash: Hash): Promise<Otp | null>;
+  getExpirationDate(hash: Hash): Promise<string | null>;
+  deleteOtpFromHashCode(hash: Hash): Promise<void>;
 }

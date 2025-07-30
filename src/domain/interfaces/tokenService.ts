@@ -1,8 +1,7 @@
-import { HashCode } from '../model/hashCode';
+import { Hash } from '../model/hashType';
 import { Token } from '../model/tokenType';
 
 export interface TokenService {
-  saveToken(hash: HashCode, token: Token): Promise<void>;
-  generateToken(hash: HashCode): Token;
-
+  saveToken(hash: Hash, token: Token): Promise<void>;
+  generateToken(hash: Hash): Token;
 }

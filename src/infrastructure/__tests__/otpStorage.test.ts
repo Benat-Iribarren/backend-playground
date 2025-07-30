@@ -1,6 +1,6 @@
 import { otpStorage } from '../otpStorage';
 import { otpRepository } from '../database/operations/otpOperations';
-import { HashCode } from '../../domain/model/hashCode';
+import { Hash } from '../../domain/model/hashType';
 import { Otp } from '../../domain/model/otpType';
 
 jest.mock('../database/operations/otpOperations', () => ({
@@ -15,7 +15,7 @@ jest.mock('../database/operations/otpOperations', () => ({
 }));
 
 describe('otpStorage', () => {
-  const mockHash: HashCode = 'mockhash';
+  const mockHash: Hash = 'mockhash';
   const mockOtp: Otp = '123456';
   const notExpiratedDate = '3000-01-01';
 
@@ -36,7 +36,7 @@ describe('otpStorage', () => {
       const expirationDate = new Date(expirationString).getTime();
 
       const fiveMinutesInMilliseconds = 1000 * 60 * 5;
-      const diff = expirationDate - actualTieme;
+      const diff = expirationDate - actualTime;
 
       expect(diff).toBeGreaterThanOrEqual(fiveMinutesInMilliseconds);
       expect(diff).toBeLessThanOrEqual(fiveMinutesInMilliseconds + 100);

@@ -1,6 +1,6 @@
 import crypto from 'crypto';
-import { HashCode } from '../../domain/model/hashCode';
+import { Hash } from '../../domain/model/hashType';
 
-export const generateRandomHash: () => HashCode = () => {
+export const generateRandomHash: () => Hash = () => {
   return crypto.randomBytes(32).toString('hex');
 };

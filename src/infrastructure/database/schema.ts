@@ -1,15 +1,15 @@
-import { HashCode } from '../../domain/model/hashCode';
+import { Hash } from '../../domain/model/hashType';
 import { Otp } from '../../domain/model/otpType';
 import { Token } from '../../domain/model/tokenType';
 
 export interface otpTable {
-  hash: HashCode;
+  hash: Hash;
   otp: Otp;
   expirationDate: string;
 }
 
 export interface tokenTable {
-  hash: HashCode;
+  hash: Hash;
   token: Token;
 }
 

@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
 import { OtpServiceImpl as OtpService } from '../../../application/service/OtpService';
-import { HashCode } from '../../../domain/model/hashCode';
+import { Hash } from '../../../domain/model/hashType';
 import { TokenServiceImpl as TokenService } from '../../../application/service/TokenService';
 import { Token } from '../../../domain/model/tokenType';
 
@@ -16,7 +16,7 @@ const MESSAGES = {
 async function verifyOtp(fastify: FastifyInstance) {
   fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
     const { hash, verificationCode } = request.body as {
-      hash: HashCode;
+      hash: Hash;
       verificationCode: string;
     };
 

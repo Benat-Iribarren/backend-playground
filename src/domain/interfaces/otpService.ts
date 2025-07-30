@@ -1,13 +1,13 @@
 import { Otp } from '../model/otpType';
-import { HashCode } from '../model/hashCode';
+import { Hash } from '../model/hashType';
 
 export interface OtpService {
   createOtp(): Promise<Otp>;
-  saveOtp(hash: HashCode, otp: Otp): Promise<void>;
+  saveOtp(hash: Hash, otp: Otp): Promise<void>;
   otpCodeExists(otp: Otp): Promise<boolean>;
-  hashCodeExists(hash: HashCode): Promise<boolean>;
-  useOtpCode(hash: HashCode): Promise<void>;
-  otpExpired(hash: HashCode, otp: Otp): Promise<boolean>;
-  otpMatchesHash(hash: HashCode, otp: Otp): Promise<boolean>;
-  generateHash(): HashCode;
+  hashCodeExists(hash: Hash): Promise<boolean>;
+  useOtpCode(hash: Hash): Promise<void>;
+  otpExpired(hash: Hash, otp: Otp): Promise<boolean>;
+  otpMatchesHash(hash: Hash, otp: Otp): Promise<boolean>;
+  generateHash(): Hash;
 }

@@ -1,6 +1,6 @@
 import db from '../dbClient';
 import { Otp } from '../../../domain/model/otpType';
-import { HashCode } from '../../../domain/model/hashCode';
+import { Hash } from '../../../domain/model/hashType';
 import { OtpRepository } from '../../../domain/interfaces/otpRepository';
 
 export const otpRepository: OtpRepository = {
@@ -12,7 +12,7 @@ export const otpRepository: OtpRepository = {
   deleteOtpFromHashCode,
 };
 
-async function saveOtpToDb(hash: HashCode, otp: Otp, expirationDateString: string) {
+async function saveOtpToDb(hash: Hash, otp: Otp, expirationDateString: string) {
   await db
     .insertInto('otp')
     .values({
@@ -33,7 +33,7 @@ async function otpCodeExistsInDb(otp: Otp): Promise<boolean> {
   return otpValueFound !== undefined && otpValueFound !== null;
 }
 
-async function hashCodeExistsInDb(hash: HashCode): Promise<boolean> {
+async function hashCodeExistsInDb(hash: Hash): Promise<boolean> {
   const HashValueFound = await db
     .selectFrom('otp')
     .selectAll()
@@ -43,7 +43,7 @@ async function hashCodeExistsInDb(hash: HashCode): Promise<boolean> {
   return HashValueFound !== undefined && HashValueFound !== null;
 }
 
-async function getOtpByHash(hash: HashCode): Promise<Otp | null> {
+async function getOtpByHash(hash: Hash): Promise<Otp | null> {
   const result = await db
     .selectFrom('otp')
     .select('otp')
@@ -53,7 +53,7 @@ async function getOtpByHash(hash: HashCode): Promise<Otp | null> {
   return result?.otp ?? null;
 }
 
-async function getExpirationDate(hash: HashCode): Promise<string | null> {
+async function getExpirationDate(hash: Hash): Promise<string | null> {
   const result = await db
     .selectFrom('otp')
     .select('expirationDate')
@@ -62,6 +62,6 @@ async function getExpirationDate(hash: HashCode): Promise<string | null> {
   return result?.expirationDate ?? null;
 }
 
-async function deleteOtpFromHashCode(hash: HashCode) {
+async function deleteOtpFromHashCode(hash: Hash) {
   await db.deleteFrom('otp').where('hash', '=', hash).execute();
 }

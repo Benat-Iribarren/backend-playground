@@ -1,6 +1,6 @@
-import { HashCode } from '../model/hashCode';
+import { Hash } from '../model/hashType';
 import { Token } from '../model/tokenType';
 
 export interface TokenRepository {
-  saveTokenToDb(hash: HashCode, token: Token): Promise<void>;
+  saveTokenToDb(hash: Hash, token: Token): Promise<void>;
 }

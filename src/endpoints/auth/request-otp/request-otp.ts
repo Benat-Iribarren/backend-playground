@@ -3,7 +3,7 @@ import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
 import { User } from '../../../domain/model/userType';
-import { HashCode } from '../../../domain/model/hashCode';
+import { Hash } from '../../../domain/model/hashType';
 import { Otp } from '../../../domain/model/otpType';
 import { OtpServiceImpl as OtpService } from '../../../application/service/OtpService';
 
@@ -43,7 +43,7 @@ async function requestOtp(fastify: FastifyInstance) {
         return reply.status(200).send({ hash: '', verificationCode: '' });
       }
 
-      const hash: HashCode = OtpService.generateHash();
+      const hash: Hash = OtpService.generateHash();
       const verificationCode: Otp = await OtpService.createOtp();
       await OtpService.saveOtp(hash, verificationCode);
 
