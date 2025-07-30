@@ -1,4 +1,4 @@
-import { OtpStorage } from "../../domain/model/otpType";
+import { OtpStorage } from "../../domain/interfaces/otpStorage";
 import { Otp } from "../../domain/model/otpType";
 
 export async function generateSixDigitCode(otpStorage: OtpStorage): Promise<string> {

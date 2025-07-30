@@ -1,42 +1,41 @@
-import { Otp, OtpStorage } from '../domain/model/otpType';
+import { Otp } from '../domain/model/otpType';
+import { OtpStorage } from '../domain/interfaces/otpStorage';
 import { Hash } from '../domain/model/hashType';
 import { otpRepository } from './database/operations/otpOperations';
 
 export const otpStorage: OtpStorage = {
-  saveOtp,
-  otpCodeExists,
-  hashCodeExists,
-  deleteOtpFromHash,
-  otpExpired,
-  otpMatchesHash,
-};
+  async saveOtp(hash: Hash, otp: Otp) {
+    const expirationDateString = obtainOtpExpirationDate().toISOString();
+    await otpRepository.saveOtpToDb(hash, otp, expirationDateString);
+  },
 
-async function saveOtp(hash: Hash, otp: Otp) {
-  const expirationDateString = obtainOtpExpirationDate().toISOString();
-  await otpRepository.saveOtpToDb(hash, otp, expirationDateString);
-}
+  async otpCodeExists(otp: Otp): Promise<boolean> {
+    const otpCodeExists = await otpRepository.otpCodeExistsInDb(otp);
+    return otpCodeExists;
+  },
+  
+  async hashCodeExists(hash: Hash): Promise<boolean> {
+    const hashCodeExists = await otpRepository.hashCodeExistsInDb(hash);
+    return hashCodeExists;
+  },
+  
+  async deleteOtpFromHash(hash: Hash) {
+    await otpRepository.deleteOtpFromHashCode(hash);
+  },
+
+  async otpExpired(hash: Hash, otp: Otp): Promise<boolean> {
+    return (await otpStorage.otpMatchesHash(hash, otp)) && !(await isOtpValid(hash, otp));
+  },
+  
+  async otpMatchesHash(hash: Hash, otp: Otp): Promise<boolean> {
+    return (await otpRepository.getOtpByHash(hash)) === otp;
+  },
+
+};
 
 const fiveMinutesInMilliseconds = 1000 * 60 * 5;
 function obtainOtpExpirationDate(): Date {
   return new Date(Date.now() + fiveMinutesInMilliseconds);
-}
-
-async function otpCodeExists(otp: Otp): Promise<boolean> {
-  const otpCodeExists = await otpRepository.otpCodeExistsInDb(otp);
-  return otpCodeExists;
-}
-
-async function hashCodeExists(hash: Hash): Promise<boolean> {
-  const hashCodeExists = await otpRepository.hashCodeExistsInDb(hash);
-  return hashCodeExists;
-}
-
-async function otpExpired(hash: Hash, otp: Otp): Promise<boolean> {
-  return (await otpStorage.otpMatchesHash(hash, otp)) && !(await isOtpValid(hash, otp));
-}
-
-async function otpMatchesHash(hash: Hash, otp: Otp): Promise<boolean> {
-  return (await otpRepository.getOtpByHash(hash)) === otp;
 }
 
 async function isOtpValid(hash: Hash, otp: Otp): Promise<boolean> {
@@ -57,8 +56,4 @@ async function isExpirationDateValid(expirationDate: string | undefined): Promis
 
 async function otpNotFound(otp: Otp | undefined): Promise<boolean> {
   return otp === undefined || !(await otpRepository.otpCodeExistsInDb(otp));
-}
-
-async function deleteOtpFromHash(hash: Hash) {
-  await otpRepository.deleteOtpFromHashCode(hash);
 }
