@@ -19,6 +19,6 @@
     ```
 
 ## 👷Construir las tablas de la base de datos👷
-    ```bash
-    npx ts-node src/infrastructure/database/createTables.ts
-    ```
+```bash
+npx ts-node src/infrastructure/database/createTables.ts
+```
