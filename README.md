@@ -20,8 +20,7 @@
 
 ## 👷Construir las tablas de la base de datos👷
 Comando:
-    ```
-    ```
-    bash
+    ```bash
+    
     npx ts-node src/infrastructure/database/createTables.ts
     ```
