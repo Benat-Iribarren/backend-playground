@@ -23,7 +23,7 @@ export function build(): FastifyInstance {
   registerSwagger(app);
   registerSwaggerUI(app);
   registerRoutes(app);
-  
+
   return app;
 }
 

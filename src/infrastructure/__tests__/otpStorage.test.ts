@@ -28,7 +28,7 @@ describe('otpStorage', () => {
 
     it('Should return an expiration date five minutes from now', async () => {
       const actualTime = Date.now();
-      await otpStorage.saveOtp(mockHash, mockOtp);
+      otpStorage.saveOtp(mockHash, mockOtp);
 
       expect(mockSave).toHaveBeenCalledWith(mockHash, mockOtp, expect.any(String));
 

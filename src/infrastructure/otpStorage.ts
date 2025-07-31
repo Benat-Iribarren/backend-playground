@@ -13,12 +13,12 @@ export const otpStorage: OtpStorage = {
     const otpCodeExists = await otpRepository.otpCodeExistsInDb(otp);
     return otpCodeExists;
   },
-  
+
   async hashCodeExists(hash: Hash): Promise<boolean> {
     const hashCodeExists = await otpRepository.hashCodeExistsInDb(hash);
     return hashCodeExists;
   },
-  
+
   async deleteOtpFromHash(hash: Hash) {
     await otpRepository.deleteOtpFromHashCode(hash);
   },
@@ -26,11 +26,10 @@ export const otpStorage: OtpStorage = {
   async otpExpired(hash: Hash, otp: Otp): Promise<boolean> {
     return (await otpStorage.otpMatchesHash(hash, otp)) && !(await isOtpValid(hash, otp));
   },
-  
+
   async otpMatchesHash(hash: Hash, otp: Otp): Promise<boolean> {
     return (await otpRepository.getOtpByHash(hash)) === otp;
   },
-
 };
 
 const fiveMinutesInMilliseconds = 1000 * 60 * 5;
