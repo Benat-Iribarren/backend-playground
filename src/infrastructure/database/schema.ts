@@ -17,7 +17,7 @@ export interface userTable {
   id: number;
   nin: User["nin"];
   phone: User["phone"];
-  blocked: boolean;
+  isBlocked: boolean;
 }
 
 export interface Database {

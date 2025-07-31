@@ -48,6 +48,11 @@ else
 endif
 
 # Docker commands
+.PHONY: db-init
+db-init: ## Create tables and execute seeders
+	@echo "Inicializando base de datos..."
+	$(DOCKER_COMPOSE) exec backend sh -c "npx ts-node src/infrastructure/database/initDatabase.ts"
+
 .PHONY: up
 up: ## Start all services
 	@echo "$(GREEN)Starting services...$(NC)"
