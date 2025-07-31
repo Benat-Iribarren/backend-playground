@@ -14,8 +14,10 @@ db.exec(
         token TEXT PRIMARY KEY
     );
     CREATE TABLE IF NOT EXISTS user (
-        nin TEXT PRIMARY KEY,
-        phone TEXT NOT NULL
+        id NUMBER PRIMARY KEY,
+        nin TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        isBlocked BOOLEAN NOT NULL
     );
     `,
 );
