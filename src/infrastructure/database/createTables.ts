@@ -14,7 +14,7 @@ db.exec(
         token TEXT PRIMARY KEY
     );
     CREATE TABLE IF NOT EXISTS user (
-        id NUMBER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         nin TEXT NOT NULL,
         phone TEXT NOT NULL,
         isBlocked BOOLEAN NOT NULL
