@@ -3,7 +3,7 @@ import { User } from '../../../domain/model/userType';
 import { UserRepository } from '../../../domain/interfaces/userRespository';
 
 export const userRepository: UserRepository = {
-  async userExistInDB(user: User): Promise<boolean> {
+  async userExistsInDB(user: User): Promise<boolean> {
     const userExist = await db
       .selectFrom('user')
       .selectAll()
@@ -22,5 +22,5 @@ export const userRepository: UserRepository = {
       .executeTakeFirst();
 
     return result?.isBlocked === true;
-  }
+  },
 };
