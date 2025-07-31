@@ -4,7 +4,8 @@ RUN apk add --no-cache \
     sqlite \
     python3 \
     make \
-    g++
+    g++ \
+    && apk upgrade --no-cache
 
 COPY package*.json ./
 RUN npm install

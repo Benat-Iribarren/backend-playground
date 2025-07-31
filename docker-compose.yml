@@ -19,6 +19,7 @@ services:
       - ./data:/app/data
     stdin_open: true
     tty: true
+    platform: linux/amd64
 
 volumes:
   sqlite_data:
