@@ -1,7 +1,7 @@
 import { generateSixDigitCode } from '../../infrastructure/helpers/randomCodeGenerator';
 import { generateRandomHash } from '../../infrastructure/helpers/randomHashGenerator';
 import { OtpService } from '../../domain/interfaces/otpService';
-import { otpRepository } from '../../infrastructure/database/operations/otpOperations';
+import { otpRepository } from '../../infrastructure/database/repository/otpRepository';
 import { obtainOtpExpirationDate } from '../../infrastructure/helpers/otpExpirationDateGenerator';
 import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
 

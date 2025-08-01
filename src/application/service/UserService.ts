@@ -1,5 +1,5 @@
 import { UserService } from '../../domain/interfaces/userService';
-import { userRepository } from '../../infrastructure/database/operations/userOperations';
+import { userRepository } from '../../infrastructure/database/repository/userRepository';
 
 export const UserServiceImpl: UserService = {
   async userNinExists(nin) {

@@ -2,7 +2,7 @@ import { Token } from '../../domain/model/tokenType';
 import { Hash } from '../../domain/model/hashType';
 import { generateTokenGivenHash } from '../../infrastructure/helpers/tokenGenerator';
 import { TokenService } from '../../domain/interfaces/tokenService';
-import { tokenRepository } from '../../infrastructure/database/operations/tokenOperations';
+import { tokenRepository } from '../../infrastructure/database/repository/tokenRepository';
 
 export const TokenServiceImpl: TokenService = {
   async saveToken(token) {

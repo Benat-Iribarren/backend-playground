@@ -1,6 +1,6 @@
 import { Hash } from '../../domain/model/hashType';
 import { Otp } from '../../domain/model/otpType';
-import { otpRepository } from '../database/operations/otpOperations';
+import { otpRepository } from '../database/repository/otpRepository';
 
 export async function isOtpValid(hash: Hash, otp: Otp): Promise<boolean> {
   if (await otpNotFound(otp)) return false;
