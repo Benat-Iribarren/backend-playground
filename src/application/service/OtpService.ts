@@ -26,7 +26,8 @@ export const OtpServiceImpl: OtpService = {
   },
   async otpExpired(hash, otp) {
     const otpValid = await isOtpValid(hash, otp);
-    return otpExired = !otpValid;
+    const otpExired = !otpValid;
+    return otpExired;
   },
   async otpMatchesHash(hash, otp) {
     return (await otpRepository.getOtpByHash(hash)) === otp;

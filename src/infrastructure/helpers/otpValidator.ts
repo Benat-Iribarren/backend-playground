@@ -6,12 +6,16 @@ export async function isOtpValid(hash: Hash, otp: Otp): Promise<boolean> {
   if (await otpNotFound(otp)) return false;
 
   const otpFromDb = await otpRepository.getOtpByHash(hash);
-  if (otpFromDb === null || otpFromDb !== otp) return false;
+  if (otpCodesDoNotMatch(otpFromDb, otp)) return false;
 
   const expirationDate = await otpRepository.getExpirationDate(hash);
   if (expirationDate === null) return false;
 
   return isExpirationDateValid(expirationDate);
+}
+
+function otpCodesDoNotMatch(otpFromDb: string | null, otp: string) {
+  return otpFromDb === null || otpFromDb !== otp;
 }
 
 async function otpNotFound(otp: Otp | undefined): Promise<boolean> {
