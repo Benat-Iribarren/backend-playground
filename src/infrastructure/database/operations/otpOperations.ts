@@ -24,44 +24,48 @@ async function saveOtpToDb(hash: Hash, otp: Otp, expirationDateString: string) {
 }
 
 async function otpCodeExistsInDb(otp: Otp): Promise<boolean> {
-  const otpValueFound = await db
+  const otpValue = await db
     .selectFrom('otp')
     .selectAll()
     .where('otp', '=', otp)
     .executeTakeFirst();
 
-  return otpValueFound !== undefined && otpValueFound !== null;
+  return exists(otpValue);
 }
 
 async function hashCodeExistsInDb(hash: Hash): Promise<boolean> {
-  const HashValueFound = await db
+  const HashValue = await db
     .selectFrom('otp')
     .selectAll()
     .where('hash', '=', hash)
     .executeTakeFirst();
 
-  return HashValueFound !== undefined && HashValueFound !== null;
+  return exists(HashValue);
 }
 
 async function getOtpByHash(hash: Hash): Promise<Otp | null> {
-  const result = await db
+  const row = await db
     .selectFrom('otp')
     .select('otp')
     .where('hash', '=', hash)
     .executeTakeFirst();
 
-  return result?.otp ?? null;
+  return row?.otp ?? null;
 }
 
 async function getExpirationDate(hash: Hash): Promise<string | null> {
-  const result = await db
+  const row = await db
     .selectFrom('otp')
     .select('expirationDate')
     .where('hash', '=', hash)
     .executeTakeFirst();
-  return result?.expirationDate ?? null;
+  return row?.expirationDate ?? null;
 }
 
 async function deleteOtpFromHashCode(hash: Hash) {
   await db.deleteFrom('otp').where('hash', '=', hash).execute();
+}
+
+function exists(row: { hash: string; otp: string; expirationDate: string; } | undefined): boolean {
+  return row != null;
 }
