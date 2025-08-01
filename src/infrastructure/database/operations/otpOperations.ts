@@ -24,23 +24,23 @@ async function saveOtpToDb(hash: Hash, otp: Otp, expirationDateString: string) {
 }
 
 async function otpCodeExistsInDb(otp: Otp): Promise<boolean> {
-  const otpValue = await db
+  const otpRow = await db
     .selectFrom('otp')
     .selectAll()
     .where('otp', '=', otp)
     .executeTakeFirst();
 
-  return exists(otpValue);
+  return exists(otpRow);
 }
 
 async function hashCodeExistsInDb(hash: Hash): Promise<boolean> {
-  const HashValue = await db
+  const hashRow = await db
     .selectFrom('otp')
     .selectAll()
     .where('hash', '=', hash)
     .executeTakeFirst();
 
-  return exists(HashValue);
+  return exists(hashRow);
 }
 
 async function getOtpByHash(hash: Hash): Promise<Otp | null> {

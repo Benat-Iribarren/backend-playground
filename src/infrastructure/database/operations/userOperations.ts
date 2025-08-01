@@ -4,31 +4,37 @@ import { UserRepository } from '../../../domain/interfaces/userRespository';
 
 export const userRepository: UserRepository = {
   async ninExistsInDB(nin: Nin): Promise<boolean> {
-    const ninExists = await db
+    const ninRow = await db
       .selectFrom('user')
       .selectAll()
       .where('nin', '=', nin)
       .executeTakeFirst();
 
-    return ninExists !== undefined && ninExists !== null;
+    return exists(ninRow);
   },
   async userIsBlocked(user: User): Promise<boolean> {
-    const userResult = await db
+    const userRow = await db
       .selectFrom('user')
       .selectAll()
       .where('nin', '=', user.nin)
       .where('phone', '=', user.phone)
       .executeTakeFirst();
 
-    return Boolean(userResult?.isBlocked);
+    return Boolean(userRow?.isBlocked);
   },
   async phoneExistsInDB(phone: Phone): Promise<boolean> {
-    const phoneExists = await db
+    const phoneRow = await db
       .selectFrom('user')
       .selectAll()
       .where('phone', '=', phone)
       .executeTakeFirst();
 
-    return phoneExists !== undefined && phoneExists !== null;
+    return exists(phoneRow);
   },
 };
+
+function exists(
+  row: { id: number; nin: Nin; phone: Phone; isBlocked: boolean } | undefined,
+): boolean {
+  return row != null;
+}
