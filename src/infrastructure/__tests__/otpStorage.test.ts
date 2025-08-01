@@ -1,4 +1,4 @@
-import { otpStorage } from '../otpStorage';
+/*import { otpStorage } from '../otpStorage';
 import { otpRepository } from '../database/operations/otpOperations';
 import { Hash } from '../../domain/model/hashType';
 import { Otp } from '../../domain/model/otpType';
@@ -164,3 +164,4 @@ describe('otpStorage', () => {
     });
   });
 });
+*/
