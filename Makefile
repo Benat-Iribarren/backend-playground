@@ -43,11 +43,6 @@ up: ## Start production/development services
 	@echo "Starting backend and db services..."
 	$(DOCKER_COMPOSE) up -d backend db
 
-.PHONY: up-test
-up-test: ## Start test services
-	@echo "Starting test-runner and test-db services..."
-	$(DOCKER_COMPOSE) up -d test-runner test-db
-
 .PHONY: down
 down: ## Stop all services
 	@echo "Stopping services..."
@@ -70,15 +65,3 @@ build: ## Build Docker images
 clean: ## Remove containers, networks, and volumes
 	@echo "Cleaning up Docker resources..."
 	$(DOCKER_COMPOSE) down -v --remove-orphans
-
-# Open a persistent shell in the test-runner container (for test environment debugging)
-.PHONY: test-shell
-test-shell: ## Open shell in test-runner container
-	$(DOCKER_COMPOSE) run --rm --service-ports test-runner sh
-
-.PHONY: test-docker
-test-docker: ## Run tests in Docker with ephemeral test DB
-	$(DOCKER_COMPOSE) run --rm test-runner
-
-.PHONY: test
-test: up-test test-docker ## Run full test suite with DB

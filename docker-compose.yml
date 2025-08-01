@@ -21,24 +21,5 @@ services:
     tty: true
     platform: linux/amd64
 
-  test-db:
-    image: nouchka/sqlite3
-    container_name: sequra-test-db
-    stdin_open: true
-    tty: true
-    platform: linux/amd64
-    volumes:
-      - /app/data
-
-  test-runner:
-    build: .
-    environment:
-      - NODE_ENV=test
-    volumes:
-      - /app/data
-    depends_on:
-      - test-db
-    command: sh -c "npx ts-node dist/infrastructure/database/createTestTables.js && npm test && sh"
-
 volumes:
   sqlite_data:
