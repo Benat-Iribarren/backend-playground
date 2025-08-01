@@ -7,7 +7,7 @@ export const tokenRepository: TokenRepository = {
     await db
       .insertInto('token')
       .values({
-        token
+        token,
       })
       .execute();
   },

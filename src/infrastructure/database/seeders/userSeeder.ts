@@ -1,7 +1,19 @@
 import db from '../dbClient';
 
 export async function seedUser() {
-  const users = [
+  const users = getUsers();
+
+  for (const user of users) {
+    const userExists = await selectUser(user);
+
+    if (!userExists) {
+      await insertUserIntoDb(user);
+    }
+  }
+}
+
+function getUsers() {
+  return [
     {
       nin: '12345678A',
       phone: '666666666',
@@ -18,25 +30,25 @@ export async function seedUser() {
       isBlocked: true,
     },
   ];
+}
 
-  for (const user of users) {
-    const exists = await db
-      .selectFrom('user')
-      .select('nin')
-      .where('nin', '=', user.nin)
-      .executeTakeFirst();
-      
-      if (!exists) {
-        await db
-          .insertInto('user')
-          .values({
-            nin: user.nin,
-            phone: user.phone,
-            isBlocked: (user.isBlocked ? 1 : 0) as unknown as boolean,
-          })
-          .execute();
-  
-        console.log(`Usuario ${user.nin} insertado.`);
-      }
-  }
+async function selectUser(user: { nin: string; phone: string; isBlocked: boolean; }) {
+  return await db
+    .selectFrom('user')
+    .select('nin')
+    .where('nin', '=', user.nin)
+    .executeTakeFirst();
+}
+
+async function insertUserIntoDb(user: { nin: string; phone: string; isBlocked: boolean; }) {
+  await db
+    .insertInto('user')
+    .values({
+      nin: user.nin,
+      phone: user.phone,
+      isBlocked: (user.isBlocked ? 1 : 0) as unknown as boolean,
+    })
+    .execute();
+
+  console.log(`Usuario ${user.nin} insertado.`);
 }

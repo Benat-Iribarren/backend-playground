@@ -2,10 +2,11 @@ import { FastifyInstance } from 'fastify';
 import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
-import { User } from '../../../domain/model/userType';
+import { User, Phone, Nin } from '../../../domain/model/userType';
 import { Hash } from '../../../domain/model/hashType';
 import { Otp } from '../../../domain/model/otpType';
 import { OtpServiceImpl as OtpService } from '../../../application/service/OtpService';
+import { UserServiceImpl as UserService } from '../../../application/service/UserService';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
@@ -14,13 +15,6 @@ const MESSAGES = {
   USER_BLOCKED: 'User is blocked.',
   USER_NOT_FOUND: 'User not found.',
 };
-
-const BLOCKED_PHONE = '666666667';
-const BLOCKED_NIN = '87654321A';
-
-const VALID_NIN = '12345678A';
-const VALID_PHONE1 = '666666666';
-const VALID_PHONE2 = '111111111';
 
 async function requestOtp(fastify: FastifyInstance) {
   fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
@@ -34,15 +28,15 @@ async function requestOtp(fastify: FastifyInstance) {
       return reply.status(400).send({ error: MESSAGES.INVALID_NIN_OR_PHONE });
     }
 
-    if (blockedUser({ nin, phone })) {
+    if (await blockedUser({ nin, phone })) {
       return reply.status(403).send({ error: MESSAGES.USER_BLOCKED });
     }
-
-    if (validUser({ nin, phone })) {
-      if (incorrectPhoneNumber(phone)) {
-        return reply.status(200).send({ hash: '', verificationCode: '' });
-      }
-
+    
+    if (await userPhoneDoesNotExists(phone)) {
+      return reply.status(200).send({ hash: '', verificationCode: '' });
+    }
+    
+    if (await userNinExists(nin)) {
       const hash: Hash = OtpService.generateHash();
       const verificationCode: Otp = await OtpService.createOtp();
       await OtpService.saveOtp(hash, verificationCode);
@@ -54,19 +48,16 @@ async function requestOtp(fastify: FastifyInstance) {
   });
 }
 
-function incorrectPhoneNumber(phone: string): boolean {
-  return phone === BLOCKED_PHONE;
+async function userPhoneDoesNotExists(phone: Phone): Promise<Boolean> {
+  return !(await UserService.userPhoneExists(phone));
 }
 
-function blockedUser(user: User): boolean {
-  return user.nin === BLOCKED_NIN && user.phone === BLOCKED_PHONE;
+async function blockedUser(user: User): Promise<boolean> {
+  return await UserService.userBlocked(user);
 }
 
-function validUser(user: User): boolean {
-  return (
-    user.nin === VALID_NIN &&
-    (user.phone === VALID_PHONE1 || user.phone === VALID_PHONE2 || user.phone === BLOCKED_PHONE)
-  );
+async function userNinExists(nin: Nin): Promise<boolean> {
+  return await UserService.userNinExists(nin);
 }
 
 function missingParameters(nin: string, phone: string): boolean {

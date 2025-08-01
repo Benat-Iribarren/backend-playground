@@ -1,4 +1,6 @@
 export interface User {
-  nin: string;
-  phone: string;
+  nin: Nin;
+  phone: Phone;
 }
+export type Phone = string;
+export type Nin = string;

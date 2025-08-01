@@ -1,6 +1,7 @@
-import { User } from '../model/userType';
+import { User, Phone, Nin } from '../model/userType';
 
 export interface UserRepository {
-  userExistsInDB(user: User): Promise<boolean | null>;
+  ninExistsInDB(nin: Nin): Promise<boolean | null>;
   userIsBlocked(user: User): Promise<boolean | null>;
+  phoneExistsInDB(phone: Phone): Promise<boolean | null>;
 }
