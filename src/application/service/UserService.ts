@@ -1,14 +1,17 @@
 import { UserService } from '../../domain/interfaces/userService';
-import { userStorage } from '../../infrastructure/userStorage';
+import { userRepository } from '../../infrastructure/database/operations/userOperations';
 
 export const UserServiceImpl: UserService = {
   async userNinExists(nin) {
-    return userStorage.userNinExists(nin);
+    const userExists = await userRepository.ninExistsInDB(nin);
+    return userExists ?? true;
   },
   async userBlocked(user) {
-    return userStorage.userIsBlocked(user);
+    const userBlocked = await userRepository.userIsBlocked(user);
+    return userBlocked ?? true;
   },
   async userPhoneExists(phone) {
-    return userStorage.userPhoneExists(phone);
+    const userExists = await userRepository.phoneExistsInDB(phone);
+    return userExists ?? true;
   },
 };
