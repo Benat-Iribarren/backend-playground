@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { requestOtpSchema } from './schema';
-import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
-import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
-import { User } from '../../../domain/model/userType';
-import { processOtpRequest } from '../../../application/service/UserService';
+import { isValidNin } from '../../../../domain/helpers/validators/ninValidator';
+import { isValidPhone } from '../../../../domain/helpers/validators/phoneValidator';
+import { User } from '../../../../domain/model/userType';
+import { processOtpRequest } from '../../../../application/service/UserService';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {

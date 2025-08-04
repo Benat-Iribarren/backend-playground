@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
-import { OtpServiceImpl as OtpService } from '../../../application/service/OtpService';
-import { Hash } from '../../../domain/model/hashType';
-import { TokenServiceImpl as TokenService } from '../../../application/service/TokenService';
-import { Token } from '../../../domain/model/tokenType';
+import { OtpServiceImpl as OtpService } from '../../../../application/service/OtpService';
+import { Hash } from '../../../../domain/model/hashType';
+import { TokenServiceImpl as TokenService } from '../../../../application/service/TokenService';
+import { Token } from '../../../../domain/model/tokenType';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 const MESSAGES = {
