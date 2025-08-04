@@ -7,10 +7,11 @@ import { processOtpRequest } from '../../../application/service/UserService';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 const MESSAGES = {
-  MISSING_NIN_OR_PHONE: { error: 'Missing nin or phone number.'},
-  INVALID_NIN_OR_PHONE: { error: 'Invalid nin or phone number.'},
-  USER_BLOCKED: { error: 'User is blocked.'},
-  USER_NOT_FOUND: { error: 'User not found.'},
+  MISSING_NIN_OR_PHONE: { error: 'Missing nin or phone number.' },
+  INVALID_NIN_OR_PHONE: { error: 'Invalid nin or phone number.' },
+  USER_BLOCKED: { error: 'User is blocked.' },
+  USER_NOT_FOUND: { error: 'User not found.' },
+  PHONE_NOT_EXISTS: '',
 };
 const messageToCode = {
   MISSING_NIN_OR_PHONE: 400,
@@ -20,33 +21,27 @@ const messageToCode = {
   EMPTY_HASH: 200,
   NOT_EMPTY_HASH: 200,
 };
-type OtpResponse =
-  | { error: string }
-  | { hash: string; verificationCode: string };
+type OtpResponse = { error: string } | { hash: string; verificationCode: string };
 
 async function requestOtp(fastify: FastifyInstance) {
   fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
     const { nin, phone } = request.body as User;
 
     if (missingParameters(nin, phone)) {
-      return reply
-        .status(messageToCode.MISSING_NIN_OR_PHONE)
-        .send(MESSAGES.MISSING_NIN_OR_PHONE);
+      return reply.status(messageToCode.MISSING_NIN_OR_PHONE).send(MESSAGES.MISSING_NIN_OR_PHONE);
     }
 
     if (invalidParameters(nin, phone)) {
-      return reply
-        .status(messageToCode.INVALID_NIN_OR_PHONE)
-        .send(MESSAGES.INVALID_NIN_OR_PHONE });
+      return reply.status(messageToCode.INVALID_NIN_OR_PHONE).send(MESSAGES.INVALID_NIN_OR_PHONE);
     }
 
     const body = await processOtpRequest({ nin, phone });
-    
-    if (body?.error === MESSAGES.USER_BLOCKED) {
+
+    if (body === MESSAGES.USER_BLOCKED) {
       return reply.status(messageToCode.USER_BLOCKED).send(body);
     }
-    
-    if (body?.error === MESSAGES.USER_NOT_FOUND) {
+
+    if (body === MESSAGES.USER_NOT_FOUND) {
       return reply.status(messageToCode.USER_NOT_FOUND).send(body);
     }
 
@@ -54,12 +49,12 @@ async function requestOtp(fastify: FastifyInstance) {
       return reply.status(messageToCode.EMPTY_HASH).send(body);
     }
 
-    return reply.status(messageToCode.DEFAULT).send(body);
+    return reply.status(messageToCode.NOT_EMPTY_HASH).send(body);
   });
 }
 
 function phoneDoesNotExists(body: OtpResponse) {
-  return body?.hash && body.hash === MESSAGES.PHONE_NOT_EXISTS;
+  return 'hash' in body && body.hash === '';
 }
 
 function missingParameters(nin: string, phone: string): boolean {

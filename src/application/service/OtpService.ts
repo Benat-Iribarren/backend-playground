@@ -7,7 +7,7 @@ import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
 
 export const OtpServiceImpl: OtpService = {
   async createOtp() {
-    return generateSixDigitCode(this);
+    return generateSixDigitCode(otpRepository.otpCodeExistsInDb.bind(otpRepository));
   },
   async saveOtp(hash, otp) {
     const expirationDateString = obtainOtpExpirationDate().toISOString();
