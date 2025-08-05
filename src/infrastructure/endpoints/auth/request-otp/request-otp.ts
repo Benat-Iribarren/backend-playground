@@ -32,7 +32,7 @@ const statusToCode: { [K in RequestOtpErrors]: number } & { [key: string]: numbe
 };
 
 type OtpResponse = RequestOtpErrors | { hash: string; verificationCode: string };
-type RequestOtpBody = { nin?: string, phone?: string};
+type RequestOtpBody = { nin: string, phone: string};
 
 async function requestOtp(fastify: FastifyInstance) {
   fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
@@ -50,7 +50,7 @@ async function requestOtp(fastify: FastifyInstance) {
         .send(statusToMessage[invalidNinOrPhoneErrorStatusMsg]);
     }
 
-    const body = await processOtpRequest({ nin, phone } as any);
+    const body = await processOtpRequest({ nin, phone });
 
     if (errorExists(body)) {
       return reply
@@ -74,12 +74,12 @@ function errorExists(body: UserLoginErrors | { hash: string; verificationCode: s
   return typeof body !== 'object';
 }
 
-function missingParameters(nin?: string, phone?: string): boolean {
+function missingParameters(nin: string, phone: string): boolean {
   return !nin || !phone;
 }
 
-function invalidParameters(nin?: string, phone?: string): boolean {
-  return !isValidNin(nin ?? '') || !isValidPhone(phone ?? '');
+function invalidParameters(nin: string, phone: string): boolean {
+  return !isValidNin(nin) || !isValidPhone(phone);
 }
 
 export default requestOtp;
