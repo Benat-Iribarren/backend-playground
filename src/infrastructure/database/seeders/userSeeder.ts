@@ -32,15 +32,11 @@ function getUsers() {
   ];
 }
 
-async function selectUser(user: { nin: string; phone: string; isBlocked: boolean; }) {
-  return await db
-    .selectFrom('user')
-    .select('nin')
-    .where('nin', '=', user.nin)
-    .executeTakeFirst();
+async function selectUser(user: { nin: string; phone: string; isBlocked: boolean }) {
+  return await db.selectFrom('user').select('nin').where('nin', '=', user.nin).executeTakeFirst();
 }
 
-async function insertUserIntoDb(user: { nin: string; phone: string; isBlocked: boolean; }) {
+async function insertUserIntoDb(user: { nin: string; phone: string; isBlocked: boolean }) {
   await db
     .insertInto('user')
     .values({
