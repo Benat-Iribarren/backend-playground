@@ -1,13 +1,13 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
 import { Token } from '../../../../domain/model/token';
-import { Hash, Otp, VerificationCode } from '../../../../domain/model/otpType';
 import {
   invalidHashOrCodeErrorStatusMsg,
   missingHashOrCodeErrorStatusMsg,
   VerifyOtpErrors,
 } from '../../../../domain/errors/verifyOtpErrors';
 import { OtpServiceImpl as OtpService } from '../../../../application/services/OtpService';
+import { Otp } from '../../../../domain/model/otpType';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -27,23 +27,23 @@ export const statusToCode: { [K in VerifyOtpErrors]: number } & {
 };
 
 type VerificationResponse = VerifyOtpErrors | { token: Token };
+type VerifyOtpBody = { hash?: string; verificationCode?: string };
 
 async function verifyOtp(fastify: FastifyInstance) {
   fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
-    const otp: Otp = request.body as {
-      hash: Hash;
-      verificationCode: VerificationCode;
-    };
-
-    if (missingParameters(otp)) {
+    const { hash, verificationCode } = request.body as VerifyOtpBody;
+    if (missingParameters(hash, verificationCode)) {
       return reply.status(400).send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
     }
 
-    if (await invalidParameters(otp)) {
+    if (await invalidParameters(hash, verificationCode)) {
       return reply.status(400).send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
     }
 
-    const body = await OtpService.processOtpVerificationRequest(otp);
+    const body = await OtpService.processOtpVerificationRequest({
+      hash: hash!,
+      verificationCode: verificationCode!,
+    });
 
     if (incorrectParameters(body as VerificationResponse)) {
       return reply
@@ -59,23 +59,26 @@ function incorrectParameters(body: VerificationResponse): boolean {
   return typeof body !== 'object';
 }
 
-function missingParameters(otp: Otp): boolean {
-  return !otp.hash || !otp.verificationCode;
+function missingParameters(hash?: string, verificationCode?: string): boolean {
+  return !hash || !verificationCode;
 }
 
-async function invalidParameters(otp: Otp): Promise<boolean> {
+async function invalidParameters(hash?: string, verificationCode?: string): Promise<boolean> {
   return (
-    (await invalidHash(otp.hash)) ||
-    (await invalidVerificationCode(otp.verificationCode)) ||
-    !(await OtpService.verificationCodeMatchesHash(otp))
+    (await invalidHash(hash ?? '')) ||
+    (await invalidVerificationCode(verificationCode ?? '')) ||
+    !(await OtpService.verificationCodeMatchesHash({
+      hash: hash ?? '',
+      verificationCode: verificationCode ?? '',
+    }))
   );
 }
 
-async function invalidHash(hash: Hash): Promise<boolean> {
+async function invalidHash(hash: string): Promise<boolean> {
   return !(await OtpService.hashCodeExists(hash));
 }
 
-async function invalidVerificationCode(verificationCode: VerificationCode): Promise<boolean> {
+async function invalidVerificationCode(verificationCode: string): Promise<boolean> {
   const codeRegex = /^[0-9]{6}$/;
   return !codeRegex.test(verificationCode) || !OtpService.verificationCodeExists(verificationCode);
 }
