@@ -1,8 +1,7 @@
 import { userRepository } from '../../infrastructure/database/repository/userRepository';
 import { Nin, Phone, User } from '../../domain/model/userType';
-import { Hash } from '../../domain/model/hashType';
 import { OtpServiceImpl as OtpService } from './OtpService';
-import { Otp } from '../../domain/model/otpType';
+import { Hash, Otp, VerificationCode } from '../../domain/model/otpType';
 import {
   userBlockedErrorStatusMsg,
   userNotFoundErrorStatusMsg,
@@ -24,12 +23,13 @@ export async function processOtpRequest(
     return { hash: '', verificationCode: '' };
   }
 
-  const { generateHash, createOtp, saveOtp } = OtpService;
+  const { generateHash, createVerificationCode, saveOtp } = OtpService;
   const hash: Hash = generateHash();
-  const verificationCode: Otp = await createOtp();
-  await saveOtp(hash, verificationCode);
+  const verificationCode: VerificationCode = await createVerificationCode();
+  const otp: Otp = { hash, verificationCode };
+  await saveOtp(otp);
 
-  return { hash: hash, verificationCode: verificationCode };
+  return otp;
 }
 async function userNinNotExists(nin: Nin) {
   const exists = await userRepository.ninExistsInDB(nin);

@@ -1,25 +1,32 @@
-import { Hash } from '../../domain/model/hashType';
-import { Otp } from '../../domain/model/otpType';
+import { Otp, VerificationCode } from '../../domain/model/otpType';
 import { otpRepository } from '../database/repository/otpRepository';
 
-export async function isOtpValid(hash: Hash, otp: Otp): Promise<boolean> {
-  if (await otpNotFound(otp)) return false;
+export async function isOtpValid(otp: Otp): Promise<boolean> {
+  if (await verificationCodeNotFound(otp.verificationCode)) return false;
 
-  const otpFromDb = await otpRepository.getOtpByHash(hash);
-  if (otpCodesDoNotMatch(otpFromDb, otp)) return false;
+  const verificationCodeFromDb = await otpRepository.getVerificationCodeByHash(otp.hash);
+  if (verificationCodeDoNotMatch(verificationCodeFromDb, otp.verificationCode)) return false;
 
-  const expirationDate = await otpRepository.getExpirationDate(hash);
+  const expirationDate = await otpRepository.getExpirationDate(otp.hash);
   if (expirationDate === null) return false;
 
   return isExpirationDateValid(expirationDate);
 }
 
-function otpCodesDoNotMatch(otpFromDb: string | null, otp: string) {
-  return otpFromDb === null || otpFromDb !== otp;
+function verificationCodeDoNotMatch(
+  verificationCodeFromDb: string | null,
+  verificationCode: VerificationCode,
+) {
+  return verificationCodeFromDb === null || verificationCodeFromDb !== verificationCode;
 }
 
-async function otpNotFound(otp: Otp | undefined): Promise<boolean> {
-  return otp === undefined || !(await otpRepository.otpCodeExistsInDb(otp));
+async function verificationCodeNotFound(
+  verificationCode: VerificationCode | undefined,
+): Promise<boolean> {
+  return (
+    verificationCode === undefined ||
+    !(await otpRepository.verificationCodeExistsInDb(verificationCode))
+  );
 }
 
 function isExpirationDateValid(expirationDate: string | undefined): boolean {

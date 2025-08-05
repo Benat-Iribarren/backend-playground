@@ -3,8 +3,7 @@ import { generateRandomHash } from '../../infrastructure/helpers/randomHashGener
 import { otpRepository } from '../../infrastructure/database/repository/otpRepository';
 import { obtainOtpExpirationDate } from '../../infrastructure/helpers/otpExpirationDateGenerator';
 import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
-import { Otp } from '../../domain/model/otpType';
-import { Hash } from '../../domain/model/hashType';
+import { Hash, Otp, VerificationCode } from '../../domain/model/otpType';
 import { Token } from '../../domain/model/token';
 import { generateToken, saveToken } from '../../domain/model/token';
 import {
@@ -14,28 +13,27 @@ import {
 
 export const OtpServiceImpl = {
   async processOtpVerificationRequest(
-    hash: Hash,
-    verificationCode: Otp,
+    otp: Otp,
   ): Promise<IncorrectHashOrCodeError | { token?: Token }> {
-    if (await otpExpired(hash, verificationCode)) {
-      useOtpCode(hash);
+    if (await otpExpired(otp)) {
+      useOtpCode(otp);
       return incorrectHashOrCodeErrorStatusMsg;
     }
 
-    useOtpCode(hash);
-    const token: Token = generateToken(hash);
+    useOtpCode(otp);
+    const token: Token = generateToken(otp.hash);
     await saveToken(token);
 
     return { token };
   },
 
-  async otpCodeExists(otp: Otp) {
-    const otpCodeExists = await otpRepository.otpCodeExistsInDb(otp);
+  async verificationCodeExists(verificationCode: VerificationCode) {
+    const otpCodeExists = await otpRepository.verificationCodeExistsInDb(verificationCode);
     return otpCodeExists;
   },
 
-  async otpMatchesHash(hash: Hash, otp: Otp) {
-    return (await otpRepository.getOtpByHash(hash)) === otp;
+  async verificationCodeMatchesHash(otp: Otp) {
+    return (await otpRepository.getVerificationCodeByHash(otp.hash)) === otp.verificationCode;
   },
 
   async hashCodeExists(hash: Hash) {
@@ -43,13 +41,13 @@ export const OtpServiceImpl = {
     return hashCodeExists;
   },
 
-  async createOtp() {
+  async createVerificationCode() {
     return generateSixDigitCode();
   },
 
-  async saveOtp(hash: Hash, otp: Otp) {
+  async saveOtp(otp: Otp) {
     const expirationDateString = obtainOtpExpirationDate().toISOString();
-    await otpRepository.saveOtpToDb(hash, otp, expirationDateString);
+    await otpRepository.saveOtpToDb(otp, expirationDateString);
   },
 
   generateHash() {
@@ -57,12 +55,12 @@ export const OtpServiceImpl = {
   },
 };
 
-const useOtpCode = async (hash: Hash) => {
-  await otpRepository.deleteOtpFromHashCode(hash);
+const useOtpCode = async (otp: Otp) => {
+  await otpRepository.deleteOtpFromHashCode(otp.hash);
 };
 
-const otpExpired = async (hash: Hash, otp: Otp) => {
-  const otpValid = await isOtpValid(hash, otp);
+const otpExpired = async (otp: Otp) => {
+  const otpValid = await isOtpValid(otp);
   const otpExired = !otpValid;
   return otpExired;
 };

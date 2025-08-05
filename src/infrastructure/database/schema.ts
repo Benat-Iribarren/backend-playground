@@ -1,12 +1,11 @@
-import { Hash } from '../../domain/model/hashType';
-import { Otp } from '../../domain/model/otpType';
+import { VerificationCode, Hash } from '../../domain/model/otpType';
 import { Token } from '../../domain/model/token';
 import { User } from '../../domain/model/userType';
 import { Generated } from 'kysely';
 
 export interface otpTable {
   hash: Hash;
-  otp: Otp;
+  verificationCode: VerificationCode;
   expirationDate: string;
 }
 

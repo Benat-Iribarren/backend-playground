@@ -1,33 +1,35 @@
 import db from '../dbClient';
-import { Otp } from '../../../domain/model/otpType';
-import { Hash } from '../../../domain/model/hashType';
+import { Hash, VerificationCode, Otp } from '../../../domain/model/otpType';
 import { OtpRepository } from '../../../domain/interfaces/otpRepository';
 
 export const otpRepository: OtpRepository = {
   saveOtpToDb,
-  otpCodeExistsInDb,
+  verificationCodeExistsInDb,
   hashCodeExistsInDb,
-  getOtpByHash,
+  getVerificationCodeByHash,
   getExpirationDate,
   deleteOtpFromHashCode,
 };
 
-async function saveOtpToDb(hash: Hash, otp: Otp, expirationDateString: string) {
+async function saveOtpToDb(
+  otp: Otp,
+  expirationDateString: string,
+) {
   await db
     .insertInto('otp')
     .values({
-      hash,
-      otp,
+      hash: otp.hash,
+      verificationCode: otp.verificationCode,
       expirationDate: expirationDateString,
     })
     .execute();
 }
 
-async function otpCodeExistsInDb(otp: Otp): Promise<boolean> {
+async function verificationCodeExistsInDb(verificationCode: VerificationCode): Promise<boolean> {
   const otpRow = await db
     .selectFrom('otp')
     .selectAll()
-    .where('otp', '=', otp)
+    .where('verificationCode', '=', verificationCode)
     .executeTakeFirst();
 
   return exists(otpRow);
@@ -43,14 +45,14 @@ async function hashCodeExistsInDb(hash: Hash): Promise<boolean> {
   return exists(hashRow);
 }
 
-async function getOtpByHash(hash: Hash): Promise<Otp | null> {
+async function getVerificationCodeByHash(hash: Hash): Promise<VerificationCode | null> {
   const row = await db
     .selectFrom('otp')
-    .select('otp')
+    .select('verificationCode')
     .where('hash', '=', hash)
     .executeTakeFirst();
 
-  return row?.otp ?? null;
+  return row?.verificationCode ?? null;
 }
 
 async function getExpirationDate(hash: Hash): Promise<string | null> {
@@ -66,6 +68,8 @@ async function deleteOtpFromHashCode(hash: Hash) {
   await db.deleteFrom('otp').where('hash', '=', hash).execute();
 }
 
-function exists(row: { hash: string; otp: string; expirationDate: string; } | undefined): boolean {
+function exists(
+  row: { hash: Hash; verificationCode: VerificationCode; expirationDate: string } | undefined,
+): boolean {
   return row != null;
 }

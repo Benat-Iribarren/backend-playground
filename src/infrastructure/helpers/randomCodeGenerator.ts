@@ -1,8 +1,8 @@
 import { OtpServiceImpl as OtpService } from '../../application/services/OtpService';
-import { Otp } from '../../domain/model/otpType';
+import { VerificationCode } from '../../domain/model/otpType';
 
-export async function generateSixDigitCode(): Promise<Otp> {
-  let result: Otp;
+export async function generateSixDigitCode(): Promise<VerificationCode> {
+  let result: VerificationCode;
 
   do {
     result = '';
@@ -10,7 +10,7 @@ export async function generateSixDigitCode(): Promise<Otp> {
       const randomIndex = Math.floor(Math.random() * 10);
       result += randomIndex.toString();
     }
-  } while (await OtpService.otpCodeExists(result));
+  } while (await OtpService.verificationCodeExists(result));
 
   return result;
 }
