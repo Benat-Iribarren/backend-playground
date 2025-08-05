@@ -1,5 +1,5 @@
 import db from '../dbClient';
-import { Token } from '../../../domain/model/tokenType';
+import { Token } from '../../../domain/model/token';
 import { TokenRepository } from '../../../domain/interfaces/tokenRepository';
 
 export const tokenRepository: TokenRepository = {

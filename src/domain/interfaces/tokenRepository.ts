@@ -1,4 +1,4 @@
-import { Token } from '../model/tokenType';
+import { Token } from '../model/token';
 
 export interface TokenRepository {
   saveTokenToDb(token: Token): Promise<void>;
