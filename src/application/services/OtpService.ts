@@ -9,7 +9,7 @@ import { Token } from '../../domain/model/token';
 import { generateToken, saveToken } from '../../domain/model/token';
 import {
   IncorrectHashOrCodeError,
-  incorrectHashOrCodeErrorMsg,
+  incorrectHashOrCodeErrorStatusMsg,
 } from '../../domain/errors/verifyOtpErrors';
 
 export const OtpServiceImpl = {
@@ -19,7 +19,7 @@ export const OtpServiceImpl = {
   ): Promise<IncorrectHashOrCodeError | { token?: Token }> {
     if (await otpExpired(hash, verificationCode)) {
       useOtpCode(hash);
-      return incorrectHashOrCodeErrorMsg;
+      return incorrectHashOrCodeErrorStatusMsg;
     }
 
     useOtpCode(hash);

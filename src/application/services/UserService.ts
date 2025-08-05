@@ -4,8 +4,8 @@ import { Hash } from '../../domain/model/hashType';
 import { OtpServiceImpl as OtpService } from './OtpService';
 import { Otp } from '../../domain/model/otpType';
 import {
-  userBlockedErrorMsg,
-  userNotFoundErrorMsg,
+  userBlockedErrorStatusMsg,
+  userNotFoundErrorStatusMsg,
   UserLoginErrors,
 } from '../../domain/errors/userLoginErrors';
 
@@ -13,11 +13,11 @@ export async function processOtpRequest(
   user: User,
 ): Promise<UserLoginErrors | { hash: string; verificationCode: string }> {
   if (await isUserBlocked(user)) {
-    return userBlockedErrorMsg;
+    return userBlockedErrorStatusMsg;
   }
 
   if (await userNinNotExists(user.nin)) {
-    return userNotFoundErrorMsg;
+    return userNotFoundErrorStatusMsg;
   }
 
   if (await userPhoneNotExists(user.phone)) {
