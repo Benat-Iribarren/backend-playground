@@ -1,4 +1,4 @@
-import { User, Phone, Nin } from '../model/userType';
+import { User, Phone, Nin } from '../model/user';
 
 export interface UserRepository {
   ninExistsInDB(nin: Nin): Promise<boolean | null>;

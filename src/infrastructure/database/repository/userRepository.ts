@@ -1,5 +1,5 @@
 import db from '../dbClient';
-import { User, Phone, Nin } from '../../../domain/model/userType';
+import { User, Phone, Nin } from '../../../domain/model/user';
 import { UserRepository } from '../../../domain/interfaces/userRespository';
 
 export const userRepository: UserRepository = {

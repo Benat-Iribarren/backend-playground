@@ -1,4 +1,4 @@
-import { Nin, Phone, User } from '../../domain/model/userType';
+import { Nin, Phone, User } from '../../domain/model/user';
 import { OtpServiceImpl as OtpService } from './OtpService';
 import { Hash, Otp, VerificationCode } from '../../domain/model/otpType';
 import {
@@ -6,11 +6,7 @@ import {
   userNotFoundErrorStatusMsg,
   UserLoginErrors,
 } from '../../domain/errors/userLoginErrors';
-import {
-  userNinNotExists,
-  isUserBlocked,
-  userPhoneNotExists,
-} from '../../domain/model/userType';
+import { userNinNotExists, isUserBlocked, userPhoneNotExists } from '../../domain/model/user';
 
 export async function processOtpRequest(
   user: User,

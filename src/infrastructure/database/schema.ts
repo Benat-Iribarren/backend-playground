@@ -1,6 +1,6 @@
 import { VerificationCode, Hash } from '../../domain/model/otpType';
 import { Token } from '../../domain/model/token';
-import { User } from '../../domain/model/userType';
+import { User } from '../../domain/model/user';
 import { Generated } from 'kysely';
 
 export interface otpTable {
