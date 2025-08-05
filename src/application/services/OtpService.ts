@@ -6,17 +6,20 @@ import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
 import { Otp } from '../../domain/model/otpType';
 import { Hash } from '../../domain/model/hashType';
 import { Token } from '../../domain/model/token';
-import { ERROR_MESSAGES } from '../../infrastructure/endpoints/auth/verify-otp/verify-otp';
 import { generateToken, saveToken } from '../../domain/model/token';
+import {
+  IncorrectHashOrCodeError,
+  incorrectHashOrCodeErrorMsg,
+} from '../../domain/errors/verifyOtpErrors';
 
 export const OtpServiceImpl = {
   async processOtpVerificationRequest(
     hash: Hash,
     verificationCode: Otp,
-  ): Promise<{ error?: string; token?: Token }> {
+  ): Promise<IncorrectHashOrCodeError | { token?: Token }> {
     if (await otpExpired(hash, verificationCode)) {
       useOtpCode(hash);
-      return ERROR_MESSAGES.INCORRECT_HASH_OR_CODE;
+      return incorrectHashOrCodeErrorMsg;
     }
 
     useOtpCode(hash);

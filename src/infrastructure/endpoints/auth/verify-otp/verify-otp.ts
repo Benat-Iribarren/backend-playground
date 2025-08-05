@@ -4,21 +4,26 @@ import { OtpServiceImpl as OtpService } from '../../../../application/services/O
 import { Hash } from '../../../../domain/model/hashType';
 import { Token } from '../../../../domain/model/token';
 import { Otp } from '../../../../domain/model/otpType';
+import { VerifyOtpErrors } from '../../../../domain/errors/verifyOtpErrors';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
-export const ERROR_MESSAGES = {
+export const ERROR_MESSAGES: { [K in VerifyOtpErrors]: string | object } = {
   MISSING_HASH_OR_CODE: { error: 'Missing hash or verification code.' },
   INVALID_HASH_OR_CODE: { error: 'Invalid hash or verification code.' },
   INCORRECT_HASH_OR_CODE: { error: 'Incorrect hash or verification code.' },
 };
 
-export const MESSAGES_CODE = {
+export const MESSAGES_CODE: { [K in VerifyOtpErrors]: number } & {
+  [key: string]: number;
+} = {
   MISSING_HASH_OR_CODE: 400,
   INVALID_HASH_OR_CODE: 400,
   INCORRECT_HASH_OR_CODE: 400,
   SUCCESSFUL_RESPONSE: 200,
 };
+
+type VerificationResponse = VerifyOtpErrors | { token: Token };
 
 async function verifyOtp(fastify: FastifyInstance) {
   fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
@@ -37,7 +42,7 @@ async function verifyOtp(fastify: FastifyInstance) {
 
     const body = await OtpService.processOtpVerificationRequest(hash, verificationCode);
 
-    if (incorrectParameters(body)) {
+    if (incorrectParameters(body as VerificationResponse)) {
       return reply
         .status(MESSAGES_CODE.INCORRECT_HASH_OR_CODE)
         .send(MESSAGES_CODE.INCORRECT_HASH_OR_CODE);
@@ -47,8 +52,8 @@ async function verifyOtp(fastify: FastifyInstance) {
   });
 }
 
-function incorrectParameters(body: { error?: string; token?: Token }) {
-  return body === ERROR_MESSAGES.INCORRECT_HASH_OR_CODE.error;
+function incorrectParameters(body: VerificationResponse): boolean {
+  return typeof body !== 'object';
 }
 
 function missingParameters(hash: string, verificationCode: string): boolean {
