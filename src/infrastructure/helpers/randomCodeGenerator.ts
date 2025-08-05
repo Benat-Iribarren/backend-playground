@@ -1,7 +1,7 @@
-import { OtpServiceImpl as OtpService } from '../../application/service/OtpService';
+import { OtpServiceImpl as OtpService } from '../../application/services/OtpService';
 import { Otp } from '../../domain/model/otpType';
 
-export async function generateSixDigitCode(): Promise<string> {
+export async function generateSixDigitCode(): Promise<Otp> {
   let result: Otp;
 
   do {

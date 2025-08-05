@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
-import { OtpServiceImpl as OtpService } from '../../../../application/service/OtpService';
+import { OtpServiceImpl as OtpService } from '../../../../application/services/OtpService';
 import { Hash } from '../../../../domain/model/hashType';
 import { Token } from '../../../../domain/model/token';
 import { Otp } from '../../../../domain/model/otpType';

@@ -3,25 +3,27 @@ import { Nin, Phone, User } from '../../domain/model/userType';
 import { Hash } from '../../domain/model/hashType';
 import { OtpServiceImpl as OtpService } from './OtpService';
 import { Otp } from '../../domain/model/otpType';
+import {
+  userBlockedErrorMsg,
+  userNotFoundErrorMsg,
+  UserLoginErrors,
+} from '../../domain/errors/userLoginErrors';
 
-const MESSAGES = {
-  USER_BLOCKED: { error: 'User is blocked.'},
-  USER_NOT_FOUND: { error: 'User not found.'},
-};
-
-export async function processOtpRequest(user: User) {
+export async function processOtpRequest(
+  user: User,
+): Promise<UserLoginErrors | { hash: string; verificationCode: string }> {
   if (await isUserBlocked(user)) {
-    return MESSAGES.USER_BLOCKED;
+    return userBlockedErrorMsg;
+  }
+
+  if (await userNinNotExists(user.nin)) {
+    return userNotFoundErrorMsg;
   }
 
   if (await userPhoneNotExists(user.phone)) {
     return { hash: '', verificationCode: '' };
   }
 
-  if (await userNinNotExists(user.nin)) {
-    return MESSAGES.USER_NOT_FOUND;
-  }
-  
   const { generateHash, createOtp, saveOtp } = OtpService;
   const hash: Hash = generateHash();
   const verificationCode: Otp = await createOtp();

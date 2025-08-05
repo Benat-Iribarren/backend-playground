@@ -3,17 +3,22 @@ import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../../domain/helpers/validators/phoneValidator';
 import { User } from '../../../../domain/model/userType';
-import { processOtpRequest } from '../../../../application/service/UserService';
+import { processOtpRequest } from '../../../../application/services/UserService';
+import { UserLoginErrors } from '../../../../domain/errors/userLoginErrors';
+import { RequestOtpErrors } from '../../../../domain/errors/requestOtpErrors';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
-const MESSAGES = {
-  MISSING_NIN_OR_PHONE: { error: 'Missing nin or phone number.' },
-  INVALID_NIN_OR_PHONE: { error: 'Invalid nin or phone number.' },
-  USER_BLOCKED: { error: 'User is blocked.' },
-  USER_NOT_FOUND: { error: 'User not found.' },
-  PHONE_NOT_EXISTS: '',
-};
-const messageToCode = {
+
+const MESSAGES: { [K in RequestOtpErrors]: string | object } & { [key: string]: string | object } =
+  {
+    MISSING_NIN_OR_PHONE: { error: 'Missing nin or phone number.' },
+    INVALID_NIN_OR_PHONE: { error: 'Invalid nin or phone number.' },
+    USER_BLOCKED: { error: 'User is blocked.' },
+    USER_NOT_FOUND: { error: 'User not found.' },
+    PHONE_NOT_EXISTS: '',
+  };
+
+const messageToCode: { [K in RequestOtpErrors]: number } & { [key: string]: number } = {
   MISSING_NIN_OR_PHONE: 400,
   INVALID_NIN_OR_PHONE: 400,
   USER_BLOCKED: 403,
@@ -21,7 +26,8 @@ const messageToCode = {
   EMPTY_HASH: 200,
   NOT_EMPTY_HASH: 200,
 };
-type OtpResponse = { error: string } | { hash: string; verificationCode: string };
+
+type OtpResponse = RequestOtpErrors | { hash: string; verificationCode: string };
 
 async function requestOtp(fastify: FastifyInstance) {
   fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
@@ -37,12 +43,10 @@ async function requestOtp(fastify: FastifyInstance) {
 
     const body = await processOtpRequest({ nin, phone });
 
-    if (body === MESSAGES.USER_BLOCKED) {
-      return reply.status(messageToCode.USER_BLOCKED).send(body);
-    }
-
-    if (body === MESSAGES.USER_NOT_FOUND) {
-      return reply.status(messageToCode.USER_NOT_FOUND).send(body);
+    if (errorExists(body)) {
+      return reply
+        .status(messageToCode[body as UserLoginErrors])
+        .send(MESSAGES[body as UserLoginErrors]);
     }
 
     if (phoneDoesNotExists(body)) {
@@ -53,8 +57,12 @@ async function requestOtp(fastify: FastifyInstance) {
   });
 }
 
-function phoneDoesNotExists(body: OtpResponse) {
-  return 'hash' in body && body.hash === '';
+function phoneDoesNotExists(body: OtpResponse): boolean {
+  return typeof body === 'object' && body !== null && 'hash' in body && body.hash === '';
+}
+
+function errorExists(body: UserLoginErrors | { hash: string; verificationCode: string }): boolean {
+  return typeof body !== 'object';
 }
 
 function missingParameters(nin: string, phone: string): boolean {
