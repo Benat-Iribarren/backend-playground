@@ -3,11 +3,11 @@ import { generateRandomHash } from '../../infrastructure/helpers/randomHashGener
 import { otpRepository } from '../../infrastructure/database/repository/otpRepository';
 import { obtainOtpExpirationDate } from '../../infrastructure/helpers/otpExpirationDateGenerator';
 import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
-import { TokenServiceImpl as TokenService } from './TokenService';
 import { Otp } from '../../domain/model/otpType';
 import { Hash } from '../../domain/model/hashType';
-import { Token } from '../../domain/model/tokenType';
+import { Token } from '../../domain/model/token';
 import { ERROR_MESSAGES } from '../../infrastructure/endpoints/auth/verify-otp/verify-otp';
+import { generateToken, saveToken } from '../../domain/model/token';
 
 export const OtpServiceImpl = {
   async processOtpVerificationRequest(
@@ -20,8 +20,8 @@ export const OtpServiceImpl = {
     }
 
     useOtpCode(hash);
-    const token: Token = TokenService.generateToken(hash);
-    await TokenService.saveToken(token);
+    const token: Token = generateToken(hash);
+    await saveToken(token);
 
     return { token };
   },

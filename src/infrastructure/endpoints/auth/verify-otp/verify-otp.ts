@@ -2,8 +2,8 @@ import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
 import { OtpServiceImpl as OtpService } from '../../../../application/service/OtpService';
 import { Hash } from '../../../../domain/model/hashType';
-import { saveToken, generateToken } from '../../../../domain/model/token';
 import { Token } from '../../../../domain/model/token';
+import { Otp } from '../../../../domain/model/otpType';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -36,10 +36,6 @@ async function verifyOtp(fastify: FastifyInstance) {
     }
 
     const body = await OtpService.processOtpVerificationRequest(hash, verificationCode);
-
-    OtpService.useOtpCode(hash);
-    const token: Token = generateToken(hash);
-    await saveToken(token);
 
     if (incorrectParameters(body)) {
       return reply
