@@ -1,4 +1,3 @@
-import { userRepository } from '../../infrastructure/database/repository/userRepository';
 import { Nin, Phone, User } from '../../domain/model/userType';
 import { OtpServiceImpl as OtpService } from './OtpService';
 import { Hash, Otp, VerificationCode } from '../../domain/model/otpType';
@@ -7,6 +6,11 @@ import {
   userNotFoundErrorStatusMsg,
   UserLoginErrors,
 } from '../../domain/errors/userLoginErrors';
+import {
+  userNinNotExists,
+  isUserBlocked,
+  userPhoneNotExists,
+} from '../../domain/model/userType';
 
 export async function processOtpRequest(
   user: User,
@@ -30,15 +34,4 @@ export async function processOtpRequest(
   await saveOtp(otp);
 
   return otp;
-}
-async function userNinNotExists(nin: Nin) {
-  const exists = await userRepository.ninExistsInDB(nin);
-  return !exists;
-}
-async function isUserBlocked(user: User) {
-  return await userRepository.userIsBlocked(user);
-}
-async function userPhoneNotExists(phone: Phone) {
-  const exists = await userRepository.phoneExistsInDB(phone);
-  return !exists;
 }
