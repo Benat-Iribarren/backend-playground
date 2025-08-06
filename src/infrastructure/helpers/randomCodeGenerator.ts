@@ -1,4 +1,4 @@
-import { verificationCodeExists } from '../../application/services/OtpService';
+import { verificationCodeExists } from '../../application/services/otpService';
 import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
 import { VerificationCode } from '../../domain/model/otp';
 import { otpRepository } from '../database/repository/otpRepository';

@@ -11,7 +11,7 @@ import {
   processOtpVerificationRequest,
   verificationCodeExists,
   verificationCodeMatchesHash,
-} from '../../../../application/services/OtpService';
+} from '../../../../application/services/otpService';
 import { otpRepository } from '../../../database/repository/otpRepository';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';

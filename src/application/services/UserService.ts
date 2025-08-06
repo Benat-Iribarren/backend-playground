@@ -1,4 +1,4 @@
-import { saveOtp } from './OtpService';
+import { saveOtp } from './otpService';
 import { Hash, Otp, VerificationCode } from '../../domain/model/otp';
 import {
   isUserBlocked,
