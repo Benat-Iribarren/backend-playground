@@ -7,7 +7,6 @@ async function initDatabase() {
     await createDatabaseFile();
     await createTables();
     await seedUser();
-    console.log('La base de datos ha sido inicializada correctamente');
   } catch (error) {
     console.error('Error inicializando la base de datos:', error);
     process.exit(1);

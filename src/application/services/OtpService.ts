@@ -1,5 +1,5 @@
 import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
-import { Hash, Otp } from '../../domain/model/otp';
+import { Hash, Otp, VerificationCode } from '../../domain/model/otp';
 import { Token } from '../../domain/model/token';
 import { generateToken, saveToken } from '../../domain/model/token';
 import {
@@ -22,6 +22,13 @@ export async function processOtpVerificationRequest(
   await saveToken(token);
 
   return { token };
+}
+
+export async function verificationCodeExists(
+  otpRepository: OtpRepository,
+  verificationCode: VerificationCode,
+) {
+  return await otpRepository.verificationCodeExistsInDb(verificationCode);
 }
 
 export async function verificationCodeMatchesHash(otpRepository: OtpRepository, otp: Otp) {

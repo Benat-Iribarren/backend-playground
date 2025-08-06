@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
 import { Token } from '../../../../domain/model/token';
-import { Hash, verificationCodeExists } from '../../../../domain/model/otp';
 import {
   invalidHashOrCodeErrorStatusMsg,
   missingHashOrCodeErrorStatusMsg,
@@ -10,6 +9,7 @@ import {
 import {
   hashCodeExists,
   processOtpVerificationRequest,
+  verificationCodeExists,
   verificationCodeMatchesHash,
 } from '../../../../application/services/OtpService';
 import { otpRepository } from '../../../database/repository/otpRepository';
@@ -37,6 +37,7 @@ type VerifyOtpBody = { hash: string; verificationCode: string };
 async function verifyOtp(fastify: FastifyInstance) {
   fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
     const { hash, verificationCode } = request.body as VerifyOtpBody;
+
     if (missingParameters(hash, verificationCode)) {
       return reply.status(400).send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
     }

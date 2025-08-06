@@ -1,5 +1,6 @@
+import { verificationCodeExists } from '../../application/services/OtpService';
 import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
-import { VerificationCode, verificationCodeExists } from '../../domain/model/otp';
+import { VerificationCode } from '../../domain/model/otp';
 import { otpRepository } from '../database/repository/otpRepository';
 
 export const randomCodeGenerator: CodeGenerator = {

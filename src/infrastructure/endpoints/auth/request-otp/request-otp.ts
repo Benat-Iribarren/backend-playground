@@ -11,6 +11,8 @@ import {
 } from '../../../../domain/errors/requestOtpErrors';
 import { otpRepository } from '../../../database/repository/otpRepository';
 import { userRepository } from '../../../database/repository/userRepository';
+import { randomCodeGenerator } from '../../../helpers/randomCodeGenerator';
+import { randomHashGenerator } from '../../../helpers/randomHashGenerator';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 
@@ -52,7 +54,14 @@ async function requestOtp(fastify: FastifyInstance) {
         .send(statusToMessage[invalidNinOrPhoneErrorStatusMsg]);
     }
 
-    const body = await processOtpRequest(otpRepository, userRepository, nin, phone );
+    const body = await processOtpRequest(
+      otpRepository,
+      userRepository,
+      randomCodeGenerator,
+      randomHashGenerator,
+      nin,
+      phone,
+    );
 
     if (errorExists(body)) {
       return reply

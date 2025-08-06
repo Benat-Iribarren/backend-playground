@@ -1,4 +1,5 @@
 import { saveOtp } from './OtpService';
+import { Hash, Otp, VerificationCode } from '../../domain/model/otp';
 import {
   createVerificationCode,
   generateHash,
@@ -19,14 +20,16 @@ import {
   userNotFoundErrorStatusMsg,
   UserLoginErrors,
 } from '../../domain/errors/userLoginErrors';
-import { randomHashGenerator } from '../../infrastructure/helpers/randomHashGenerator';
-import { randomCodeGenerator } from '../../infrastructure/helpers/randomCodeGenerator';
 import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
 import { UserRepository } from '../../domain/interfaces/repositories/userRespository';
+import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
+import { HashGenerator } from '../../domain/interfaces/hashGenerator';
 
 export async function processOtpRequest(
   otpRepository: OtpRepository,
   userRepository: UserRepository,
+  codeGenerator: CodeGenerator,
+  hashGenerator: HashGenerator,
   nin: Nin,
   phone: Phone,
 ): Promise<UserLoginErrors | { hash: string; verificationCode: string }> {
@@ -44,10 +47,10 @@ export async function processOtpRequest(
     return { hash: '', verificationCode: '' };
   }
 
-  const hash: Hash = generateHash(randomHashGenerator);
-  const verificationCode: VerificationCode = await createVerificationCode(randomCodeGenerator);
+  const hash: Hash = hashGenerator.generateHash();
+  const verificationCode: VerificationCode = await codeGenerator.generateSixDigitCode();
   const otp: Otp = { hash, verificationCode };
-  await saveOtp(otpRepository, otp);
 
+  await saveOtp(otpRepository, otp);
   return otp;
 }
