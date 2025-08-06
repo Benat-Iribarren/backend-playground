@@ -1,13 +1,6 @@
 import { saveOtp } from './OtpService';
 import { Hash, Otp, VerificationCode } from '../../domain/model/otp';
 import {
-  createVerificationCode,
-  generateHash,
-  Hash,
-  Otp,
-  VerificationCode,
-} from '../../domain/model/otp';
-import {
   isUserBlocked,
   Nin,
   Phone,
