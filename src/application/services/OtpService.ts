@@ -7,6 +7,7 @@ import {
   incorrectHashOrCodeErrorStatusMsg,
 } from '../../domain/errors/verifyOtpErrors';
 import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
+import { UserId } from '../../domain/model/user';
 
 export async function processOtpVerificationRequest(
   otpRepository: OtpRepository,
@@ -28,7 +29,7 @@ export async function verificationCodeExists(
   otpRepository: OtpRepository,
   verificationCode: VerificationCode,
 ) {
-  return await otpRepository.verificationCodeExistsInDb(verificationCode);
+  return await otpRepository.verificationCodeExists(verificationCode);
 }
 
 export async function verificationCodeMatchesHash(otpRepository: OtpRepository, otp: Otp) {
@@ -36,13 +37,13 @@ export async function verificationCodeMatchesHash(otpRepository: OtpRepository, 
 }
 
 export async function hashCodeExists(otpRepository: OtpRepository, hash: Hash) {
-  const hashCodeExists = await otpRepository.hashCodeExistsInDb(hash);
+  const hashCodeExists = await otpRepository.hashCodeExists(hash);
   return hashCodeExists;
 }
 
-export async function saveOtp(otpRepository: OtpRepository, otp: Otp) {
+export async function saveOtp(otpRepository: OtpRepository, userId: UserId, otp: Otp) {
   const expirationDateString = obtainOtpExpirationDate().toISOString();
-  await otpRepository.saveOtpToDb(otp, expirationDateString);
+  await otpRepository.saveOtp(userId, otp, expirationDateString);
 }
 
 const useOtpCode = async (otpRepository: OtpRepository, otp: Otp) => {

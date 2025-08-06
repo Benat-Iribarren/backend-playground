@@ -25,7 +25,7 @@ async function verificationCodeNotFound(
 ): Promise<boolean> {
   return (
     verificationCode === undefined ||
-    !(await otpRepository.verificationCodeExistsInDb(verificationCode))
+    !(await otpRepository.verificationCodeExists(verificationCode))
   );
 }
 

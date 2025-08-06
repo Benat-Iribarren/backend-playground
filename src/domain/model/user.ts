@@ -1,5 +1,3 @@
-import { UserRepository } from '../interfaces/repositories/userRespository';
-
 export interface User {
   nin: Nin;
   phone: Phone;
@@ -7,7 +5,9 @@ export interface User {
 }
 export type Phone = string;
 export type Nin = string;
-export function userNotExists(user: User | null): user is null {
+export type UserId = number;
+export type UserWithId = User & { id: UserId };
+export function userNotExists(user: UserWithId | null): user is null {
   return user === null;
 }
 export function isUserBlocked(user: User): boolean {

@@ -3,7 +3,8 @@ import { db } from './createDatabaseFile';
 export const createTables = async () => {
   db.exec(
     `CREATE TABLE IF NOT EXISTS otp (
-        hash TEXT PRIMARY KEY,
+        userId TEXT PRIMARY KEY,
+        hash TEXT NOT NULL,
         verificationCode TEXT NOT NULL,
         expirationDate TEXT NOT NULL
     );

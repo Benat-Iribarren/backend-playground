@@ -1,28 +1,48 @@
 import db from '../dbClient';
 import { Hash, VerificationCode, Otp } from '../../../domain/model/otp';
 import { OtpRepository } from '../../../domain/interfaces/repositories/otpRepository';
+import { UserId } from '../../../domain/model/user';
 
 export const otpRepository: OtpRepository = {
-  saveOtpToDb,
-  verificationCodeExistsInDb,
-  hashCodeExistsInDb,
+  saveOtp,
+  verificationCodeExists,
+  hashCodeExists,
   getVerificationCodeByHash,
   getExpirationDate,
   deleteOtpFromHashCode,
 };
 
-async function saveOtpToDb(otp: Otp, expirationDateString: string) {
-  await db
-    .insertInto('otp')
-    .values({
-      hash: otp.hash,
-      verificationCode: otp.verificationCode,
-      expirationDate: expirationDateString,
-    })
-    .execute();
+async function saveOtp(userId: UserId, otp: Otp, expirationDateString: string) {
+  const existing = await db
+    .selectFrom('otp')
+    .select('userId')
+    .where('userId', '=', userId)
+    .executeTakeFirst();
+
+  if (existing) {
+    await db
+      .updateTable('otp')
+      .set({
+        hash: otp.hash,
+        verificationCode: otp.verificationCode,
+        expirationDate: expirationDateString,
+      })
+      .where('userId', '=', userId)
+      .execute();
+  } else {
+    await db
+      .insertInto('otp')
+      .values({
+        userId,
+        hash: otp.hash,
+        verificationCode: otp.verificationCode,
+        expirationDate: expirationDateString,
+      })
+      .execute();
+  }
 }
 
-async function verificationCodeExistsInDb(verificationCode: VerificationCode): Promise<boolean> {
+async function verificationCodeExists(verificationCode: VerificationCode): Promise<boolean> {
   const otpRow = await db
     .selectFrom('otp')
     .selectAll()
@@ -32,7 +52,7 @@ async function verificationCodeExistsInDb(verificationCode: VerificationCode): P
   return exists(otpRow);
 }
 
-async function hashCodeExistsInDb(hash: Hash): Promise<boolean> {
+async function hashCodeExists(hash: Hash): Promise<boolean> {
   const hashRow = await db
     .selectFrom('otp')
     .selectAll()

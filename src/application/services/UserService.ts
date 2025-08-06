@@ -5,8 +5,9 @@ import {
   Nin,
   Phone,
   User,
-  userNotExists,
+  userNotExists as userAndIdNotExists,
   userPhoneNotExists,
+  UserWithId,
 } from '../../domain/model/user';
 import {
   userBlockedErrorStatusMsg,
@@ -26,12 +27,13 @@ export async function processOtpRequest(
   nin: Nin,
   phone: Phone,
 ): Promise<UserLoginErrors | { hash: string; verificationCode: string }> {
-  const user: User | null = await userRepository.getUser(nin, phone);
+  const userWithId: UserWithId | null  = await userRepository.getUser(nin, phone);
 
-  if (userNotExists(user)) {
+  if (userAndIdNotExists(userWithId)) {
     return userNotFoundErrorStatusMsg;
   }
-
+  
+  const { id: userId, ...user } = userWithId;
   if (isUserBlocked(user)) {
     return userBlockedErrorStatusMsg;
   }
@@ -44,6 +46,6 @@ export async function processOtpRequest(
   const verificationCode: VerificationCode = await codeGenerator.generateSixDigitCode();
   const otp: Otp = { hash, verificationCode };
 
-  await saveOtp(otpRepository, otp);
+  await saveOtp(otpRepository, userId, otp);
   return otp;
 }
