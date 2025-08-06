@@ -1,6 +1,6 @@
 import db from '../dbClient';
 import { User, Phone, Nin } from '../../../domain/model/user';
-import { UserRepository } from '../../../domain/interfaces/userRespository';
+import { UserRepository } from '../../../domain/interfaces/repositories/userRespository';
 
 export const userRepository: UserRepository = {
   async ninExistsInDB(nin: Nin): Promise<boolean> {

@@ -1,4 +1,4 @@
-import { Hash, Otp, VerificationCode } from '../model/otpType';
+import { Hash, Otp, VerificationCode } from '../../model/otp';
 export interface OtpRepository {
   saveOtpToDb(otp: Otp, expirationDate: string): Promise<void>;
   verificationCodeExistsInDb(verificationCode: VerificationCode): Promise<boolean>;

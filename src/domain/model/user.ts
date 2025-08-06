@@ -1,4 +1,4 @@
-import { UserRepository } from "../interfaces/userRespository";
+import { UserRepository } from '../interfaces/repositories/userRespository';
 
 export interface User {
   nin: Nin;

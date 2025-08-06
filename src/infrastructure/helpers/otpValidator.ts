@@ -1,4 +1,4 @@
-import { Otp, VerificationCode } from '../../domain/model/otpType';
+import { Otp, VerificationCode } from '../../domain/model/otp';
 import { otpRepository } from '../database/repository/otpRepository';
 
 export async function isOtpValid(otp: Otp): Promise<boolean> {

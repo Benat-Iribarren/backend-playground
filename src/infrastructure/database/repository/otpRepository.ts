@@ -1,6 +1,6 @@
 import db from '../dbClient';
-import { Hash, VerificationCode, Otp } from '../../../domain/model/otpType';
-import { OtpRepository } from '../../../domain/interfaces/otpRepository';
+import { Hash, VerificationCode, Otp } from '../../../domain/model/otp';
+import { OtpRepository } from '../../../domain/interfaces/repositories/otpRepository';
 
 export const otpRepository: OtpRepository = {
   saveOtpToDb,
@@ -11,10 +11,7 @@ export const otpRepository: OtpRepository = {
   deleteOtpFromHashCode,
 };
 
-async function saveOtpToDb(
-  otp: Otp,
-  expirationDateString: string,
-) {
+async function saveOtpToDb(otp: Otp, expirationDateString: string) {
   await db
     .insertInto('otp')
     .values({

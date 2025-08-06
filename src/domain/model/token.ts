@@ -1,6 +1,6 @@
 import { tokenRepository } from '../../infrastructure/database/repository/tokenRepository';
 import { generateTokenGivenHash } from '../../infrastructure/helpers/tokenGenerator';
-import { Hash } from './otpType';
+import { Hash } from './otp';
 export type Token = string;
 
 export async function saveToken(token: Token): Promise<void> {

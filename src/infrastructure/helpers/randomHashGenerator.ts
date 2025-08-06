@@ -1,6 +1,8 @@
 import crypto from 'crypto';
-import { Hash } from '../../domain/model/otpType';
+import { HashGenerator } from '../../domain/interfaces/hashGenerator';
 
-export const generateRandomHash: () => Hash = () => {
-  return crypto.randomBytes(32).toString('hex');
+export const randomHashGenerator: HashGenerator = {
+  generateHash: () => {
+    return crypto.randomBytes(32).toString('hex');
+  },
 };

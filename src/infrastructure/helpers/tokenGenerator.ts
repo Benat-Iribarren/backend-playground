@@ -1,4 +1,4 @@
-import { Hash } from '../../domain/model/otpType';
+import { Hash } from '../../domain/model/otp';
 import { Token } from '../../domain/model/token';
 import crypto from 'crypto';
 

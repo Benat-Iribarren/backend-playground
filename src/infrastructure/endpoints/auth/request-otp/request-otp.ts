@@ -9,6 +9,7 @@ import {
   missingNinOrPhoneErrorStatusMsg,
   RequestOtpErrors,
 } from '../../../../domain/errors/requestOtpErrors';
+import { otpRepository } from '../../../database/repository/otpRepository';
 import { userRepository } from '../../../database/repository/userRepository';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
@@ -33,7 +34,7 @@ const statusToCode: { [K in RequestOtpErrors]: number } & { [key: string]: numbe
 };
 
 type OtpResponse = RequestOtpErrors | { hash: string; verificationCode: string };
-type RequestOtpBody = { nin: string, phone: string};
+type RequestOtpBody = { nin: string; phone: string };
 
 async function requestOtp(fastify: FastifyInstance) {
   fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
@@ -51,7 +52,7 @@ async function requestOtp(fastify: FastifyInstance) {
         .send(statusToMessage[invalidNinOrPhoneErrorStatusMsg]);
     }
 
-    const body = await processOtpRequest(userRepository, { nin, phone });
+    const body = await processOtpRequest(otpRepository, userRepository, { nin, phone });
 
     if (errorExists(body)) {
       return reply

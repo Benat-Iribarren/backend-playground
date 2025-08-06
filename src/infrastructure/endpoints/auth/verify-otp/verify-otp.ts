@@ -1,13 +1,18 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
 import { Token } from '../../../../domain/model/token';
+import { Hash, verificationCodeExists } from '../../../../domain/model/otp';
 import {
   invalidHashOrCodeErrorStatusMsg,
   missingHashOrCodeErrorStatusMsg,
   VerifyOtpErrors,
 } from '../../../../domain/errors/verifyOtpErrors';
-import { OtpServiceImpl as OtpService } from '../../../../application/services/OtpService';
-import { Otp } from '../../../../domain/model/otpType';
+import {
+  hashCodeExists,
+  processOtpVerificationRequest,
+  verificationCodeMatchesHash,
+} from '../../../../application/services/OtpService';
+import { otpRepository } from '../../../database/repository/otpRepository';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -40,10 +45,7 @@ async function verifyOtp(fastify: FastifyInstance) {
       return reply.status(400).send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
     }
 
-    const body = await OtpService.processOtpVerificationRequest({
-      hash: hash,
-      verificationCode: verificationCode,
-    });
+    const body = await processOtpVerificationRequest(otpRepository, { hash, verificationCode });
 
     if (incorrectParameters(body as VerificationResponse)) {
       return reply
@@ -67,17 +69,19 @@ async function invalidParameters(hash: string, verificationCode: string): Promis
   return (
     (await invalidHash(hash)) ||
     (await invalidVerificationCode(verificationCode)) ||
-    !(await OtpService.verificationCodeMatchesHash({ hash, verificationCode }))
+    !(await verificationCodeMatchesHash(otpRepository, { hash, verificationCode }))
   );
 }
 
 async function invalidHash(hash: string): Promise<boolean> {
-  return !(await OtpService.hashCodeExists(hash));
+  return !(await hashCodeExists(otpRepository, hash));
 }
 
 async function invalidVerificationCode(verificationCode: string): Promise<boolean> {
   const codeRegex = /^[0-9]{6}$/;
-  return !codeRegex.test(verificationCode) || !OtpService.verificationCodeExists(verificationCode);
+  return (
+    !codeRegex.test(verificationCode) || !verificationCodeExists(otpRepository, verificationCode)
+  );
 }
 
 export default verifyOtp;

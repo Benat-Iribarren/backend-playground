@@ -1,14 +1,24 @@
+import { saveOtp } from './OtpService';
+import {
+  createVerificationCode,
+  generateHash,
+  Hash,
+  Otp,
+  VerificationCode,
+} from '../../domain/model/otp';
 import { User, userNinNotExists, userPhoneNotExists, isUserBlocked } from '../../domain/model/user';
-import { OtpServiceImpl as OtpService } from './OtpService';
-import { Hash, Otp, VerificationCode } from '../../domain/model/otpType';
 import {
   userBlockedErrorStatusMsg,
   userNotFoundErrorStatusMsg,
   UserLoginErrors,
 } from '../../domain/errors/userLoginErrors';
-import { UserRepository } from '../../domain/interfaces/userRespository';
+import { randomHashGenerator } from '../../infrastructure/helpers/randomHashGenerator';
+import { randomCodeGenerator } from '../../infrastructure/helpers/randomCodeGenerator';
+import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
+import { UserRepository } from '../../domain/interfaces/repositories/userRespository';
 
 export async function processOtpRequest(
+  otpRepository: OtpRepository,
   userRepository: UserRepository,
   user: User,
 ): Promise<UserLoginErrors | { hash: string; verificationCode: string }> {
@@ -24,11 +34,10 @@ export async function processOtpRequest(
     return { hash: '', verificationCode: '' };
   }
 
-  const { generateHash, createVerificationCode, saveOtp } = OtpService;
-  const hash: Hash = generateHash();
-  const verificationCode: VerificationCode = await createVerificationCode();
+  const hash: Hash = generateHash(randomHashGenerator);
+  const verificationCode: VerificationCode = await createVerificationCode(randomCodeGenerator);
   const otp: Otp = { hash, verificationCode };
-  await saveOtp(otp);
+  await saveOtp(otpRepository, otp);
 
   return otp;
 }

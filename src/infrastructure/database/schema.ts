@@ -1,4 +1,4 @@
-import { VerificationCode, Hash } from '../../domain/model/otpType';
+import { VerificationCode, Hash } from '../../domain/model/otp';
 import { Token } from '../../domain/model/token';
 import { User } from '../../domain/model/user';
 import { Generated } from 'kysely';
