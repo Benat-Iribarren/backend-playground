@@ -39,11 +39,15 @@ async function verifyOtp(fastify: FastifyInstance) {
     const { hash, verificationCode } = request.body as VerifyOtpBody;
 
     if (missingParameters(hash, verificationCode)) {
-      return reply.status(400).send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
+      return reply
+        .status(statusToCode[missingHashOrCodeErrorStatusMsg])
+        .send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
     }
 
     if (await invalidParameters(hash, verificationCode)) {
-      return reply.status(400).send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
+      return reply
+        .status(statusToCode[invalidHashOrCodeErrorStatusMsg])
+        .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
     }
 
     const body = await processOtpVerificationRequest(otpRepository, { hash, verificationCode });
@@ -51,7 +55,7 @@ async function verifyOtp(fastify: FastifyInstance) {
     if (incorrectParameters(body as VerificationResponse)) {
       return reply
         .status(statusToCode[body as VerifyOtpErrors])
-        .send(statusToCode[body as VerifyOtpErrors]);
+        .send(statusToMessage[body as VerifyOtpErrors]);
     }
 
     return reply.status(statusToCode.SUCCESSFUL_RESPONSE).send(body);
