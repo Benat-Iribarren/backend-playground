@@ -3,18 +3,17 @@ import { UserRepository } from '../interfaces/repositories/userRespository';
 export interface User {
   nin: Nin;
   phone: Phone;
+  isBlocked: boolean;
 }
 export type Phone = string;
 export type Nin = string;
-
-export async function userNinNotExists(userRepository: UserRepository, nin: Nin) {
-  const exists = await userRepository.ninExistsInDB(nin);
-  return !exists;
+export function userNotExists(user: User | null): user is null {
+  return user === null;
 }
-export async function isUserBlocked(userRepository: UserRepository, user: User) {
-  return await userRepository.userIsBlocked(user);
+export function isUserBlocked(user: User): boolean {
+  return user.isBlocked;
 }
-export async function userPhoneNotExists(userRepository: UserRepository, phone: Phone) {
-  const exists = await userRepository.phoneExistsInDB(phone);
-  return !exists;
+export function userPhoneNotExists(phone: Phone) {
+  /*const exists = await userRepository.phoneExistsInDB(phone);*/
+  return false;
 }

@@ -52,7 +52,7 @@ async function requestOtp(fastify: FastifyInstance) {
         .send(statusToMessage[invalidNinOrPhoneErrorStatusMsg]);
     }
 
-    const body = await processOtpRequest(otpRepository, userRepository, { nin, phone });
+    const body = await processOtpRequest(otpRepository, userRepository, nin, phone );
 
     if (errorExists(body)) {
       return reply
