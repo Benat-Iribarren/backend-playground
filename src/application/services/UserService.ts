@@ -1,4 +1,4 @@
-import { Nin, Phone, User } from '../../domain/model/user';
+import { User, userNinNotExists, userPhoneNotExists, isUserBlocked } from '../../domain/model/user';
 import { OtpServiceImpl as OtpService } from './OtpService';
 import { Hash, Otp, VerificationCode } from '../../domain/model/otpType';
 import {
@@ -6,20 +6,21 @@ import {
   userNotFoundErrorStatusMsg,
   UserLoginErrors,
 } from '../../domain/errors/userLoginErrors';
-import { userNinNotExists, isUserBlocked, userPhoneNotExists } from '../../domain/model/user';
+import { UserRepository } from '../../domain/interfaces/userRespository';
 
 export async function processOtpRequest(
+  userRepository: UserRepository,
   user: User,
 ): Promise<UserLoginErrors | { hash: string; verificationCode: string }> {
-  if (await isUserBlocked(user)) {
+  if (await isUserBlocked(userRepository, user)) {
     return userBlockedErrorStatusMsg;
   }
 
-  if (await userNinNotExists(user.nin)) {
+  if (await userNinNotExists(userRepository, user.nin)) {
     return userNotFoundErrorStatusMsg;
   }
 
-  if (await userPhoneNotExists(user.phone)) {
+  if (await userPhoneNotExists(userRepository, user.phone)) {
     return { hash: '', verificationCode: '' };
   }
 

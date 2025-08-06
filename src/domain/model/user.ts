@@ -1,4 +1,4 @@
-import { userRepository } from "../../infrastructure/database/repository/userRepository";
+import { UserRepository } from "../interfaces/userRespository";
 
 export interface User {
   nin: Nin;
@@ -7,14 +7,14 @@ export interface User {
 export type Phone = string;
 export type Nin = string;
 
-export async function userNinNotExists(nin: Nin) {
+export async function userNinNotExists(userRepository: UserRepository, nin: Nin) {
   const exists = await userRepository.ninExistsInDB(nin);
   return !exists;
 }
-export async function isUserBlocked(user: User) {
+export async function isUserBlocked(userRepository: UserRepository, user: User) {
   return await userRepository.userIsBlocked(user);
 }
-export async function userPhoneNotExists(phone: Phone) {
+export async function userPhoneNotExists(userRepository: UserRepository, phone: Phone) {
   const exists = await userRepository.phoneExistsInDB(phone);
   return !exists;
 }
