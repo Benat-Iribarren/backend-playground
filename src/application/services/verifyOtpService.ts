@@ -1,6 +1,6 @@
 import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
-import { Hash, Otp } from '../../domain/model/otp';
-import { Token } from '../../domain/model/token';
+import { Hash, Otp } from '../../domain/model/Otp';
+import { Token } from '../../domain/model/Token';
 import {
   IncorrectHashOrCodeError,
   incorrectHashOrCodeErrorStatusMsg,
@@ -8,7 +8,7 @@ import {
 import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
 import { TokenRepository } from '../../domain/interfaces/repositories/tokenRepository';
 import { generateTokenGivenHash } from '../../infrastructure/helpers/tokenGenerator';
-import { UserId } from '../../domain/model/user';
+import { UserId } from '../../domain/model/User';
 
 export async function processOtpVerificationRequest(
   otpRepository: OtpRepository,
@@ -45,7 +45,11 @@ function generateToken(hash: Hash): Token {
   return generateTokenGivenHash(hash);
 }
 
-async function saveToken(tokenRepository: TokenRepository, userId: UserId, token: Token): Promise<void> {
+async function saveToken(
+  tokenRepository: TokenRepository,
+  userId: UserId,
+  token: Token,
+): Promise<void> {
   tokenRepository.saveTokenToDb(userId, token);
 }
 

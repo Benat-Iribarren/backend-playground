@@ -1,5 +1,5 @@
-import { Hash, Otp, VerificationCode } from '../../model/otp';
-import { UserId } from '../../model/user';
+import { Hash, Otp, VerificationCode } from '../../model/Otp';
+import { UserId } from '../../model/User';
 export interface OtpRepository {
   saveOtp(userId: UserId, otp: Otp, expirationDate: string): Promise<void>;
   verificationCodeExists(verificationCode: VerificationCode): Promise<boolean>;

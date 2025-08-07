@@ -13,7 +13,7 @@ import { otpRepository } from '../../../database/repository/otpRepository';
 import { userRepository } from '../../../database/repository/userRepository';
 import { randomCodeGenerator } from '../../../helpers/randomCodeGenerator';
 import { randomHashGenerator } from '../../../helpers/randomHashGenerator';
-import { UserId } from '../../../../domain/model/user';
+import { UserId } from '../../../../domain/model/User';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 

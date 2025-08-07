@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
-import { Token } from '../../../../domain/model/token';
+import { Token } from '../../../../domain/model/Token';
 import {
   invalidHashOrCodeErrorStatusMsg,
   missingHashOrCodeErrorStatusMsg,
@@ -8,9 +8,9 @@ import {
 } from '../../../../domain/errors/verifyOtpErrors';
 import { processOtpVerificationRequest } from '../../../../application/services/verifyOtpService';
 import { otpRepository } from '../../../database/repository/otpRepository';
-import { verificationCodeMatchesHash } from '../../../../domain/model/otp';
+import { verificationCodeMatchesHash } from '../../../../domain/model/Otp';
 import { tokenRepository } from '../../../database/repository/tokenRepository';
-import { UserId } from '../../../../domain/model/user';
+import { UserId } from '../../../../domain/model/User';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -71,7 +71,11 @@ function missingParameters(hash: string, verificationCode: string, userId: UserI
   return !hash || !verificationCode || !userId;
 }
 
-async function invalidParameters(hash: string, verificationCode: string, userId: UserId): Promise<boolean> {
+async function invalidParameters(
+  hash: string,
+  verificationCode: string,
+  userId: UserId,
+): Promise<boolean> {
   return (
     (await invalidHash(hash)) ||
     (await invalidVerificationCode(verificationCode)) ||

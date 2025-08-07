@@ -1,7 +1,7 @@
 import db from '../dbClient';
-import { Hash, VerificationCode, Otp } from '../../../domain/model/otp';
+import { Hash, VerificationCode, Otp } from '../../../domain/model/Otp';
 import { OtpRepository } from '../../../domain/interfaces/repositories/otpRepository';
-import { UserId } from '../../../domain/model/user';
+import { UserId } from '../../../domain/model/User';
 
 export const otpRepository: OtpRepository = {
   saveOtp,

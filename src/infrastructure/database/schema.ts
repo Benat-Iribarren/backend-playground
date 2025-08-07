@@ -1,6 +1,6 @@
-import { VerificationCode, Hash } from '../../domain/model/otp';
-import { Token } from '../../domain/model/token';
-import { User, UserId } from '../../domain/model/user';
+import { VerificationCode, Hash } from '../../domain/model/Otp';
+import { Token } from '../../domain/model/Token';
+import { User, UserId } from '../../domain/model/User';
 import { Generated } from 'kysely';
 
 export interface otpTable {
@@ -11,7 +11,7 @@ export interface otpTable {
 }
 
 export interface tokenTable {
-  userId: UserId
+  userId: UserId;
   token: Token;
 }
 

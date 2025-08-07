@@ -1,5 +1,5 @@
-import { Hash } from '../../domain/model/otp';
-import { Token } from '../../domain/model/token';
+import { Hash } from '../../domain/model/Otp';
+import { Token } from '../../domain/model/Token';
 import crypto from 'crypto';
 
 export const generateTokenGivenHash: (hash: Hash) => Token = (hash: Hash) => {

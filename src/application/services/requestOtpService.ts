@@ -6,7 +6,7 @@ import {
   UserId,
   userPhoneNotExists,
   UserWithId,
-} from '../../domain/model/user';
+} from '../../domain/model/User';
 import {
   userBlockedErrorStatusMsg,
   userNotFoundErrorStatusMsg,
@@ -16,7 +16,7 @@ import { OtpRepository } from '../../domain/interfaces/repositories/otpRepositor
 import { UserRepository } from '../../domain/interfaces/repositories/userRespository';
 import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
 import { HashGenerator } from '../../domain/interfaces/hashGenerator';
-import { Hash, Otp, OtpWithUserId, VerificationCode } from '../../domain/model/otp';
+import { Hash, Otp, OtpWithUserId, VerificationCode } from '../../domain/model/Otp';
 
 export async function processOtpRequest(
   otpRepository: OtpRepository,
