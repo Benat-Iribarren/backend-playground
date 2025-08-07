@@ -6,9 +6,8 @@ import {
   incorrectHashOrCodeErrorStatusMsg,
 } from '../../domain/errors/verifyOtpErrors';
 import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
-import { getToken } from './tokenService';
-import { useOtpCode } from './otpService';
 import { TokenRepository } from '../../domain/interfaces/repositories/tokenRepository';
+import { generateTokenGivenHash } from '../../infrastructure/helpers/tokenGenerator';
 
 export async function processOtpVerificationRequest(
   otpRepository: OtpRepository,
@@ -27,4 +26,26 @@ const otpExpired = async (otp: Otp) => {
   const otpValid = await isOtpValid(otp);
   const otpExired = !otpValid;
   return otpExired;
+};
+
+export async function getToken(
+  otpRepository: OtpRepository,
+  tokenRepository: TokenRepository,
+  otp: Otp,
+): Promise<{ token: Token }> {
+  useOtpCode(otpRepository, otp);
+  const token: Token = generateToken(otp.hash);
+  await saveToken(tokenRepository, token);
+  return { token };
+}
+function generateToken(hash: Hash): Token {
+  return generateTokenGivenHash(hash);
+}
+
+async function saveToken(tokenRepository: TokenRepository, token: Token): Promise<void> {
+  tokenRepository.saveTokenToDb(token);
+}
+
+export const useOtpCode = async (otpRepository: OtpRepository, otp: Otp) => {
+  await otpRepository.deleteOtpFromHashCode(otp.hash);
 };
