@@ -1,10 +1,7 @@
-import { saveOtp } from './OtpService';
-import { Hash, Otp, VerificationCode } from '../../domain/model/otp';
 import {
   isUserBlocked,
   Nin,
   Phone,
-  User,
   userNotExists as userAndIdNotExists,
   userPhoneNotExists,
   UserWithId,
@@ -18,6 +15,7 @@ import { OtpRepository } from '../../domain/interfaces/repositories/otpRepositor
 import { UserRepository } from '../../domain/interfaces/repositories/userRespository';
 import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
 import { HashGenerator } from '../../domain/interfaces/hashGenerator';
+import { getOtp } from './otpService';
 
 export async function processOtpRequest(
   otpRepository: OtpRepository,
@@ -27,12 +25,12 @@ export async function processOtpRequest(
   nin: Nin,
   phone: Phone,
 ): Promise<UserLoginErrors | { hash: string; verificationCode: string }> {
-  const userWithId: UserWithId | null  = await userRepository.getUser(nin, phone);
+  const userWithId: UserWithId | null = await userRepository.getUser(nin, phone);
 
   if (userAndIdNotExists(userWithId)) {
     return userNotFoundErrorStatusMsg;
   }
-  
+
   const { id: userId, ...user } = userWithId;
   if (isUserBlocked(user)) {
     return userBlockedErrorStatusMsg;
@@ -42,10 +40,5 @@ export async function processOtpRequest(
     return { hash: '', verificationCode: '' };
   }
 
-  const hash: Hash = hashGenerator.generateHash();
-  const verificationCode: VerificationCode = await codeGenerator.generateSixDigitCode();
-  const otp: Otp = { hash, verificationCode };
-
-  await saveOtp(otpRepository, userId, otp);
-  return otp;
+  return getOtp(otpRepository, codeGenerator, hashGenerator, userId);
 }

@@ -6,13 +6,9 @@ import {
   missingHashOrCodeErrorStatusMsg,
   VerifyOtpErrors,
 } from '../../../../domain/errors/verifyOtpErrors';
-import {
-  hashCodeExists,
-  processOtpVerificationRequest,
-  verificationCodeExists,
-  verificationCodeMatchesHash,
-} from '../../../../application/services/OtpService';
+import { processOtpVerificationRequest } from '../../../../application/services/verifyOtpService';
 import { otpRepository } from '../../../database/repository/otpRepository';
+import { verificationCodeMatchesHash } from '../../../../domain/model/otp';
 import { tokenRepository } from '../../../database/repository/tokenRepository';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
@@ -83,13 +79,13 @@ async function invalidParameters(hash: string, verificationCode: string): Promis
 }
 
 async function invalidHash(hash: string): Promise<boolean> {
-  return !(await hashCodeExists(otpRepository, hash));
+  return !(await otpRepository.hashCodeExists(hash));
 }
 
 async function invalidVerificationCode(verificationCode: string): Promise<boolean> {
   const codeRegex = /^[0-9]{6}$/;
   return (
-    !codeRegex.test(verificationCode) || !verificationCodeExists(otpRepository, verificationCode)
+    !codeRegex.test(verificationCode) || !otpRepository.verificationCodeExists(verificationCode)
   );
 }
 

@@ -1,4 +1,3 @@
-import { verificationCodeExists } from '../../application/services/OtpService';
 import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
 import { VerificationCode } from '../../domain/model/otp';
 import { otpRepository } from '../database/repository/otpRepository';
@@ -13,7 +12,7 @@ export const randomCodeGenerator: CodeGenerator = {
         const randomIndex = Math.floor(Math.random() * 10);
         result += randomIndex.toString();
       }
-    } while (await verificationCodeExists(otpRepository, result));
+    } while (await otpRepository.verificationCodeExists(result));
 
     return result;
   },
