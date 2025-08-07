@@ -10,6 +10,7 @@ import { processOtpVerificationRequest } from '../../../../application/services/
 import { otpRepository } from '../../../database/repository/otpRepository';
 import { verificationCodeMatchesHash } from '../../../../domain/model/otp';
 import { tokenRepository } from '../../../database/repository/tokenRepository';
+import { UserId } from '../../../../domain/model/user';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -29,25 +30,25 @@ export const statusToCode: { [K in VerifyOtpErrors]: number } & {
 };
 
 type VerificationResponse = VerifyOtpErrors | { token: Token };
-type VerifyOtpBody = { hash: string; verificationCode: string };
+type VerifyOtpBody = { hash: string; verificationCode: string; userId: UserId };
 
 async function verifyOtp(fastify: FastifyInstance) {
   fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
-    const { hash, verificationCode } = request.body as VerifyOtpBody;
+    const { hash, verificationCode, userId } = request.body as VerifyOtpBody;
 
-    if (missingParameters(hash, verificationCode)) {
+    if (missingParameters(hash, verificationCode, userId)) {
       return reply
         .status(statusToCode[missingHashOrCodeErrorStatusMsg])
         .send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
     }
 
-    if (await invalidParameters(hash, verificationCode)) {
+    if (await invalidParameters(hash, verificationCode, userId)) {
       return reply
         .status(statusToCode[invalidHashOrCodeErrorStatusMsg])
         .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
     }
 
-    const body = await processOtpVerificationRequest(otpRepository, tokenRepository, {
+    const body = await processOtpVerificationRequest(otpRepository, tokenRepository, userId, {
       hash,
       verificationCode,
     });
@@ -66,14 +67,15 @@ function incorrectParameters(body: VerificationResponse): boolean {
   return typeof body !== 'object';
 }
 
-function missingParameters(hash: string, verificationCode: string): boolean {
-  return !hash || !verificationCode;
+function missingParameters(hash: string, verificationCode: string, userId: UserId): boolean {
+  return !hash || !verificationCode || !userId;
 }
 
-async function invalidParameters(hash: string, verificationCode: string): Promise<boolean> {
+async function invalidParameters(hash: string, verificationCode: string, userId: UserId): Promise<boolean> {
   return (
     (await invalidHash(hash)) ||
     (await invalidVerificationCode(verificationCode)) ||
+    typeof userId !== 'number' ||
     !(await verificationCodeMatchesHash(otpRepository, { hash, verificationCode }))
   );
 }

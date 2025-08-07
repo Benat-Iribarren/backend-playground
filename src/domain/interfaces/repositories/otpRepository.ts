@@ -7,4 +7,5 @@ export interface OtpRepository {
   getVerificationCodeByHash(hash: Hash): Promise<VerificationCode | null>;
   getExpirationDate(hash: Hash): Promise<string | null>;
   deleteOtpFromHashCode(hash: Hash): Promise<void>;
+  getUserId(hash: Hash): Promise<number | null>;
 }

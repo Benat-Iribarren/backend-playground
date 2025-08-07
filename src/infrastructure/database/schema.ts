@@ -11,6 +11,7 @@ export interface otpTable {
 }
 
 export interface tokenTable {
+  userId: UserId
   token: Token;
 }
 

@@ -1,14 +1,32 @@
 import db from '../dbClient';
 import { Token } from '../../../domain/model/token';
 import { TokenRepository } from '../../../domain/interfaces/repositories/tokenRepository';
+import { UserId } from '../../../domain/model/user';
 
 export const tokenRepository: TokenRepository = {
-  async saveTokenToDb(token: Token) {
-    await db
-      .insertInto('token')
-      .values({
-        token,
-      })
-      .execute();
+  async saveTokenToDb(userId: UserId, token: Token) {
+    const existing = await db
+      .selectFrom('token')
+      .select('userId')
+      .where('userId', '=', userId)
+      .executeTakeFirst();
+
+    if (existing) {
+      await db
+        .updateTable('token')
+        .set({
+          token,
+        })
+        .where('userId', '=', userId)
+        .execute();
+    } else {
+      await db
+        .insertInto('token')
+        .values({
+          userId,
+          token,
+        })
+        .execute();
+    }
   },
 };

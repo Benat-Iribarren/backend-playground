@@ -9,7 +9,8 @@ export const createTables = async () => {
         expirationDate TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS token (
-        token TEXT PRIMARY KEY
+        userId NUMBER PRIMARY KEY,
+        token TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

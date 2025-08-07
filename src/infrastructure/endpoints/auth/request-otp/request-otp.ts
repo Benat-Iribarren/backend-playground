@@ -13,6 +13,7 @@ import { otpRepository } from '../../../database/repository/otpRepository';
 import { userRepository } from '../../../database/repository/userRepository';
 import { randomCodeGenerator } from '../../../helpers/randomCodeGenerator';
 import { randomHashGenerator } from '../../../helpers/randomHashGenerator';
+import { UserId } from '../../../../domain/model/user';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 
@@ -35,7 +36,7 @@ const statusToCode: { [K in RequestOtpErrors]: number } & { [key: string]: numbe
   NOT_EMPTY_HASH: 200,
 };
 
-type OtpResponse = RequestOtpErrors | { hash: string; verificationCode: string };
+type OtpResponse = RequestOtpErrors | { hash: string; verificationCode: string; userId: UserId };
 type RequestOtpBody = { nin: string; phone: string };
 
 async function requestOtp(fastify: FastifyInstance) {
