@@ -98,5 +98,5 @@ async function deleteOtpFromHashCode(hash: Hash) {
 function exists(
   row: { hash: Hash; verificationCode: VerificationCode; expirationDate: string } | undefined,
 ): boolean {
-  return row != null;
+  return row !== null;
 }

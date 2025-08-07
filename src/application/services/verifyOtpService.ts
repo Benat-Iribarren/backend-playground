@@ -1,5 +1,5 @@
 import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
-import { Hash, Otp, VerificationCode } from '../../domain/model/otp';
+import { Hash, Otp } from '../../domain/model/otp';
 import { Token } from '../../domain/model/token';
 import {
   IncorrectHashOrCodeError,
