@@ -1,26 +1,27 @@
-import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
 import { Hash, Otp, VerificationCode } from '../../domain/model/otp';
 import { Token } from '../../domain/model/token';
-import { generateToken, saveToken } from '../../domain/model/token';
 import {
   IncorrectHashOrCodeError,
   incorrectHashOrCodeErrorStatusMsg,
 } from '../../domain/errors/verifyOtpErrors';
 import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
+import { TokenRepository } from '../../domain/interfaces/repositories/tokenRepository';
+import { generateToken } from '../factories/TokenFactory';
 import { UserId } from '../../domain/model/user';
 
 export async function processOtpVerificationRequest(
   otpRepository: OtpRepository,
+  tokenRepository: TokenRepository,
   otp: Otp,
 ): Promise<IncorrectHashOrCodeError | { token: Token }> {
-  if (await otpExpired(otp)) {
+  if (await otpExpired(otpRepository, otp)) {
     useOtpCode(otpRepository, otp);
     return incorrectHashOrCodeErrorStatusMsg;
   }
 
   useOtpCode(otpRepository, otp);
   const token: Token = generateToken(otp.hash);
-  await saveToken(token);
+  await saveToken(tokenRepository, token);
 
   return { token };
 }
@@ -50,13 +51,20 @@ const useOtpCode = async (otpRepository: OtpRepository, otp: Otp) => {
   await otpRepository.deleteOtpFromHashCode(otp.hash);
 };
 
-const otpExpired = async (otp: Otp) => {
-  const otpValid = await isOtpValid(otp);
-  const otpExired = !otpValid;
-  return otpExired;
+const otpExpired = async (otpRepository: OtpRepository, otp: Otp): Promise<boolean> => {
+  const expiration = await otpRepository.getExpirationDate(otp.hash);
+  if (!expiration) return true;
+
+  const now = new Date();
+  const expiresAt = new Date(expiration);
+  return expiresAt <= now;
 };
 
 const obtainOtpExpirationDate = (): Date => {
   const fiveMinutesInMilliseconds = 1000 * 60 * 5;
   return new Date(Date.now() + fiveMinutesInMilliseconds);
 };
+
+async function saveToken(tokenRepository: TokenRepository, token: Token): Promise<void> {
+  await tokenRepository.saveTokenToDb(token);
+}

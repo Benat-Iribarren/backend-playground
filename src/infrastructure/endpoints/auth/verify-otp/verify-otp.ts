@@ -11,8 +11,9 @@ import {
   processOtpVerificationRequest,
   verificationCodeExists,
   verificationCodeMatchesHash,
-} from '../../../../application/services/otpService';
+} from '../../../../application/services/OtpService';
 import { otpRepository } from '../../../database/repository/otpRepository';
+import { tokenRepository } from '../../../database/repository/tokenRepository';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -50,7 +51,10 @@ async function verifyOtp(fastify: FastifyInstance) {
         .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
     }
 
-    const body = await processOtpVerificationRequest(otpRepository, { hash, verificationCode });
+    const body = await processOtpVerificationRequest(otpRepository, tokenRepository, {
+      hash,
+      verificationCode,
+    });
 
     if (incorrectParameters(body as VerificationResponse)) {
       return reply
