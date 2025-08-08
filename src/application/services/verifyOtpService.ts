@@ -1,4 +1,4 @@
-import { Hash, Otp } from '../../domain/model/Otp';
+import { Otp } from '../../domain/model/Otp';
 import { Token } from '../../domain/model/Token';
 import {
   IncorrectHashOrCodeError,
@@ -10,7 +10,7 @@ import { TokenGenerator } from '../../domain/interfaces/generators/TokenGenerato
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
 import { OtpValidator } from '../../domain/interfaces/validators/OtpValidator';
 
-type VerifyInput = { hash: Hash; verificationCode: string };
+type VerifyInput = Omit<Otp, 'expirationDate' | 'userId'>;
 
 export async function processOtpVerificationRequest(
   tokenRepository: TokenRepository,
@@ -24,8 +24,8 @@ export async function processOtpVerificationRequest(
     return incorrectHashOrCodeErrorStatusMsg;
   }
 
-  const isValid = await otpValidator.isOtpValid(input.hash, input.verificationCode);
-  if (!isValid) {
+  const otpValid = await otpValidator.isOtpValid(input.hash, input.verificationCode);
+  if (!otpValid) {
     return incorrectHashOrCodeErrorStatusMsg;
   }
 
