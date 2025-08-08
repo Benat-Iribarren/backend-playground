@@ -15,6 +15,3 @@ export function userNotExists(user: UserWithId | null): user is null {
 export function isUserBlocked(user: User): boolean {
   return user.isBlocked;
 }
-export function userPhoneNotExists(phone: Phone) {
-  return false;
-}

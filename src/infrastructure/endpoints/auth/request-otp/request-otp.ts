@@ -14,6 +14,7 @@ import { userRepository } from '../../../database/repository/userRepository';
 import { randomCodeGenerator } from '../../../helpers/randomCodeGenerator';
 import { randomHashGenerator } from '../../../helpers/randomHashGenerator';
 import { UserId } from '../../../../domain/model/User';
+import { phoneValidator } from '../../../helpers/phoneValidator';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 
@@ -60,6 +61,7 @@ async function requestOtp(fastify: FastifyInstance) {
       userRepository,
       randomCodeGenerator,
       randomHashGenerator,
+      phoneValidator,
       nin,
       phone,
     );

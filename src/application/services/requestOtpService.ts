@@ -4,7 +4,6 @@ import {
   Phone,
   userNotExists as userAndIdNotExists,
   UserId,
-  userPhoneNotExists,
   UserWithId,
 } from '../../domain/model/User';
 import {
@@ -17,6 +16,7 @@ import { UserRepository } from '../../domain/interfaces/repositories/userResposi
 import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
 import { HashGenerator } from '../../domain/interfaces/hashGenerator';
 import { Hash, Otp, OtpWithUserId, VerificationCode } from '../../domain/model/Otp';
+import { PhoneValidator } from '../../domain/interfaces/phoneValidator';
 
 type OtpWithUserIdWithoutExpiration = Omit<OtpWithUserId, 'expirationDate'>;
 
@@ -25,6 +25,7 @@ export async function processOtpRequest(
   userRepository: UserRepository,
   codeGenerator: CodeGenerator,
   hashGenerator: HashGenerator,
+  phoneValidator: PhoneValidator,
   nin: Nin,
   phone: Phone,
 ): Promise<UserLoginErrors | OtpWithUserIdWithoutExpiration> {
@@ -38,14 +39,14 @@ export async function processOtpRequest(
     return userBlockedErrorStatusMsg;
   }
 
-  if (userPhoneNotExists(user.phone)) {
+  if (userPhoneNotExists(phoneValidator, user.phone)) {
     return { hash: '', verificationCode: '', userId: -1 };
   }
 
   return getOtp(otpRepository, codeGenerator, hashGenerator, userId);
 }
 
-export async function getOtp(
+async function getOtp(
   otpRepository: OtpRepository,
   codeGenerator: CodeGenerator,
   hashGenerator: HashGenerator,
@@ -65,6 +66,10 @@ export async function getOtp(
   return otpWithUserId;
 }
 
+function userPhoneNotExists(phoneValidator: PhoneValidator, phone: Phone) {
+  return phoneValidator.validatePhone(phone);
+}
+
 async function saveOtp(
   otpRepository: OtpRepository,
   userId: UserId,
@@ -76,7 +81,7 @@ async function saveOtp(
   await otpRepository.saveOtp(userId, otp);
 }
 
-const obtainOtpExpirationDate = (): Date => {
+function obtainOtpExpirationDate(): Date {
   const fiveMinutesInMilliseconds = 1000 * 60 * 5;
   return new Date(Date.now() + fiveMinutesInMilliseconds);
-};
+}
