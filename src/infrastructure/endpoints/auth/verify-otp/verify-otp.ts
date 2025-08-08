@@ -10,7 +10,6 @@ import { processOtpVerificationRequest } from '../../../../application/services/
 import { otpRepository } from '../../../database/repository/otpRepository';
 import { tokenRepository } from '../../../database/repository/tokenRepository';
 import { tokenGenerator } from '../../../helpers/generators/tokenGenerator';
-import { otpValidator } from '../../../helpers/validators/otpValidator';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -52,7 +51,6 @@ async function verifyOtp(fastify: FastifyInstance) {
       tokenRepository,
       otpRepository,
       tokenGenerator,
-      otpValidator,
       { hash, verificationCode },
     );
 
