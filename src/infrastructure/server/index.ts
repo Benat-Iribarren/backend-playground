@@ -1,4 +1,4 @@
-import { build, start } from './utils/serverBuild';
+import { build, start } from './serverBuild';
 
 const fastify = build();
 export default fastify;
