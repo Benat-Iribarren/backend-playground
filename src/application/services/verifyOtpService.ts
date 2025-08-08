@@ -23,6 +23,8 @@ export async function processOtpVerificationRequest(
     return incorrectHashOrCodeErrorStatusMsg;
   }
 
+  otpRepository.deleteOtpFromHashCode(input.hash);
+
   if (isOtpExpired(otp)) {
     return incorrectHashOrCodeErrorStatusMsg;
   }
