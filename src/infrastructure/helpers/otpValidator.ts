@@ -1,17 +1,23 @@
-import { Otp, VerificationCode } from '../../domain/model/Otp';
+import { Hash, VerificationCode } from '../../domain/model/Otp';
 import { otpRepository } from '../database/repository/otpRepository';
 
-export async function isOtpValid(otp: Otp): Promise<boolean> {
-  if (await verificationCodeNotFound(otp.verificationCode)) {
+export async function isOtpValid({
+  hash,
+  verificationCode,
+}: {
+  hash: Hash;
+  verificationCode: VerificationCode;
+}): Promise<boolean> {
+  if (await verificationCodeNotFound(verificationCode)) {
     return false;
   }
 
-  const verificationCodeFromDb = await otpRepository.getVerificationCodeByHash(otp.hash);
-  if (verificationCodeDoNotMatch(verificationCodeFromDb, otp.verificationCode)) {
+  const verificationCodeFromDb = await otpRepository.getVerificationCodeByHash(hash);
+  if (verificationCodeDoNotMatch(verificationCodeFromDb, verificationCode)) {
     return false;
   }
 
-  const expirationDate = await otpRepository.getExpirationDate(otp.hash);
+  const expirationDate = await otpRepository.getExpirationDate(hash);
   if (expirationDate === null) {
     return false;
   }

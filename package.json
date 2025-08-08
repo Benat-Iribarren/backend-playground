@@ -10,8 +10,7 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "seed:user": "ts-node src/infrastructure/database/seeders/userSeeder.ts",
-    "prepare": "husky install"
+    "seed:user": "ts-node src/infrastructure/database/seeders/userSeeder.ts"
   },
   "keywords": [],
   "author": "",

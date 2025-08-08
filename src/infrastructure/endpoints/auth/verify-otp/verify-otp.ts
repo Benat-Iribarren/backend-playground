@@ -48,7 +48,7 @@ async function verifyOtp(fastify: FastifyInstance) {
         .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
     }
 
-    const body = await processOtpVerificationRequest(otpRepository, tokenRepository, userId, {
+    const body = await processOtpVerificationRequest(tokenRepository, userId, {
       hash,
       verificationCode,
     });
@@ -80,7 +80,7 @@ async function invalidParameters(
     (await invalidHash(hash)) ||
     (await invalidVerificationCode(verificationCode)) ||
     typeof userId !== 'number' ||
-    !(await verificationCodeMatchesHash(otpRepository, { hash, verificationCode }))
+    !(await verificationCodeMatchesHash(otpRepository, hash, verificationCode))
   );
 }
 

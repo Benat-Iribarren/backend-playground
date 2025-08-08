@@ -13,7 +13,7 @@ export const otpRepository: OtpRepository = {
   getUserId,
 };
 
-async function saveOtp(userId: UserId, otp: Otp, expirationDateString: string) {
+async function saveOtp(userId: UserId, otp: Otp) {
   const existing = await db
     .selectFrom('otp')
     .select('userId')
@@ -26,7 +26,7 @@ async function saveOtp(userId: UserId, otp: Otp, expirationDateString: string) {
       .set({
         hash: otp.hash,
         verificationCode: otp.verificationCode,
-        expirationDate: expirationDateString,
+        expirationDate: otp.expirationDate,
       })
       .where('userId', '=', userId)
       .execute();
@@ -37,7 +37,7 @@ async function saveOtp(userId: UserId, otp: Otp, expirationDateString: string) {
         userId,
         hash: otp.hash,
         verificationCode: otp.verificationCode,
-        expirationDate: expirationDateString,
+        expirationDate: otp.expirationDate,
       })
       .execute();
   }

@@ -18,6 +18,8 @@ import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
 import { HashGenerator } from '../../domain/interfaces/hashGenerator';
 import { Hash, Otp, OtpWithUserId, VerificationCode } from '../../domain/model/Otp';
 
+type OtpWithUserIdWithoutExpiration = Omit<OtpWithUserId, 'expirationDate'>;
+
 export async function processOtpRequest(
   otpRepository: OtpRepository,
   userRepository: UserRepository,
@@ -25,13 +27,12 @@ export async function processOtpRequest(
   hashGenerator: HashGenerator,
   nin: Nin,
   phone: Phone,
-): Promise<UserLoginErrors | OtpWithUserId> {
+): Promise<UserLoginErrors | OtpWithUserIdWithoutExpiration> {
   const userWithId: UserWithId | null = await userRepository.getUser(nin, phone);
 
   if (userAndIdNotExists(userWithId)) {
     return userNotFoundErrorStatusMsg;
   }
-
   const { id: userId, ...user } = userWithId;
   if (isUserBlocked(user)) {
     return userBlockedErrorStatusMsg;
@@ -49,27 +50,33 @@ export async function getOtp(
   codeGenerator: CodeGenerator,
   hashGenerator: HashGenerator,
   userId: UserId,
-): Promise<OtpWithUserId> {
+): Promise<OtpWithUserIdWithoutExpiration> {
   const hash: Hash = hashGenerator.generateHash();
   const verificationCode: VerificationCode = await codeGenerator.generateSixDigitCode();
-  const otp: Otp = { hash, verificationCode };
 
-  await saveOtp(otpRepository, userId, otp);
+  await saveOtp(otpRepository, userId, hash, verificationCode);
 
-  const otpWithUserId: OtpWithUserId = { hash, verificationCode, userId };
+  const otpWithUserId: OtpWithUserIdWithoutExpiration = {
+    hash,
+    verificationCode,
+    userId,
+  };
+
   return otpWithUserId;
 }
 
-async function saveOtp(otpRepository: OtpRepository, userId: UserId, otp: Otp) {
+async function saveOtp(
+  otpRepository: OtpRepository,
+  userId: UserId,
+  hash: Hash,
+  verificationCode: VerificationCode,
+) {
   const expirationDateString = obtainOtpExpirationDate().toISOString();
-  await otpRepository.saveOtp(userId, otp, expirationDateString);
+  const otp: Otp = { hash, verificationCode, expirationDate: expirationDateString };
+  await otpRepository.saveOtp(userId, otp);
 }
 
 const obtainOtpExpirationDate = (): Date => {
   const fiveMinutesInMilliseconds = 1000 * 60 * 5;
   return new Date(Date.now() + fiveMinutesInMilliseconds);
-};
-
-export const useOtpCode = async (otpRepository: OtpRepository, otp: Otp) => {
-  await otpRepository.deleteOtpFromHashCode(otp.hash);
 };
