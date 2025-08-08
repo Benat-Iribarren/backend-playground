@@ -9,11 +9,11 @@ import {
   missingNinOrPhoneErrorStatusMsg,
   RequestOtpErrors,
 } from '../../../../domain/errors/requestOtpErrors';
-import { otpRepository } from '../../../database/repository/otpRepository';
-import { userRepository } from '../../../database/repository/userRepository';
+import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
+import { userRepository } from '../../../database/repository/SQLiteUserRepository';
 import { randomCodeGenerator } from '../../../helpers/generators/randomCodeGenerator';
 import { randomHashGenerator } from '../../../helpers/generators/randomHashGenerator';
-import { phoneValidator } from '../../../helpers/validators/phoneValidator';
+import { blacklistPhoneValidator } from '../../../helpers/validators/blacklistPhoneValidator';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 
@@ -60,7 +60,7 @@ async function requestOtp(fastify: FastifyInstance) {
       userRepository,
       randomCodeGenerator,
       randomHashGenerator,
-      phoneValidator,
+      blacklistPhoneValidator,
       nin,
       phone,
     );

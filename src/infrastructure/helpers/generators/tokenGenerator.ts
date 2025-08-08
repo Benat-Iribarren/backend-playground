@@ -3,8 +3,8 @@ import { Hash } from '../../../domain/model/Otp';
 import { Token } from '../../../domain/model/Token';
 import crypto from 'crypto';
 
-export const tokenGenerator: TokenGenerator = {
-  generateTokenGivenHash: (hash: Hash): Token => {
+export const tokenGeneratorFromHash: TokenGenerator = {
+  generateToken: (hash: Hash): Token => {
     return crypto.createHash('sha256').update(hash).digest('hex');
   },
 };

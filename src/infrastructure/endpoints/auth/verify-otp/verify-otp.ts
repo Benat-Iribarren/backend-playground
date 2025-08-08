@@ -7,8 +7,8 @@ import {
   VerifyOtpErrors,
 } from '../../../../domain/errors/verifyOtpErrors';
 import { processOtpVerificationRequest } from '../../../../application/services/verifyOtpService';
-import { otpRepository } from '../../../database/repository/otpRepository';
-import { tokenRepository } from '../../../database/repository/tokenRepository';
+import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
+import { tokenRepository } from '../../../database/repository/SQLiteTokenRepository';
 import { tokenGenerator } from '../../../helpers/generators/tokenGenerator';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';

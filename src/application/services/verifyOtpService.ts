@@ -29,7 +29,7 @@ export async function processOtpVerificationRequest(
     return incorrectHashOrCodeErrorStatusMsg;
   }
 
-  const token: Token = tokenGenerator.generateTokenGivenHash(input.hash);
+  const token: Token = tokenGenerator.generateToken(input.hash);
   await saveToken(tokenRepository, otp.userId, token);
   return { token };
 }
