@@ -11,6 +11,7 @@ export const otpRepository: OtpRepository = {
   getExpirationDate,
   deleteOtpFromHashCode,
   getUserId,
+  getOtp,
 };
 
 async function saveOtp(userId: UserId, otp: Otp) {
@@ -43,6 +44,21 @@ async function saveOtp(userId: UserId, otp: Otp) {
   }
 }
 
+async function getOtp(verificationCode: VerificationCode, hash: Hash) {
+  const otpRow = await db
+    .selectFrom('otp')
+    .selectAll()
+    .where('verificationCode', '=', verificationCode)
+    .where('hash', '=', hash)
+    .executeTakeFirst();
+  if (!otpRow) {
+    return null;
+  }
+  return {
+    userId: otpRow.userId,
+    expirationDate: otpRow.expirationDate,
+  };
+}
 async function verificationCodeExists(verificationCode: VerificationCode): Promise<boolean> {
   const otpRow = await db
     .selectFrom('otp')
