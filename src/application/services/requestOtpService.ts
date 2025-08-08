@@ -11,12 +11,12 @@ import {
   userNotFoundErrorStatusMsg,
   UserLoginErrors,
 } from '../../domain/errors/userLoginErrors';
-import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
-import { UserRepository } from '../../domain/interfaces/repositories/userRespository';
-import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
-import { HashGenerator } from '../../domain/interfaces/hashGenerator';
+import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
+import { UserRepository } from '../../domain/interfaces/repositories/UserRespository';
+import { CodeGenerator } from '../../domain/interfaces/generators/CodeGenerator';
+import { HashGenerator } from '../../domain/interfaces/generators/HashGenerator';
 import { Hash, Otp, VerificationCode } from '../../domain/model/Otp';
-import { PhoneValidator } from '../../domain/interfaces/phoneValidator';
+import { PhoneValidator } from '../../domain/interfaces/validators/PhoneValidator';
 
 type OtpWithUserIdWithoutExpiration = Omit<Otp, 'expirationDate'>;
 

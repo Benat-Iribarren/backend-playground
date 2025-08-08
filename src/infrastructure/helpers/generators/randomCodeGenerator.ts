@@ -1,5 +1,5 @@
-import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
-import { VerificationCode } from '../../domain/model/Otp';
+import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
+import { VerificationCode } from '../../../domain/model/Otp';
 
 export const randomCodeGenerator: CodeGenerator = {
   generateSixDigitCode: async (): Promise<VerificationCode> => {

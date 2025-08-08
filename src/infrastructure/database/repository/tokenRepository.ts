@@ -1,6 +1,6 @@
 import db from '../dbClient';
 import { Token } from '../../../domain/model/Token';
-import { TokenRepository } from '../../../domain/interfaces/repositories/tokenRepository';
+import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRepository';
 import { UserId } from '../../../domain/model/User';
 
 export const tokenRepository: TokenRepository = {

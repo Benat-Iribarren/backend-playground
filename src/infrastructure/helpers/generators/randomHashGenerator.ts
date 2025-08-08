@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { HashGenerator } from '../../domain/interfaces/hashGenerator';
+import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
 
 export const randomHashGenerator: HashGenerator = {
   generateHash: () => {

@@ -1,4 +1,4 @@
-import { OtpRepository } from '../interfaces/repositories/otpRepository';
+import { OtpRepository } from '../interfaces/repositories/OtpRepository';
 
 export type VerificationCode = string;
 export type Hash = string;

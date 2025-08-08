@@ -11,9 +11,9 @@ import {
 } from '../../../../domain/errors/requestOtpErrors';
 import { otpRepository } from '../../../database/repository/otpRepository';
 import { userRepository } from '../../../database/repository/userRepository';
-import { randomCodeGenerator } from '../../../helpers/randomCodeGenerator';
-import { randomHashGenerator } from '../../../helpers/randomHashGenerator';
-import { phoneValidator } from '../../../helpers/phoneValidator';
+import { randomCodeGenerator } from '../../../helpers/generators/randomCodeGenerator';
+import { randomHashGenerator } from '../../../helpers/generators/randomHashGenerator';
+import { phoneValidator } from '../../../helpers/validators/phoneValidator';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 

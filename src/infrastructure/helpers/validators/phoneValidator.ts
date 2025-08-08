@@ -1,5 +1,5 @@
-import { PhoneValidator } from '../../domain/interfaces/phoneValidator';
-import { Phone } from '../../domain/model/User';
+import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValidator';
+import { Phone } from '../../../domain/model/User';
 
 const blacklistedPhones: Phone[] = ['111111111', '111111121', '666666668'];
 

@@ -1,6 +1,6 @@
 import db from '../dbClient';
 import { UserWithId, Phone, Nin } from '../../../domain/model/User';
-import { UserRepository } from '../../../domain/interfaces/repositories/userRespository';
+import { UserRepository } from '../../../domain/interfaces/repositories/UserRespository';
 
 export const userRepository: UserRepository = {
   async getUser(nin: Nin, phone: Phone): Promise<UserWithId | null> {
