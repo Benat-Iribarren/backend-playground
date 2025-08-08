@@ -1,4 +1,5 @@
 import { UserId } from './User';
+
 export type VerificationCode = string;
 export type Hash = string;
 export type ExpirationDate = string;

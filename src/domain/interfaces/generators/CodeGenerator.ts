@@ -1,4 +1,4 @@
-import { VerificationCode } from '../model/Otp';
+import { VerificationCode } from '../../model/Otp';
 
 export interface CodeGenerator {
   generateSixDigitCode(): Promise<VerificationCode>;

@@ -1,59 +1,37 @@
-import { isOtpValid } from '../../infrastructure/helpers/otpValidator';
 import { Hash, Otp } from '../../domain/model/Otp';
 import { Token } from '../../domain/model/Token';
 import {
   IncorrectHashOrCodeError,
   incorrectHashOrCodeErrorStatusMsg,
 } from '../../domain/errors/verifyOtpErrors';
-import { TokenRepository } from '../../domain/interfaces/repositories/tokenRepository';
-import { generateTokenGivenHash } from '../../infrastructure/helpers/tokenGenerator';
+import { TokenRepository } from '../../domain/interfaces/repositories/TokenRepository';
 import { UserId } from '../../domain/model/User';
-import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
+import { TokenGenerator } from '../../domain/interfaces/generators/TokenGenerator';
+import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
+import { OtpValidator } from '../../domain/interfaces/validators/OtpValidator';
 
-type OtpWithoutExpirationDate = Omit<Otp, 'expirationDate'>;
+type VerifyInput = { hash: Hash; verificationCode: string };
 
 export async function processOtpVerificationRequest(
   tokenRepository: TokenRepository,
   otpRepository: OtpRepository,
-  otpWithoutExpiration: OtpWithoutExpirationDate,
+  tokenGenerator: TokenGenerator,
+  otpValidator: OtpValidator,
+  input: VerifyInput,
 ): Promise<IncorrectHashOrCodeError | { token: Token }> {
-  const otp: Otp = await otpRepository.getOtp(
-    otpWithoutExpiration.verificationCode,
-    otpWithoutExpiration.hash,
-  );
-
-  if (await otpExpired(otp.expirationDate)) {
+  const otp: Otp | null = await otpRepository.getOtp(input.verificationCode, input.hash);
+  if (!otp) {
     return incorrectHashOrCodeErrorStatusMsg;
   }
 
-  if (usesIdNotFound(userId)) {
+  const isValid = await otpValidator.isOtpValid(input.hash, input.verificationCode);
+  if (!isValid) {
     return incorrectHashOrCodeErrorStatusMsg;
   }
-  return await getToken(tokenRepository, userId, otpWithoutExpiration);
-}
 
-const otpExpired = async (otpWithoutExpiration: OtpWithoutExpirationDate) => {
-  const otpValid = await isOtpValid({ ...otpWithoutExpiration });
-  const otpExired = !otpValid;
-  return otpExired;
-};
-
-function usesIdNotFound(userId: UserId | null) {
-  return userId === null;
-}
-
-async function getToken(
-  tokenRepository: TokenRepository,
-  userId: UserId,
-  otpWithoutExpiration: OtpWithoutExpirationDate,
-): Promise<{ token: Token }> {
-  const token: Token = generateToken(otpWithoutExpiration.hash);
-  await saveToken(tokenRepository, userId, token);
+  const token: Token = tokenGenerator.generateTokenGivenHash(input.hash);
+  await saveToken(tokenRepository, otp.userId, token);
   return { token };
-}
-
-function generateToken(hash: Hash): Token {
-  return generateTokenGivenHash(hash);
 }
 
 async function saveToken(
@@ -61,5 +39,5 @@ async function saveToken(
   userId: UserId,
   token: Token,
 ): Promise<void> {
-  tokenRepository.saveTokenToDb(userId, token);
+  await tokenRepository.saveTokenToDb(userId, token);
 }

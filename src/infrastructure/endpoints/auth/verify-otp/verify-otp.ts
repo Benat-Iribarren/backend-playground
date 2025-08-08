@@ -9,6 +9,8 @@ import {
 import { processOtpVerificationRequest } from '../../../../application/services/verifyOtpService';
 import { otpRepository } from '../../../database/repository/otpRepository';
 import { tokenRepository } from '../../../database/repository/tokenRepository';
+import { tokenGenerator } from '../../../helpers/generators/tokenGenerator';
+import { otpValidator } from '../../../helpers/validators/otpValidator';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -46,10 +48,13 @@ async function verifyOtp(fastify: FastifyInstance) {
         .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
     }
 
-    const body = await processOtpVerificationRequest(tokenRepository, otpRepository, {
-      hash,
-      verificationCode,
-    });
+    const body = await processOtpVerificationRequest(
+      tokenRepository,
+      otpRepository,
+      tokenGenerator,
+      otpValidator,
+      { hash, verificationCode },
+    );
 
     if (incorrectParameters(body as VerificationResponse)) {
       return reply
@@ -70,16 +75,15 @@ function missingParameters(hash: string, verificationCode: string): boolean {
 }
 
 async function invalidParameters(hash: string, verificationCode: string): Promise<boolean> {
-  return (await invalidHash(hash)) || (await invalidVerificationCode(verificationCode));
+  return invalidHash(hash) || invalidVerificationCode(verificationCode);
 }
 
-async function invalidHash(hash: string): Promise<boolean> {
-  return false;
+function invalidHash(hash: string): boolean {
+  return !/^[a-f0-9]{64}$/i.test(hash);
 }
 
-async function invalidVerificationCode(verificationCode: string): Promise<boolean> {
-  const codeRegex = /^[0-9]{6}$/;
-  return !codeRegex.test(verificationCode);
+function invalidVerificationCode(verificationCode: string): boolean {
+  return !/^[0-9]{6}$/.test(verificationCode);
 }
 
 export default verifyOtp;

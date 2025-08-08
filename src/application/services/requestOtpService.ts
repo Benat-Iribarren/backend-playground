@@ -11,13 +11,14 @@ import {
   userNotFoundErrorStatusMsg,
   UserLoginErrors,
 } from '../../domain/errors/userLoginErrors';
-import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
-import { UserRepository } from '../../domain/interfaces/repositories/userRespository';
-import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
-import { HashGenerator } from '../../domain/interfaces/hashGenerator';
+import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
+import { UserRepository } from '../../domain/interfaces/repositories/UserRespository';
+import { CodeGenerator } from '../../domain/interfaces/generators/CodeGenerator';
+import { HashGenerator } from '../../domain/interfaces/generators/HashGenerator';
 import { Hash, Otp, VerificationCode } from '../../domain/model/Otp';
-import { PhoneValidator } from '../../domain/interfaces/phoneValidator';
-type OtpWithoutExpirationDateAndUserId = Omit<Otp, 'expirationDate' | 'userId'>;
+import { PhoneValidator } from '../../domain/interfaces/validators/PhoneValidator';
+
+type OtpResponse = Pick<Otp, 'hash' | 'verificationCode'>;
 
 export async function processOtpRequest(
   otpRepository: OtpRepository,
@@ -27,7 +28,7 @@ export async function processOtpRequest(
   phoneValidator: PhoneValidator,
   nin: Nin,
   phone: Phone,
-): Promise<UserLoginErrors | OtpWithoutExpirationDateAndUserId> {
+): Promise<UserLoginErrors | OtpResponse> {
   const userWithId: UserWithId | null = await userRepository.getUser(nin, phone);
 
   if (userAndIdNotExists(userWithId)) {
@@ -50,18 +51,13 @@ async function getOtp(
   codeGenerator: CodeGenerator,
   hashGenerator: HashGenerator,
   userId: UserId,
-): Promise<OtpWithoutExpirationDateAndUserId> {
+): Promise<OtpResponse> {
   const hash: Hash = hashGenerator.generateHash();
   const verificationCode: VerificationCode = await codeGenerator.generateSixDigitCode();
 
   await saveOtp(otpRepository, userId, hash, verificationCode);
 
-  const otpWithUserId: OtpWithoutExpirationDateAndUserId = {
-    hash,
-    verificationCode,
-  };
-
-  return otpWithUserId;
+  return { hash, verificationCode };
 }
 
 function userPhoneNotExists(phoneValidator: PhoneValidator, phone: Phone) {
