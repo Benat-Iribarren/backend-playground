@@ -7,7 +7,6 @@ export const verifyOtpSchema = {
       properties: {
         hash: { type: 'string' },
         verificationCode: { type: 'string' },
-        userId: { type: 'number' },
       },
       additionalProperties: false,
     },

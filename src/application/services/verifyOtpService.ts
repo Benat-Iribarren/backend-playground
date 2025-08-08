@@ -8,18 +8,23 @@ import {
 import { TokenRepository } from '../../domain/interfaces/repositories/tokenRepository';
 import { generateTokenGivenHash } from '../../infrastructure/helpers/tokenGenerator';
 import { UserId } from '../../domain/model/User';
+import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
 
 type OtpWithoutExpiration = Omit<Otp, 'expirationDate'>;
 
 export async function processOtpVerificationRequest(
   tokenRepository: TokenRepository,
-  userId: UserId,
+  otpRepository: OtpRepository,
   otpWithoutExpiration: OtpWithoutExpiration,
 ): Promise<IncorrectHashOrCodeError | { token: Token }> {
   if (await otpExpired(otpWithoutExpiration)) {
     return incorrectHashOrCodeErrorStatusMsg;
   }
 
+  const userId: UserId | null = await otpRepository.getUserId(otpWithoutExpiration.hash);
+  if (usesIdNotFound(userId)) {
+    return incorrectHashOrCodeErrorStatusMsg;
+  }
   return await getToken(tokenRepository, userId, otpWithoutExpiration);
 }
 
@@ -28,6 +33,10 @@ const otpExpired = async (otpWithoutExpiration: OtpWithoutExpiration) => {
   const otpExired = !otpValid;
   return otpExired;
 };
+
+function usesIdNotFound(userId: number | null) {
+  return userId === null;
+}
 
 async function getToken(
   tokenRepository: TokenRepository,

@@ -15,10 +15,10 @@ import { OtpRepository } from '../../domain/interfaces/repositories/otpRepositor
 import { UserRepository } from '../../domain/interfaces/repositories/userRespository';
 import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
 import { HashGenerator } from '../../domain/interfaces/hashGenerator';
-import { Hash, Otp, OtpWithUserId, VerificationCode } from '../../domain/model/Otp';
+import { Hash, Otp, VerificationCode } from '../../domain/model/Otp';
 import { PhoneValidator } from '../../domain/interfaces/phoneValidator';
 
-type OtpWithUserIdWithoutExpiration = Omit<OtpWithUserId, 'expirationDate'>;
+type OtpWithUserIdWithoutExpiration = Omit<Otp, 'expirationDate'>;
 
 export async function processOtpRequest(
   otpRepository: OtpRepository,
@@ -40,7 +40,7 @@ export async function processOtpRequest(
   }
 
   if (userPhoneNotExists(phoneValidator, user.phone)) {
-    return { hash: '', verificationCode: '', userId: -1 };
+    return { hash: '', verificationCode: '' };
   }
 
   return getOtp(otpRepository, codeGenerator, hashGenerator, userId);
@@ -60,7 +60,6 @@ async function getOtp(
   const otpWithUserId: OtpWithUserIdWithoutExpiration = {
     hash,
     verificationCode,
-    userId,
   };
 
   return otpWithUserId;

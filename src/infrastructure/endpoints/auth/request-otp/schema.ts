@@ -16,9 +16,8 @@ export const requestOtpSchema = {
         properties: {
           hash: { type: 'string' },
           verificationCode: { type: 'string' },
-          userId: { type: 'number' },
         },
-        required: ['hash', 'verificationCode', 'userId'],
+        required: ['hash', 'verificationCode'],
       },
       400: errorSchema,
       403: errorSchema,
