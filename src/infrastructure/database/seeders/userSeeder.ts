@@ -15,6 +15,11 @@ export async function seedUser() {
 function getUsers() {
   return [
     {
+      nin: '87654321Z',
+      phone: '222222222',
+      isBlocked: false,
+    },
+    {
       nin: '12345678A',
       phone: '666666666',
       isBlocked: false,
