@@ -10,38 +10,42 @@ import { generateTokenGivenHash } from '../../infrastructure/helpers/tokenGenera
 import { UserId } from '../../domain/model/User';
 import { OtpRepository } from '../../domain/interfaces/repositories/otpRepository';
 
-type OtpWithoutExpiration = Omit<Otp, 'expirationDate'>;
+type OtpWithoutExpirationDate = Omit<Otp, 'expirationDate'>;
 
 export async function processOtpVerificationRequest(
   tokenRepository: TokenRepository,
   otpRepository: OtpRepository,
-  otpWithoutExpiration: OtpWithoutExpiration,
+  otpWithoutExpiration: OtpWithoutExpirationDate,
 ): Promise<IncorrectHashOrCodeError | { token: Token }> {
-  if (await otpExpired(otpWithoutExpiration)) {
+  const otp: Otp = await otpRepository.getOtp(
+    otpWithoutExpiration.verificationCode,
+    otpWithoutExpiration.hash,
+  );
+
+  if (await otpExpired(otp.expirationDate)) {
     return incorrectHashOrCodeErrorStatusMsg;
   }
 
-  const userId: UserId | null = await otpRepository.getUserId(otpWithoutExpiration.hash);
   if (usesIdNotFound(userId)) {
     return incorrectHashOrCodeErrorStatusMsg;
   }
   return await getToken(tokenRepository, userId, otpWithoutExpiration);
 }
 
-const otpExpired = async (otpWithoutExpiration: OtpWithoutExpiration) => {
+const otpExpired = async (otpWithoutExpiration: OtpWithoutExpirationDate) => {
   const otpValid = await isOtpValid({ ...otpWithoutExpiration });
   const otpExired = !otpValid;
   return otpExired;
 };
 
-function usesIdNotFound(userId: number | null) {
+function usesIdNotFound(userId: UserId | null) {
   return userId === null;
 }
 
 async function getToken(
   tokenRepository: TokenRepository,
   userId: UserId,
-  otpWithoutExpiration: OtpWithoutExpiration,
+  otpWithoutExpiration: OtpWithoutExpirationDate,
 ): Promise<{ token: Token }> {
   const token: Token = generateToken(otpWithoutExpiration.hash);
   await saveToken(tokenRepository, userId, token);

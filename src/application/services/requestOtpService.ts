@@ -17,8 +17,7 @@ import { CodeGenerator } from '../../domain/interfaces/codeGenerator';
 import { HashGenerator } from '../../domain/interfaces/hashGenerator';
 import { Hash, Otp, VerificationCode } from '../../domain/model/Otp';
 import { PhoneValidator } from '../../domain/interfaces/phoneValidator';
-
-type OtpWithUserIdWithoutExpiration = Omit<Otp, 'expirationDate'>;
+type OtpWithoutExpirationDateAndUserId = Omit<Otp, 'expirationDate' | 'userId'>;
 
 export async function processOtpRequest(
   otpRepository: OtpRepository,
@@ -28,7 +27,7 @@ export async function processOtpRequest(
   phoneValidator: PhoneValidator,
   nin: Nin,
   phone: Phone,
-): Promise<UserLoginErrors | OtpWithUserIdWithoutExpiration> {
+): Promise<UserLoginErrors | OtpWithoutExpirationDateAndUserId> {
   const userWithId: UserWithId | null = await userRepository.getUser(nin, phone);
 
   if (userAndIdNotExists(userWithId)) {
@@ -51,13 +50,13 @@ async function getOtp(
   codeGenerator: CodeGenerator,
   hashGenerator: HashGenerator,
   userId: UserId,
-): Promise<OtpWithUserIdWithoutExpiration> {
+): Promise<OtpWithoutExpirationDateAndUserId> {
   const hash: Hash = hashGenerator.generateHash();
   const verificationCode: VerificationCode = await codeGenerator.generateSixDigitCode();
 
   await saveOtp(otpRepository, userId, hash, verificationCode);
 
-  const otpWithUserId: OtpWithUserIdWithoutExpiration = {
+  const otpWithUserId: OtpWithoutExpirationDateAndUserId = {
     hash,
     verificationCode,
   };
@@ -76,8 +75,8 @@ async function saveOtp(
   verificationCode: VerificationCode,
 ) {
   const expirationDateString = obtainOtpExpirationDate().toISOString();
-  const otp: Otp = { hash, verificationCode, expirationDate: expirationDateString };
-  await otpRepository.saveOtp(userId, otp);
+  const otp: Otp = { userId, hash, verificationCode, expirationDate: expirationDateString };
+  await otpRepository.saveOtp(otp);
 }
 
 function obtainOtpExpirationDate(): Date {
