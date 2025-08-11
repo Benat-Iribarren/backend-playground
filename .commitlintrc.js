@@ -1,4 +1,4 @@
-const headerPattern = /^\[#\d+\] - .{1,80}$/;
+const headerPattern = /^\[#\d*\] - .{1,80}$/;
 
 module.exports = {
   rules: {

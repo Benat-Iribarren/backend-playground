@@ -8,8 +8,8 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
-  roots: ['<rootDir>/src'],
+  roots: ['<rootDir>/src', '<rootDir>/tests'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
-  testMatch: ['**/__tests__/**/*.(test|spec).ts'],
+  testMatch: ['**/?(*.)+(test|spec).ts'],
   clearMocks: true,
 };
