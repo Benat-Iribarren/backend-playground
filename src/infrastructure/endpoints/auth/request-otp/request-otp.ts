@@ -9,11 +9,11 @@ import {
   missingNinOrPhoneErrorStatusMsg,
   RequestOtpErrors,
 } from '../../../../domain/errors/requestOtpErrors';
-import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
-import { userRepository } from '../../../database/repository/SQLiteUserRepository';
-import { randomCodeGenerator } from '../../../helpers/generators/randomCodeGenerator';
-import { randomHashGenerator } from '../../../helpers/generators/randomHashGenerator';
-import { blacklistPhoneValidator } from '../../../helpers/validators/blacklistPhoneValidator';
+import { OtpRepository } from '../../../../domain/interfaces/repositories/OtpRepository';
+import { UserRepository } from '../../../../domain/interfaces/repositories/UserRespository';
+import { CodeGenerator } from '../../../../domain/interfaces/generators/CodeGenerator';
+import { HashGenerator } from '../../../../domain/interfaces/generators/HashGenerator';
+import { PhoneValidator } from '../../../../domain/interfaces/validators/PhoneValidator';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 
@@ -39,46 +39,55 @@ const statusToCode: { [K in RequestOtpErrors]: number } & { [key: string]: numbe
 type OtpResponse = RequestOtpErrors | { hash: string; verificationCode: string };
 type RequestOtpBody = { nin: string; phone: string };
 
-async function requestOtp(fastify: FastifyInstance) {
-  fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
-    const { nin, phone } = request.body as RequestOtpBody;
-
-    if (missingParameters(nin, phone)) {
-      return reply
-        .status(statusToCode[missingNinOrPhoneErrorStatusMsg])
-        .send(statusToMessage[missingNinOrPhoneErrorStatusMsg]);
-    }
-
-    if (invalidParameters(nin, phone)) {
-      return reply
-        .status(statusToCode[invalidNinOrPhoneErrorStatusMsg])
-        .send(statusToMessage[invalidNinOrPhoneErrorStatusMsg]);
-    }
-
-    const body = await processOtpRequest(
-      otpRepository,
-      userRepository,
-      randomCodeGenerator,
-      randomHashGenerator,
-      blacklistPhoneValidator,
-      nin,
-      phone,
-    );
-
-    if (errorExists(body)) {
-      return reply
-        .status(statusToCode[body as UserLoginErrors])
-        .send(statusToMessage[body as UserLoginErrors]);
-    }
-
-    if (phoneDoesNotExists(body)) {
-      return reply.status(statusToCode.EMPTY_HASH).send(body);
-    }
-
-    return reply.status(statusToCode.NOT_EMPTY_HASH).send(body);
-  });
+interface RequestOtpDependencies {
+  otpRepository: OtpRepository;
+  userRepository: UserRepository;
+  codeGenerator: CodeGenerator;
+  hashGenerator: HashGenerator;
+  phoneValidator: PhoneValidator;
 }
 
+function requestOtp(dependencies: RequestOtpDependencies) {
+  return async function (fastify: FastifyInstance) {
+    fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
+      const { nin, phone } = request.body as RequestOtpBody;
+
+      if (missingParameters(nin, phone)) {
+        return reply
+          .status(statusToCode[missingNinOrPhoneErrorStatusMsg])
+          .send(statusToMessage[missingNinOrPhoneErrorStatusMsg]);
+      }
+
+      if (invalidParameters(nin, phone)) {
+        return reply
+          .status(statusToCode[invalidNinOrPhoneErrorStatusMsg])
+          .send(statusToMessage[invalidNinOrPhoneErrorStatusMsg]);
+      }
+
+      const body = await processOtpRequest(
+        dependencies.otpRepository,
+        dependencies.userRepository,
+        dependencies.codeGenerator,
+        dependencies.hashGenerator,
+        dependencies.phoneValidator,
+        nin,
+        phone,
+      );
+
+      if (errorExists(body)) {
+        return reply
+          .status(statusToCode[body as UserLoginErrors])
+          .send(statusToMessage[body as UserLoginErrors]);
+      }
+
+      if (phoneDoesNotExists(body)) {
+        return reply.status(statusToCode.EMPTY_HASH).send(body);
+      }
+
+      return reply.status(statusToCode.NOT_EMPTY_HASH).send(body);
+    });
+  };
+}
 function phoneDoesNotExists(body: OtpResponse): boolean {
   return typeof body === 'object' && body !== null && 'hash' in body && body.hash === '';
 }

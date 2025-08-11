@@ -7,11 +7,11 @@ import {
   VerifyOtpErrors,
 } from '../../../../domain/errors/verifyOtpErrors';
 import { processOtpVerificationRequest } from '../../../../application/services/verifyOtpService';
-import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
-import { tokenRepository } from '../../../database/repository/SQLiteTokenRepository';
-import { fromHashTokenGenerator } from '../../../helpers/generators/fromHashTokenGenerator';
 import { invalidHash } from '../../../../domain/helpers/validators/hashValidator';
 import { invalidVerificationCode } from '../../../../domain/helpers/validators/verificationCodeValidator';
+import { TokenRepository } from '../../../../domain/interfaces/repositories/TokenRepository';
+import { OtpRepository } from '../../../../domain/interfaces/repositories/OtpRepository';
+import { TokenGenerator } from '../../../../domain/interfaces/generators/TokenGenerator';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -33,37 +33,45 @@ export const statusToCode: { [K in VerifyOtpErrors]: number } & {
 type VerificationResponse = VerifyOtpErrors | { token: Token };
 type VerifyOtpBody = { hash: string; verificationCode: string };
 
-async function verifyOtp(fastify: FastifyInstance) {
-  fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
-    const { hash, verificationCode } = request.body as VerifyOtpBody;
+interface VerifyOtpDependencies {
+  tokenRepository: TokenRepository;
+  otpRepository: OtpRepository;
+  tokenGenerator: TokenGenerator;
+}
 
-    if (missingParameters(hash, verificationCode)) {
-      return reply
-        .status(statusToCode[missingHashOrCodeErrorStatusMsg])
-        .send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
-    }
+function verifyOtp(dependencies: VerifyOtpDependencies) {
+  return async function (fastify: FastifyInstance) {
+    fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
+      const { hash, verificationCode } = request.body as VerifyOtpBody;
 
-    if (await invalidParameters(hash, verificationCode)) {
-      return reply
-        .status(statusToCode[invalidHashOrCodeErrorStatusMsg])
-        .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
-    }
+      if (missingParameters(hash, verificationCode)) {
+        return reply
+          .status(statusToCode[missingHashOrCodeErrorStatusMsg])
+          .send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
+      }
 
-    const body = await processOtpVerificationRequest(
-      tokenRepository,
-      otpRepository,
-      fromHashTokenGenerator,
-      { hash, verificationCode },
-    );
+      if (await invalidParameters(hash, verificationCode)) {
+        return reply
+          .status(statusToCode[invalidHashOrCodeErrorStatusMsg])
+          .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
+      }
 
-    if (incorrectParameters(body as VerificationResponse)) {
-      return reply
-        .status(statusToCode[body as VerifyOtpErrors])
-        .send(statusToMessage[body as VerifyOtpErrors]);
-    }
+      const body = await processOtpVerificationRequest(
+        dependencies.tokenRepository,
+        dependencies.otpRepository,
+        dependencies.tokenGenerator,
+        { hash, verificationCode },
+      );
 
-    return reply.status(statusToCode.SUCCESSFUL_RESPONSE).send(body);
-  });
+      if (incorrectParameters(body as VerificationResponse)) {
+        return reply
+          .status(statusToCode[body as VerifyOtpErrors])
+          .send(statusToMessage[body as VerifyOtpErrors]);
+      }
+
+      return reply.status(statusToCode.SUCCESSFUL_RESPONSE).send(body);
+    });
+  };
 }
 
 function incorrectParameters(body: VerificationResponse): boolean {
