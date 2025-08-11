@@ -10,6 +10,7 @@ import {
   userBlockedErrorStatusMsg,
   userNotFoundErrorStatusMsg,
   UserLoginErrors,
+  userPhoneUnavailableForSmsErrorStatusMsg,
 } from '../../domain/errors/userLoginErrors';
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
 import { UserRepository } from '../../domain/interfaces/repositories/UserRespository';
@@ -34,13 +35,14 @@ export async function processOtpRequest(
   if (userAndIdNotExists(userWithId)) {
     return userNotFoundErrorStatusMsg;
   }
+
   const { id: userId, ...user } = userWithId;
   if (isUserBlocked(user)) {
     return userBlockedErrorStatusMsg;
   }
 
-  if (userPhoneNotExists(phoneValidator, user.phone)) {
-    return { hash: '', verificationCode: '' };
+  if (userPhoneUnavailable(phoneValidator, user.phone)) {
+    return userPhoneUnavailableForSmsErrorStatusMsg;
   }
 
   return getOtp(otpRepository, codeGenerator, hashGenerator, userId);
@@ -60,7 +62,7 @@ async function getOtp(
   return { hash, verificationCode };
 }
 
-function userPhoneNotExists(phoneValidator: PhoneValidator, phone: Phone) {
+function userPhoneUnavailable(phoneValidator: PhoneValidator, phone: Phone) {
   return phoneValidator.validatePhone(phone);
 }
 

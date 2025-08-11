@@ -22,21 +22,20 @@ const statusToMessage: { [K in RequestOtpErrors]: string | object } & {
 } = {
   MISSING_NIN_OR_PHONE: { error: 'Missing nin or phone number.' },
   INVALID_NIN_OR_PHONE: { error: 'Invalid nin or phone number.' },
+  UNAVAILABLE_PHONE: { error: 'Incorrect nin or phone number' },
+  USER_NOT_FOUND: { error: 'Incorrect nin or phone number.' },
   USER_BLOCKED: { error: 'User is blocked.' },
-  USER_NOT_FOUND: { error: 'User not found.' },
-  PHONE_NOT_EXISTS: '',
 };
 
 const statusToCode: { [K in RequestOtpErrors]: number } & { [key: string]: number } = {
+  SUCCESSFUL: 201,
   MISSING_NIN_OR_PHONE: 400,
   INVALID_NIN_OR_PHONE: 400,
+  UNAVAILABLE_PHONE: 401,
+  USER_NOT_FOUND: 401,
   USER_BLOCKED: 403,
-  USER_NOT_FOUND: 404,
-  EMPTY_HASH: 200,
-  NOT_EMPTY_HASH: 200,
 };
 
-type OtpResponse = RequestOtpErrors | { hash: string; verificationCode: string };
 type RequestOtpBody = { nin: string; phone: string };
 
 interface RequestOtpDependencies {
@@ -80,16 +79,9 @@ function requestOtp(dependencies: RequestOtpDependencies) {
           .send(statusToMessage[body as UserLoginErrors]);
       }
 
-      if (phoneDoesNotExists(body)) {
-        return reply.status(statusToCode.EMPTY_HASH).send(body);
-      }
-
-      return reply.status(statusToCode.NOT_EMPTY_HASH).send(body);
+      return reply.status(statusToCode.SUCCESSFUL).send(body);
     });
   };
-}
-function phoneDoesNotExists(body: OtpResponse): boolean {
-  return typeof body === 'object' && body !== null && 'hash' in body && body.hash === '';
 }
 
 function errorExists(body: UserLoginErrors | { hash: string; verificationCode: string }): boolean {
