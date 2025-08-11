@@ -10,6 +10,8 @@ import { processOtpVerificationRequest } from '../../../../application/services/
 import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
 import { tokenRepository } from '../../../database/repository/SQLiteTokenRepository';
 import { fromHashTokenGenerator } from '../../../helpers/generators/fromHashTokenGenerator';
+import { invalidHash } from '../../../../domain/helpers/validators/hashValidator';
+import { invalidVerificationCode } from '../../../../domain/helpers/validators/verificationCodeValidator';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -74,14 +76,6 @@ function missingParameters(hash: string, verificationCode: string): boolean {
 
 async function invalidParameters(hash: string, verificationCode: string): Promise<boolean> {
   return invalidHash(hash) || invalidVerificationCode(verificationCode);
-}
-
-function invalidHash(hash: string): boolean {
-  return !/^[a-f0-9]{64}$/i.test(hash);
-}
-
-function invalidVerificationCode(verificationCode: string): boolean {
-  return !/^[0-9]{6}$/.test(verificationCode);
 }
 
 export default verifyOtp;
