@@ -36,7 +36,7 @@ endif
 .PHONY: db-init
 db-init: ## Create tables and execute seeders
 	@echo "Inicializando base de datos..."
-	$(DOCKER_COMPOSE) exec backend sh -c "npx ts-node src/infrastructure/database/initDatabase.ts"
+	$(DOCKER_COMPOSE) exec backend sh -c "npx ts-node src/auth/infrastructure/database/initDatabase.ts"
 
 .PHONY: up
 up: ## Start production/development services

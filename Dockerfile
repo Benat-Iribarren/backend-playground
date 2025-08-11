@@ -17,4 +17,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["node", "dist/infrastructure/server/index.js"]
+CMD ["node", "dist/auth/infrastructure/server/index.js"]

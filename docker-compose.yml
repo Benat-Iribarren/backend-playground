@@ -10,7 +10,7 @@ services:
       - ./data:/app/data
     depends_on:
       - db
-    command: sh -c "npm ci && npm run build && node dist/infrastructure/server/index.js"
+    command: sh -c "npm ci && npm run build && node dist/auth/infrastructure/server/index.js"
 
   db:
     image: nouchka/sqlite3

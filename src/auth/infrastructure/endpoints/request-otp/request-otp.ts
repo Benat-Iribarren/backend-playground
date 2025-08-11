@@ -1,19 +1,19 @@
 import { FastifyInstance } from 'fastify';
 import { requestOtpSchema } from './schema';
-import { isValidNin } from '../../../../domain/helpers/validators/ninValidator';
-import { isValidPhone } from '../../../../domain/helpers/validators/phoneValidator';
-import { processOtpRequest } from '../../../../application/services/requestOtpService';
-import { UserLoginErrors } from '../../../../domain/errors/userLoginErrors';
+import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
+import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
+import { processOtpRequest } from '../../../application/services/requestOtpService';
+import { UserLoginErrors } from '../../../domain/errors/userLoginErrors';
 import {
   invalidNinOrPhoneErrorStatusMsg,
   missingNinOrPhoneErrorStatusMsg,
   RequestOtpErrors,
 } from './errors';
-import { OtpRepository } from '../../../../domain/interfaces/repositories/OtpRepository';
-import { UserRepository } from '../../../../domain/interfaces/repositories/UserRespository';
-import { CodeGenerator } from '../../../../domain/interfaces/generators/CodeGenerator';
-import { HashGenerator } from '../../../../domain/interfaces/generators/HashGenerator';
-import { PhoneValidator } from '../../../../domain/interfaces/validators/PhoneValidator';
+import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
+import { UserRepository } from '../../../domain/interfaces/repositories/UserRespository';
+import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
+import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
+import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValidator';
 
 const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
 

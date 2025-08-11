@@ -1,17 +1,17 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
-import { Token } from '../../../../domain/model/Token';
+import { Token } from '../../../domain/model/Token';
 import {
   invalidHashOrCodeErrorStatusMsg,
   missingHashOrCodeErrorStatusMsg,
   VerifyOtpErrors,
 } from './errors';
-import { processOtpVerificationRequest } from '../../../../application/services/verifyOtpService';
-import { invalidHash } from '../../../../domain/helpers/validators/hashValidator';
-import { invalidVerificationCode } from '../../../../domain/helpers/validators/verificationCodeValidator';
-import { TokenRepository } from '../../../../domain/interfaces/repositories/TokenRepository';
-import { OtpRepository } from '../../../../domain/interfaces/repositories/OtpRepository';
-import { TokenGenerator } from '../../../../domain/interfaces/generators/TokenGenerator';
+import { processOtpVerificationRequest } from '../../../application/services/verifyOtpService';
+import { invalidHash } from '../../../domain/helpers/validators/hashValidator';
+import { invalidVerificationCode } from '../../../domain/helpers/validators/verificationCodeValidator';
+import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRepository';
+import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
+import { TokenGenerator } from '../../../domain/interfaces/generators/TokenGenerator';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
