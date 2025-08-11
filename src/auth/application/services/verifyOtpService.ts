@@ -6,7 +6,7 @@ import { TokenGenerator } from '../../domain/interfaces/generators/TokenGenerato
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
 import {
   expiredVerificationCodeErrorStatusMsg,
-  incorrectHashOrCodeErrorStatusMsg,
+  otpNotFoundErrorStatusMsg,
   OtpLoginErrors,
 } from '../../domain/errors/otpLoginError';
 
@@ -21,7 +21,7 @@ export async function processOtpVerificationRequest(
   const otp: Otp | null = await otpRepository.getOtp(input.verificationCode, input.hash);
 
   if (!otp) {
-    return incorrectHashOrCodeErrorStatusMsg;
+    return otpNotFoundErrorStatusMsg;
   }
 
   otpRepository.deleteOtpFromHashCode(input.hash);

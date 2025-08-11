@@ -18,18 +18,18 @@ const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 export const statusToMessage: { [K in VerifyOtpErrors]: string | object } = {
   MISSING_HASH_OR_CODE: { error: 'Missing hash or verification code.' },
   INVALID_HASH_OR_CODE: { error: 'Invalid hash or verification code.' },
-  INCORRECT_HASH_OR_CODE: { error: 'Incorrect hash or verification code.' },
+  OTP_NOT_FOUND: { error: 'Incorrect hash or verification code.' },
   EXPIRED_VERIFICATION_CODE: { error: 'Incorrect hash or verification code.' },
 };
 
 export const statusToCode: { [K in VerifyOtpErrors]: number } & {
   [key: string]: number;
 } = {
+  SUCCESSFUL: 201,
   MISSING_HASH_OR_CODE: 400,
   INVALID_HASH_OR_CODE: 400,
-  INCORRECT_HASH_OR_CODE: 400,
-  EXPIRED_VERIFICATION_CODE: 400,
-  SUCCESSFUL_RESPONSE: 200,
+  OTP_NOT_FOUND: 401,
+  EXPIRED_VERIFICATION_CODE: 401,
 };
 
 type VerificationResponse = VerifyOtpErrors | { token: Token };
@@ -65,18 +65,18 @@ function verifyOtp(dependencies: VerifyOtpDependencies) {
         { hash, verificationCode },
       );
 
-      if (incorrectParameters(body as VerificationResponse)) {
+      if (errorExists(body as VerificationResponse)) {
         return reply
           .status(statusToCode[body as VerifyOtpErrors])
           .send(statusToMessage[body as VerifyOtpErrors]);
       }
 
-      return reply.status(statusToCode.SUCCESSFUL_RESPONSE).send(body);
+      return reply.status(statusToCode.SUCCESSFUL).send(body);
     });
   };
 }
 
-function incorrectParameters(body: VerificationResponse): boolean {
+function errorExists(body: VerificationResponse): boolean {
   return typeof body !== 'object';
 }
 
