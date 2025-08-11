@@ -9,7 +9,7 @@ import {
 import { processOtpVerificationRequest } from '../../../../application/services/verifyOtpService';
 import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
 import { tokenRepository } from '../../../database/repository/SQLiteTokenRepository';
-import { tokenGenerator } from '../../../helpers/generators/tokenGenerator';
+import { fromHashTokenGenerator } from '../../../helpers/generators/fromHashTokenGenerator';
 
 const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
 
@@ -50,7 +50,7 @@ async function verifyOtp(fastify: FastifyInstance) {
     const body = await processOtpVerificationRequest(
       tokenRepository,
       otpRepository,
-      tokenGenerator,
+      fromHashTokenGenerator,
       { hash, verificationCode },
     );
 
