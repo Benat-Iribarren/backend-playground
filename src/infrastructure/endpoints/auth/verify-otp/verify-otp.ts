@@ -5,7 +5,7 @@ import {
   invalidHashOrCodeErrorStatusMsg,
   missingHashOrCodeErrorStatusMsg,
   VerifyOtpErrors,
-} from '../../../../domain/errors/verifyOtpErrors';
+} from './errors';
 import { processOtpVerificationRequest } from '../../../../application/services/verifyOtpService';
 import { invalidHash } from '../../../../domain/helpers/validators/hashValidator';
 import { invalidVerificationCode } from '../../../../domain/helpers/validators/verificationCodeValidator';
@@ -19,6 +19,7 @@ export const statusToMessage: { [K in VerifyOtpErrors]: string | object } = {
   MISSING_HASH_OR_CODE: { error: 'Missing hash or verification code.' },
   INVALID_HASH_OR_CODE: { error: 'Invalid hash or verification code.' },
   INCORRECT_HASH_OR_CODE: { error: 'Incorrect hash or verification code.' },
+  EXPIRED_VERIFICATION_CODE: { error: 'Incorrect hash or verification code.' },
 };
 
 export const statusToCode: { [K in VerifyOtpErrors]: number } & {
@@ -27,6 +28,7 @@ export const statusToCode: { [K in VerifyOtpErrors]: number } & {
   MISSING_HASH_OR_CODE: 400,
   INVALID_HASH_OR_CODE: 400,
   INCORRECT_HASH_OR_CODE: 400,
+  EXPIRED_VERIFICATION_CODE: 400,
   SUCCESSFUL_RESPONSE: 200,
 };
 

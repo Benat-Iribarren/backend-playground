@@ -1,13 +1,14 @@
 import { Otp } from '../../domain/model/Otp';
 import { Token } from '../../domain/model/Token';
-import {
-  IncorrectHashOrCodeError,
-  incorrectHashOrCodeErrorStatusMsg,
-} from '../../domain/errors/verifyOtpErrors';
 import { TokenRepository } from '../../domain/interfaces/repositories/TokenRepository';
 import { UserId } from '../../domain/model/User';
 import { TokenGenerator } from '../../domain/interfaces/generators/TokenGenerator';
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
+import {
+  expiredVerificationCodeErrorStatusMsg,
+  incorrectHashOrCodeErrorStatusMsg,
+  OtpLoginErrors,
+} from '../../domain/errors/otpLoginError';
 
 type VerifyInput = Omit<Otp, 'expirationDate' | 'userId'>;
 
@@ -16,7 +17,7 @@ export async function processOtpVerificationRequest(
   otpRepository: OtpRepository,
   tokenGenerator: TokenGenerator,
   input: VerifyInput,
-): Promise<IncorrectHashOrCodeError | { token: Token }> {
+): Promise<OtpLoginErrors | { token: Token }> {
   const otp: Otp | null = await otpRepository.getOtp(input.verificationCode, input.hash);
 
   if (!otp) {
@@ -26,7 +27,7 @@ export async function processOtpVerificationRequest(
   otpRepository.deleteOtpFromHashCode(input.hash);
 
   if (isOtpExpired(otp)) {
-    return incorrectHashOrCodeErrorStatusMsg;
+    return expiredVerificationCodeErrorStatusMsg;
   }
 
   const token: Token = tokenGenerator.generateToken(input.hash);

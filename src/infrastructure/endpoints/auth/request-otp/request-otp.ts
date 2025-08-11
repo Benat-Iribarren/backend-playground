@@ -8,7 +8,7 @@ import {
   invalidNinOrPhoneErrorStatusMsg,
   missingNinOrPhoneErrorStatusMsg,
   RequestOtpErrors,
-} from '../../../../domain/errors/requestOtpErrors';
+} from './errors';
 import { OtpRepository } from '../../../../domain/interfaces/repositories/OtpRepository';
 import { UserRepository } from '../../../../domain/interfaces/repositories/UserRespository';
 import { CodeGenerator } from '../../../../domain/interfaces/generators/CodeGenerator';
