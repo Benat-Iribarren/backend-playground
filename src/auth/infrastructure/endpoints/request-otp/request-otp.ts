@@ -15,7 +15,7 @@ import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerat
 import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
 import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValidator';
 
-const REQUEST_OTP_ENDPOINT = '/auth/request-otp';
+const REQUEST_OTP_ENDPOINT = '/auth/otp';
 
 const statusToMessage: { [K in RequestOtpErrors]: string | object } & {
   [key: string]: string | object;

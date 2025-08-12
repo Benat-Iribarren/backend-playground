@@ -13,7 +13,7 @@ import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRe
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
 import { TokenGenerator } from '../../../domain/interfaces/generators/TokenGenerator';
 
-const VERIFY_OTP_ENDPOINT = '/auth/verify-otp';
+const VERIFY_OTP_ENDPOINT = '/auth/otp/verify';
 
 export const statusToMessage: { [K in VerifyOtpErrors]: string | object } = {
   MISSING_HASH_OR_CODE: { error: 'Missing hash or verification code.' },
