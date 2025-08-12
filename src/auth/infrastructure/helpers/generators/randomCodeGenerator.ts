@@ -1,7 +1,7 @@
 import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
 import { VerificationCode } from '../../../domain/model/Otp';
 
-export const randomCodeGenerator: CodeGenerator = {
+export const codeGenerator: CodeGenerator = {
   generateSixDigitCode: async (): Promise<VerificationCode> => {
     let result: VerificationCode;
 

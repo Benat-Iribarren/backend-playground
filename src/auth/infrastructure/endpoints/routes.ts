@@ -2,10 +2,10 @@ import { FastifyInstance } from 'fastify';
 import requestOtp from './requestOtp/requestOtp';
 import { otpRepository } from '../database/repository/SQLiteOtpRepository';
 import { userRepository } from '../database/repository/SQLiteUserRepository';
-import { randomCodeGenerator } from '../helpers/generators/randomCodeGenerator';
-import { randomHashGenerator } from '../helpers/generators/randomHashGenerator';
-import { blacklistPhoneValidator } from '../helpers/validators/blacklistPhoneValidator';
-import { fromHashTokenGenerator } from '../helpers/generators/fromHashTokenGenerator';
+import { codeGenerator } from '../helpers/generators/randomCodeGenerator';
+import { hashGenerator } from '../helpers/generators/randomHashGenerator';
+import { phoneValidator } from '../helpers/validators/blacklistPhoneValidator';
+import { tokenGenerator } from '../helpers/generators/fromHashTokenGenerator';
 import { tokenRepository } from '../database/repository/SQLiteTokenRepository';
 import verifyOtp from './verifyOtp/verifyOtp';
 
@@ -14,13 +14,11 @@ export function registerRoutes(fastify: FastifyInstance) {
     requestOtp({
       otpRepository,
       userRepository,
-      codeGenerator: randomCodeGenerator,
-      hashGenerator: randomHashGenerator,
-      phoneValidator: blacklistPhoneValidator,
+      codeGenerator,
+      hashGenerator,
+      phoneValidator,
     }),
   );
 
-  fastify.register(
-    verifyOtp({ tokenRepository, otpRepository, tokenGenerator: fromHashTokenGenerator }),
-  );
+  fastify.register(verifyOtp({ tokenRepository, otpRepository, tokenGenerator }));
 }

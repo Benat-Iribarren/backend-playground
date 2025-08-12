@@ -2,10 +2,10 @@ import { build } from '../../../../src/auth/infrastructure/server/serverBuild';
 import { REQUEST_OTP_ENDPOINT } from '../../../../src/auth/infrastructure/endpoints/requestOtp/requestOtp';
 import { userRepository } from '../../../../src/auth/infrastructure/database/repository/SQLiteUserRepository';
 import { otpRepository } from '../../../../src/auth/infrastructure/database/repository/SQLiteOtpRepository';
-import { randomCodeGenerator } from '../../../../src/auth/infrastructure/helpers/generators/randomCodeGenerator';
-import { randomHashGenerator } from '../../../../src/auth/infrastructure/helpers/generators/randomHashGenerator';
+import { codeGenerator } from '../../../../src/auth/infrastructure/helpers/generators/randomCodeGenerator';
+import { hashGenerator } from '../../../../src/auth/infrastructure/helpers/generators/randomHashGenerator';
 import { FastifyInstance } from 'fastify/types/instance';
-import { blacklistPhoneValidator } from '../../../../src/auth/infrastructure/helpers/validators/blacklistPhoneValidator';
+import { phoneValidator } from '../../../../src/auth/infrastructure/helpers/validators/blacklistPhoneValidator';
 
 describe('requestOtp endpoint', () => {
   let app: FastifyInstance;
@@ -38,8 +38,8 @@ describe('requestOtp endpoint', () => {
       phone: phone,
       isBlocked: false,
     });
-    jest.spyOn(randomCodeGenerator, 'generateSixDigitCode').mockResolvedValue(verificationCode);
-    jest.spyOn(randomHashGenerator, 'generateHash').mockReturnValue(hash);
+    jest.spyOn(codeGenerator, 'generateSixDigitCode').mockResolvedValue(verificationCode);
+    jest.spyOn(hashGenerator, 'generateHash').mockReturnValue(hash);
     jest.spyOn(Date, 'now').mockReturnValue(new Date(0).getTime());
 
     const response = await app.inject({
@@ -167,7 +167,7 @@ describe('requestOtp endpoint', () => {
     });
 
     const blacklistPhoneValidatorSpy = jest
-      .spyOn(blacklistPhoneValidator, 'validatePhone')
+      .spyOn(phoneValidator, 'validatePhone')
       .mockReturnValue(false);
 
     const response = await app.inject({
