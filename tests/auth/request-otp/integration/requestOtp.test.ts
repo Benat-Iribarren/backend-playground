@@ -5,6 +5,7 @@ import { otpRepository } from '../../../../src/auth/infrastructure/database/repo
 import { randomCodeGenerator } from '../../../../src/auth/infrastructure/helpers/generators/randomCodeGenerator';
 import { randomHashGenerator } from '../../../../src/auth/infrastructure/helpers/generators/randomHashGenerator';
 import { FastifyInstance } from 'fastify/types/instance';
+import { blacklistPhoneValidator } from '../../../../src/auth/infrastructure/helpers/validators/blacklistPhoneValidator';
 
 describe('requestOtp endpoint', () => {
   let app: FastifyInstance;
@@ -115,5 +116,70 @@ describe('requestOtp endpoint', () => {
     expect(response.statusCode).toBe(400);
     expect(data).toHaveProperty('error');
     expect(data.error).toBe('Invalid nin or phone number.');
+  });
+
+  test('should return incorrect nin or phone number error when introducing an incorrect phone number', async () => {
+    const nin = '87654321Z';
+    const phone = '213456789';
+
+    jest.spyOn(userRepository, 'getUser').mockResolvedValue(null);
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin: nin, phone: phone },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(401);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Incorrect nin or phone number.');
+  });
+
+  test('should return incorrect nin or phone number error when introducing an incorrect nin', async () => {
+    const nin = '00000000Z';
+    const phone = '222222222';
+
+    jest.spyOn(userRepository, 'getUser').mockResolvedValue(null);
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin: nin, phone: phone },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(401);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Incorrect nin or phone number.');
+  });
+
+  test('should return incorrect nin or phone number error when a sms cannot be sent to the phone number', async () => {
+    const nin = '12312312Z';
+    const phone = '222222222';
+    const userId = 1;
+
+    jest.spyOn(userRepository, 'getUser').mockResolvedValue({
+      id: userId,
+      nin: nin,
+      phone: phone,
+      isBlocked: false,
+    });
+
+    const blacklistPhoneValidatorSpy = jest
+      .spyOn(blacklistPhoneValidator, 'validatePhone')
+      .mockReturnValue(true);
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin: nin, phone: phone },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(401);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Incorrect nin or phone number');
+    expect(blacklistPhoneValidatorSpy).toHaveBeenCalledWith(phone);
   });
 });
