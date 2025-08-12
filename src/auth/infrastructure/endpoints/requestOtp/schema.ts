@@ -11,7 +11,7 @@ export const requestOtpSchema = {
       additionalProperties: false,
     },
     response: {
-      200: {
+      201: {
         type: 'object',
         properties: {
           hash: { type: 'string' },
@@ -20,8 +20,8 @@ export const requestOtpSchema = {
         required: ['hash', 'verificationCode'],
       },
       400: errorSchema,
+      401: errorSchema,
       403: errorSchema,
-      404: errorSchema,
       500: errorSchema,
     },
   },

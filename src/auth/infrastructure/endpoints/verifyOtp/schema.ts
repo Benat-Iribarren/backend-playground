@@ -11,7 +11,7 @@ export const verifyOtpSchema = {
       additionalProperties: false,
     },
     response: {
-      200: {
+      201: {
         type: 'object',
         properties: {
           token: { type: 'string' },
@@ -19,6 +19,7 @@ export const verifyOtpSchema = {
         required: ['token'],
       },
       400: errorSchema,
+      401: errorSchema,
       500: errorSchema,
     },
   },
