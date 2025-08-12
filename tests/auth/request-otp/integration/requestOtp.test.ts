@@ -182,4 +182,28 @@ describe('requestOtp endpoint', () => {
     expect(data.error).toBe('Incorrect nin or phone number');
     expect(blacklistPhoneValidatorSpy).toHaveBeenCalledWith(phone);
   });
+
+  test('should return user is blocked error when the user is blocked', async () => {
+    const nin = '12312312Z';
+    const phone = '222222222';
+    const userId = 1;
+
+    jest.spyOn(userRepository, 'getUser').mockResolvedValue({
+      id: userId,
+      nin: nin,
+      phone: phone,
+      isBlocked: true,
+    });
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin: nin, phone: phone },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(403);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('User is blocked.');
+  });
 });
