@@ -22,7 +22,7 @@ describe('requestOtp endpoint', () => {
     await app.close();
   });
 
-  test('should return hash and a verificationCode ', async () => {
+  test('should return hash and a verificationCode when introducing correct nin and phone number', async () => {
     const nin = '87654321Z';
     const phone = '222222222';
     const userId = 1;
@@ -54,5 +54,34 @@ describe('requestOtp endpoint', () => {
     expect(data.hash).toBe(hash);
     expect(data.verificationCode).toBe(verificationCode);
     expect(saveOtpSpy).toHaveBeenCalledWith({ userId, verificationCode, hash, expirationDate });
+  });
+
+  test('should return missing nin or phone number error when introducing emtpy nin and phone number', async () => {
+    const nin = '';
+    const phone = '';
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin: nin, phone: phone },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(400);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Missing nin or phone number.');
+  });
+
+  test('should return missing nin or phone number error when introducing no body', async () => {
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: {},
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(400);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Missing nin or phone number.');
   });
 });
