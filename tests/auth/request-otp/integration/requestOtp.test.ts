@@ -206,4 +206,22 @@ describe('requestOtp endpoint', () => {
     expect(data).toHaveProperty('error');
     expect(data.error).toBe('User is blocked.');
   });
+
+  test('should return internal server error when the database malfunctions', async () => {
+    const nin = '12312312Z';
+    const phone = '222222222';
+
+    jest.spyOn(userRepository, 'getUser').mockRejectedValue(new Error('Database error'));
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin: nin, phone: phone },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(500);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Internal Server Error');
+  });
 });
