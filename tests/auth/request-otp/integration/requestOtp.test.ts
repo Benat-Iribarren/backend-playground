@@ -84,4 +84,36 @@ describe('requestOtp endpoint', () => {
     expect(data).toHaveProperty('error');
     expect(data.error).toBe('Missing nin or phone number.');
   });
+
+  test('should return invalid nin or phone number error when improper format nin or phone number', async () => {
+    const nin = 'not a valid nin';
+    const phone = '222222222';
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin: nin, phone: phone },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(400);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Invalid nin or phone number.');
+  });
+
+  test('should return invalid nin or phone number error when improper format nin or phone number', async () => {
+    const nin = '87654321Z';
+    const phone = 'not a valid phone number';
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin: nin, phone: phone },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(400);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Invalid nin or phone number.');
+  });
 });
