@@ -86,7 +86,7 @@ describe('requestOtp endpoint', () => {
     expect(data.error).toBe('Missing nin or phone number.');
   });
 
-  test('should return invalid nin or phone number error when improper format nin or phone number', async () => {
+  test('should return invalid nin or phone number error when nin has importer format', async () => {
     const nin = 'not a valid nin';
     const phone = '222222222';
 
@@ -102,7 +102,7 @@ describe('requestOtp endpoint', () => {
     expect(data.error).toBe('Invalid nin or phone number.');
   });
 
-  test('should return invalid nin or phone number error when improper format nin or phone number', async () => {
+  test('should return invalid nin or phone number error when phone number has improper format', async () => {
     const nin = '87654321Z';
     const phone = 'not a valid phone number';
 
