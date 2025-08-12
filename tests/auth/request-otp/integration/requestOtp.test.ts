@@ -168,7 +168,7 @@ describe('requestOtp endpoint', () => {
 
     const blacklistPhoneValidatorSpy = jest
       .spyOn(blacklistPhoneValidator, 'validatePhone')
-      .mockReturnValue(true);
+      .mockReturnValue(false);
 
     const response = await app.inject({
       method: 'POST',

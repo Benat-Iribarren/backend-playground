@@ -63,7 +63,7 @@ async function getOtp(
 }
 
 function userPhoneUnavailable(phoneValidator: PhoneValidator, phone: Phone) {
-  return phoneValidator.validatePhone(phone);
+  return !phoneValidator.validatePhone(phone);
 }
 
 async function saveOtp(
