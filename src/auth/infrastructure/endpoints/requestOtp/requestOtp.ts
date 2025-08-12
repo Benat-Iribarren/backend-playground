@@ -22,7 +22,7 @@ const statusToMessage: { [K in RequestOtpErrors]: string | object } & {
 } = {
   MISSING_NIN_OR_PHONE: { error: 'Missing nin or phone number.' },
   INVALID_NIN_OR_PHONE: { error: 'Invalid nin or phone number.' },
-  UNAVAILABLE_PHONE: { error: 'Incorrect nin or phone number' },
+  UNAVAILABLE_PHONE: { error: 'Incorrect nin or phone number.' },
   USER_NOT_FOUND: { error: 'Incorrect nin or phone number.' },
   USER_BLOCKED: { error: 'User is blocked.' },
 };

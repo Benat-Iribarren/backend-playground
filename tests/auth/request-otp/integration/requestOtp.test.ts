@@ -179,7 +179,7 @@ describe('requestOtp endpoint', () => {
 
     expect(response.statusCode).toBe(401);
     expect(data).toHaveProperty('error');
-    expect(data.error).toBe('Incorrect nin or phone number');
+    expect(data.error).toBe('Incorrect nin or phone number.');
     expect(blacklistPhoneValidatorSpy).toHaveBeenCalledWith(phone);
   });
 
