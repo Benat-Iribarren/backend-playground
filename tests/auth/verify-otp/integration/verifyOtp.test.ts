@@ -150,7 +150,7 @@ describe('verifyOtp endpoint', () => {
     const userId = 1;
     const hash = '9d2bff5d9dfdacfaa4a39e2a6d7f98ea5bd89f5d311986a50f24ee542ba9e221';
     const verificationCode = '123456';
-    const expirationDate = new Date(Date.now()).toISOString();
+    const expirationDate = new Date(Date.now() - 1000).toISOString();
     const getOtpSpy = jest.spyOn(otpRepository, 'getOtp').mockResolvedValue({
       userId,
       verificationCode,
@@ -170,5 +170,23 @@ describe('verifyOtp endpoint', () => {
     expect(data).toHaveProperty('error');
     expect(data.error).toBe('Incorrect hash or verification code.');
     expect(getOtpSpy).toHaveBeenCalledWith(verificationCode, hash);
+  });
+
+  test('should return internal server error when the database malfunctions', async () => {
+    const hash = '9d2bff5d9dfdacfaa4a39e2a6d7f98ea5bd89f5d311986a50f24ee542ba9e221';
+    const verificationCode = '123456';
+
+    jest.spyOn(otpRepository, 'getOtp').mockRejectedValue(new Error('Database error'));
+
+    const response = await app.inject({
+      method: 'POST',
+      url: VERIFY_OTP_ENDPOINT,
+      payload: { hash: hash, verificationCode: verificationCode },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(500);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Internal Server Error');
   });
 });
