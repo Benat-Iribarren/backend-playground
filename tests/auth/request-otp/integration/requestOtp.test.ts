@@ -38,7 +38,7 @@ describe('requestOtp endpoint', () => {
       phone: phone,
       isBlocked: false,
     });
-    jest.spyOn(codeGenerator, 'generateSixDigitCode').mockResolvedValue(verificationCode);
+    jest.spyOn(codeGenerator, 'generateSixDigitCode').mockReturnValue(verificationCode);
     jest.spyOn(hashGenerator, 'generateHash').mockReturnValue(hash);
     jest.spyOn(Date, 'now').mockReturnValue(new Date(0).getTime());
 

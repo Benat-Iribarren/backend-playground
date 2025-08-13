@@ -18,7 +18,13 @@ import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepositor
 import { UserRepository } from '../../domain/interfaces/repositories/UserRespository';
 import { CodeGenerator } from '../../domain/interfaces/generators/CodeGenerator';
 import { HashGenerator } from '../../domain/interfaces/generators/HashGenerator';
-import { Hash, Otp, VerificationCode } from '../../domain/model/Otp';
+import {
+  ExpirationDate,
+  generateOtpExpirationDate,
+  Hash,
+  Otp,
+  VerificationCode,
+} from '../../domain/model/Otp';
 import { PhoneValidator } from '../../domain/interfaces/validators/PhoneValidator';
 
 type OtpResponse = Pick<Otp, 'hash' | 'verificationCode'>;
@@ -61,11 +67,10 @@ async function getOtp(
   hashGenerator: HashGenerator,
   userId: UserId,
 ): Promise<OtpResponse> {
-  const hash: Hash = hashGenerator.generateHash();
-  const verificationCode: VerificationCode = await codeGenerator.generateSixDigitCode();
+  const otp: Otp = generateOtp(userId, codeGenerator, hashGenerator);
+  otpRepository.saveOtp(otp);
 
-  await saveOtp(otpRepository, userId, hash, verificationCode);
-
+  const { hash, verificationCode } = otp;
   return { hash, verificationCode };
 }
 
@@ -73,18 +78,14 @@ function userPhoneUnavailable(phoneValidator: PhoneValidator, phone: Phone) {
   return !phoneValidator.validatePhone(phone);
 }
 
-async function saveOtp(
-  otpRepository: OtpRepository,
+function generateOtp(
   userId: UserId,
-  hash: Hash,
-  verificationCode: VerificationCode,
-) {
-  const expirationDateString = obtainOtpExpirationDate().toISOString();
+  codeGenerator: CodeGenerator,
+  hashGenerator: HashGenerator,
+): Otp {
+  const hash: Hash = hashGenerator.generateHash();
+  const verificationCode: VerificationCode = codeGenerator.generateSixDigitCode();
+  const expirationDateString: ExpirationDate = generateOtpExpirationDate();
   const otp: Otp = { userId, hash, verificationCode, expirationDate: expirationDateString };
-  await otpRepository.saveOtp(otp);
-}
-
-function obtainOtpExpirationDate(): Date {
-  const fiveMinutesInMilliseconds = 1000 * 60 * 5;
-  return new Date(Date.now() + fiveMinutesInMilliseconds);
+  return otp;
 }

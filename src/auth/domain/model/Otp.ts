@@ -10,3 +10,12 @@ export type Otp = {
   hash: Hash;
   expirationDate: ExpirationDate;
 };
+
+export function isOtpExpired(otp: Otp): boolean {
+  return otp.expirationDate < new Date().toISOString();
+}
+
+export function generateOtpExpirationDate(): ExpirationDate {
+  const fiveMinutesInMilliseconds = 1000 * 60 * 5;
+  return new Date(Date.now() + fiveMinutesInMilliseconds).toISOString();
+}

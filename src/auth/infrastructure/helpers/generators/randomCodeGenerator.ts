@@ -2,7 +2,7 @@ import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerat
 import { VerificationCode } from '../../../domain/model/Otp';
 
 export const codeGenerator: CodeGenerator = {
-  generateSixDigitCode: async (): Promise<VerificationCode> => {
+  generateSixDigitCode: (): VerificationCode => {
     let result: VerificationCode;
 
     result = '';
