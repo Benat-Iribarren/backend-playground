@@ -24,7 +24,7 @@ export async function processOtpVerificationRequest(
     return otpNotFoundErrorStatusMsg;
   }
 
-  otpRepository.deleteOtpFromHashCode(input.hash);
+  otpRepository.deleteOtp(otp.userId);
 
   if (isOtpExpired(otp)) {
     return expiredVerificationCodeErrorStatusMsg;
@@ -40,7 +40,7 @@ async function saveToken(
   userId: UserId,
   token: Token,
 ): Promise<void> {
-  await tokenRepository.saveTokenToDb(userId, token);
+  await tokenRepository.saveToken(userId, token);
 }
 
 function isOtpExpired(otp: Otp): boolean {

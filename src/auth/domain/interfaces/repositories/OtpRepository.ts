@@ -1,7 +1,8 @@
 import { Hash, Otp, VerificationCode } from '../../model/Otp';
+import { UserId } from '../../model/User';
 
 export interface OtpRepository {
   saveOtp(otp: Otp): Promise<void>;
   getOtp(verificationCode: VerificationCode, hash: Hash): Promise<Otp | null>;
-  deleteOtpFromHashCode(hash: Hash): Promise<void>;
+  deleteOtp(userId: UserId): Promise<void>;
 }

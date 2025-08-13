@@ -34,9 +34,9 @@ describe('verifyOtp endpoint', () => {
       hash,
       expirationDate,
     });
-    jest.spyOn(otpRepository, 'deleteOtpFromHashCode').mockResolvedValue();
+    jest.spyOn(otpRepository, 'deleteOtp').mockResolvedValue();
     jest.spyOn(tokenGenerator, 'generateToken').mockReturnValue(token);
-    jest.spyOn(tokenRepository, 'saveTokenToDb').mockResolvedValue();
+    jest.spyOn(tokenRepository, 'saveToken').mockResolvedValue();
 
     const response = await app.inject({
       method: 'POST',

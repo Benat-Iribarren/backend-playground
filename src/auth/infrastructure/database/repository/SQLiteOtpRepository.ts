@@ -1,11 +1,12 @@
 import db from '../dbClient';
 import { Hash, VerificationCode, Otp } from '../../../domain/model/Otp';
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
+import { UserId } from '../../../domain/model/User';
 
 export const otpRepository: OtpRepository = {
   saveOtp,
   getOtp,
-  deleteOtpFromHashCode,
+  deleteOtp,
 };
 
 async function saveOtp(otp: Otp) {
@@ -50,6 +51,6 @@ async function getOtp(verificationCode: VerificationCode, hash: Hash) {
   }
   return otpRow;
 }
-async function deleteOtpFromHashCode(hash: Hash) {
-  await db.deleteFrom('otp').where('hash', '=', hash).execute();
+async function deleteOtp(userId: UserId) {
+  await db.deleteFrom('otp').where('userId', '=', userId).execute();
 }
