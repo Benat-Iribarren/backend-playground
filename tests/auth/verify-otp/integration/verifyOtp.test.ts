@@ -50,4 +50,49 @@ describe('verifyOtp endpoint', () => {
     expect(data.token).toBe(token);
     expect(getOtpSpy).toHaveBeenCalledWith(verificationCode, hash);
   });
+
+  test('should return missing hash or verification code error when introducing an empty hash', async () => {
+    const hash = '';
+    const verificationCode = '123456';
+
+    const response = await app.inject({
+      method: 'POST',
+      url: VERIFY_OTP_ENDPOINT,
+      payload: { hash: hash, verificationCode: verificationCode },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(400);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Missing hash or verification code.');
+  });
+
+  test('should return missing hash or verification code error when introducing an empty verification code', async () => {
+    const hash = '9d2bff5d9dfdacfaa4a39e2a6d7f98ea5bd89f5d311986a50f24ee542ba9e221';
+    const verificationCode = '';
+
+    const response = await app.inject({
+      method: 'POST',
+      url: VERIFY_OTP_ENDPOINT,
+      payload: { hash: hash, verificationCode: verificationCode },
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(400);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Missing hash or verification code.');
+  });
+
+  test('should return missing missing hash or verification code error when introducing no body', async () => {
+    const response = await app.inject({
+      method: 'POST',
+      url: VERIFY_OTP_ENDPOINT,
+      payload: {},
+    });
+    const data = response.json();
+
+    expect(response.statusCode).toBe(400);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Missing hash or verification code.');
+  });
 });
