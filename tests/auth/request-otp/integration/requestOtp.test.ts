@@ -134,27 +134,9 @@ describe('requestOtp endpoint', () => {
     expect(data.error).toBe('Invalid nin or phone number.');
   });
 
-  test('should return incorrect nin or phone number error when introducing an incorrect phone number', async () => {
+  test('should return incorrect nin or phone number error when introducing incorrect parameters', async () => {
     const nin = '87654321Z';
     const phone = '213456789';
-
-    jest.spyOn(userRepository, 'getUser').mockResolvedValue(null);
-
-    const response = await app.inject({
-      method: 'POST',
-      url: REQUEST_OTP_ENDPOINT,
-      payload: { nin: nin, phone: phone },
-    });
-    const data = response.json();
-
-    expect(response.statusCode).toBe(401);
-    expect(data).toHaveProperty('error');
-    expect(data.error).toBe('Incorrect nin or phone number.');
-  });
-
-  test('should return incorrect nin or phone number error when introducing an incorrect nin', async () => {
-    const nin = '00000000Z';
-    const phone = '222222222';
 
     jest.spyOn(userRepository, 'getUser').mockResolvedValue(null);
 
