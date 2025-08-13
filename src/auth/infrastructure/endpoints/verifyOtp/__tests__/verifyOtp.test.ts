@@ -4,6 +4,12 @@ import { otpRepository } from '../../../database/repository/SQLiteOtpRepository'
 import { tokenGenerator } from '../../../helpers/generators/fromHashTokenGenerator';
 import { VERIFY_OTP_ENDPOINT } from '../verifyOtp';
 import { tokenRepository } from '../../../database/repository/SQLiteTokenRepository';
+import { isOtpExpired } from '../../../../domain/model/Otp';
+
+jest.mock('../../../../domain/model/Otp', () => ({
+  ...jest.requireActual('../../../../domain/model/Otp'),
+  isOtpExpired: jest.fn(() => false),
+}));
 
 /**
  * @group integration
@@ -29,7 +35,7 @@ describe('verifyOtp endpoint', () => {
     const hash = '9d2bff5d9dfdacfaa4a39e2a6d7f98ea5bd89f5d311986a50f24ee542ba9e221';
     const verificationCode = '123456';
     const token = 'token';
-    const expirationDate = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+    const expirationDate = 'notExpiredDate';
 
     const getOtpSpy = jest.spyOn(otpRepository, 'getOtp').mockResolvedValue({
       userId,
@@ -37,6 +43,8 @@ describe('verifyOtp endpoint', () => {
       hash,
       expirationDate,
     });
+
+    (isOtpExpired as jest.Mock).mockReturnValue(false);
     jest.spyOn(otpRepository, 'deleteOtp').mockResolvedValue();
     jest.spyOn(tokenGenerator, 'generateToken').mockReturnValue(token);
     jest.spyOn(tokenRepository, 'saveToken').mockResolvedValue();
@@ -52,6 +60,12 @@ describe('verifyOtp endpoint', () => {
     expect(data).toHaveProperty('token');
     expect(data.token).toBe(token);
     expect(getOtpSpy).toHaveBeenCalledWith(verificationCode, hash);
+    expect(isOtpExpired).toHaveBeenCalledWith({
+      userId,
+      verificationCode,
+      hash,
+      expirationDate,
+    });
   });
 
   test('should return missing hash or verification code error when introducing an empty hash', async () => {
@@ -161,6 +175,7 @@ describe('verifyOtp endpoint', () => {
       expirationDate,
     });
     jest.spyOn(otpRepository, 'deleteOtp').mockResolvedValue();
+    (isOtpExpired as jest.Mock).mockReturnValue(true);
 
     const response = await app.inject({
       method: 'POST',
@@ -173,6 +188,12 @@ describe('verifyOtp endpoint', () => {
     expect(data).toHaveProperty('error');
     expect(data.error).toBe('Incorrect hash or verification code.');
     expect(getOtpSpy).toHaveBeenCalledWith(verificationCode, hash);
+    expect(isOtpExpired).toHaveBeenCalledWith({
+      userId,
+      verificationCode,
+      hash,
+      expirationDate,
+    });
   });
 
   test('should return internal server error when the database malfunctions', async () => {

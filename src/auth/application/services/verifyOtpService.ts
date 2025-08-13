@@ -1,4 +1,4 @@
-import { Otp } from '../../domain/model/Otp';
+import { isOtpExpired, Otp } from '../../domain/model/Otp';
 import { Token } from '../../domain/model/Token';
 import { TokenRepository } from '../../domain/interfaces/repositories/TokenRepository';
 import { UserId } from '../../domain/model/User';
@@ -43,8 +43,4 @@ async function saveToken(
   token: Token,
 ): Promise<void> {
   await tokenRepository.saveToken(userId, token);
-}
-
-function isOtpExpired(otp: Otp): boolean {
-  return otp.expirationDate < new Date().toISOString();
 }

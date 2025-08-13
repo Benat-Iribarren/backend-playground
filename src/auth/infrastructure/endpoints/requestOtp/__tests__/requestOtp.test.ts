@@ -6,6 +6,12 @@ import { codeGenerator } from '../../../helpers/generators/randomCodeGenerator';
 import { hashGenerator } from '../../../helpers/generators/randomHashGenerator';
 import { FastifyInstance } from 'fastify/types/instance';
 import { phoneValidator } from '../../../helpers/validators/blacklistPhoneValidator';
+import { generateOtpExpirationDate } from '../../../../domain/model/Otp';
+
+jest.mock('../../../../domain/model/Otp', () => ({
+  ...jest.requireActual('../../../../domain/model/Otp'),
+  generateOtpExpirationDate: jest.fn(),
+}));
 
 /**
  * @group integration
@@ -32,7 +38,7 @@ describe('requestOtp endpoint', () => {
     const userId = 1;
     const hash = 'hash';
     const verificationCode = '123456';
-    const expirationDate = new Date(5 * 60 * 1000).toISOString();
+    const expirationDate = new Date().toISOString();
 
     const saveOtpSpy = jest.spyOn(otpRepository, 'saveOtp').mockResolvedValue();
     jest.spyOn(userRepository, 'getUser').mockResolvedValue({
@@ -41,9 +47,10 @@ describe('requestOtp endpoint', () => {
       phone: phone,
       isBlocked: false,
     });
+
+    (generateOtpExpirationDate as jest.Mock).mockReturnValue(expirationDate);
     jest.spyOn(codeGenerator, 'generateSixDigitCode').mockReturnValue(verificationCode);
     jest.spyOn(hashGenerator, 'generateHash').mockReturnValue(hash);
-    jest.spyOn(Date, 'now').mockReturnValue(new Date(0).getTime());
 
     const response = await app.inject({
       method: 'POST',

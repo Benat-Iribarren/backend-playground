@@ -12,7 +12,8 @@ export type Otp = {
 };
 
 export function isOtpExpired(otp: Otp): boolean {
-  return otp.expirationDate < new Date().toISOString();
+  const expiration = new Date(otp.expirationDate);
+  return isNaN(expiration.getTime()) || expiration < new Date();
 }
 
 export function generateOtpExpirationDate(): ExpirationDate {
