@@ -3,7 +3,6 @@ import { requestOtpSchema } from './schema';
 import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
 import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
 import { processOtpRequest } from '../../../application/services/requestOtpService';
-import { UserLoginErrors } from '../../../domain/errors/userLoginErrors';
 import {
   invalidNinOrPhoneErrorStatusMsg,
   missingNinOrPhoneErrorStatusMsg,
@@ -75,8 +74,8 @@ function requestOtp(dependencies: RequestOtpDependencies) {
 
       if (errorExists(body)) {
         return reply
-          .status(statusToCode[body as UserLoginErrors])
-          .send(statusToMessage[body as UserLoginErrors]);
+          .status(statusToCode[body as RequestOtpErrors])
+          .send(statusToMessage[body as RequestOtpErrors]);
       }
 
       return reply.status(statusToCode.SUCCESSFUL).send(body);
@@ -84,7 +83,7 @@ function requestOtp(dependencies: RequestOtpDependencies) {
   };
 }
 
-function errorExists(body: UserLoginErrors | { hash: string; verificationCode: string }): boolean {
+function errorExists(body: RequestOtpErrors | { hash: string; verificationCode: string }): boolean {
   return typeof body !== 'object';
 }
 

@@ -5,5 +5,3 @@ export const userPhoneUnavailableForSmsErrorStatusMsg = 'UNAVAILABLE_PHONE' as c
 export type UserPhoneUnavailableError = typeof userPhoneUnavailableForSmsErrorStatusMsg;
 export type UserBlockedError = typeof userBlockedErrorStatusMsg;
 export type UserNotFoundError = typeof userNotFoundErrorStatusMsg;
-
-export type UserLoginErrors = UserPhoneUnavailableError | UserBlockedError | UserNotFoundError;

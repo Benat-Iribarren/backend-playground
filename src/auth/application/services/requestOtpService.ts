@@ -7,9 +7,11 @@ import {
   UserWithId,
 } from '../../domain/model/User';
 import {
+  UserBlockedError,
   userBlockedErrorStatusMsg,
+  UserNotFoundError,
   userNotFoundErrorStatusMsg,
-  UserLoginErrors,
+  UserPhoneUnavailableError,
   userPhoneUnavailableForSmsErrorStatusMsg,
 } from '../../domain/errors/userLoginErrors';
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
@@ -21,6 +23,11 @@ import { PhoneValidator } from '../../domain/interfaces/validators/PhoneValidato
 
 type OtpResponse = Pick<Otp, 'hash' | 'verificationCode'>;
 
+export type RequestOtpServiceErrors =
+  | UserPhoneUnavailableError
+  | UserBlockedError
+  | UserNotFoundError;
+
 export async function processOtpRequest(
   otpRepository: OtpRepository,
   userRepository: UserRepository,
@@ -29,7 +36,7 @@ export async function processOtpRequest(
   phoneValidator: PhoneValidator,
   nin: Nin,
   phone: Phone,
-): Promise<UserLoginErrors | OtpResponse> {
+): Promise<RequestOtpServiceErrors | OtpResponse> {
   const userWithId: UserWithId | null = await userRepository.getUser(nin, phone);
 
   if (userAndIdNotExists(userWithId)) {

@@ -6,7 +6,10 @@ import {
   missingHashOrCodeErrorStatusMsg,
   VerifyOtpErrors,
 } from './errors';
-import { processOtpVerificationRequest } from '../../../application/services/verifyOtpService';
+import {
+  processOtpVerificationRequest,
+  VerifyOtpServiceErrors,
+} from '../../../application/services/verifyOtpService';
 import { invalidHash } from '../../../domain/helpers/validators/hashValidator';
 import { invalidVerificationCode } from '../../../domain/helpers/validators/verificationCodeValidator';
 import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRepository';
@@ -65,10 +68,10 @@ function verifyOtp(dependencies: VerifyOtpDependencies) {
         { hash, verificationCode },
       );
 
-      if (errorExists(body as VerificationResponse)) {
+      if (errorExists(body)) {
         return reply
-          .status(statusToCode[body as VerifyOtpErrors])
-          .send(statusToMessage[body as VerifyOtpErrors]);
+          .status(statusToCode[body as VerifyOtpServiceErrors])
+          .send(statusToMessage[body as VerifyOtpServiceErrors]);
       }
 
       return reply.status(statusToCode.SUCCESSFUL).send(body);
