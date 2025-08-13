@@ -1,12 +1,15 @@
-import { build } from '../../../../src/auth/infrastructure/server/serverBuild';
-import { REQUEST_OTP_ENDPOINT } from '../../../../src/auth/infrastructure/endpoints/requestOtp/requestOtp';
-import { userRepository } from '../../../../src/auth/infrastructure/database/repository/SQLiteUserRepository';
-import { otpRepository } from '../../../../src/auth/infrastructure/database/repository/SQLiteOtpRepository';
-import { codeGenerator } from '../../../../src/auth/infrastructure/helpers/generators/randomCodeGenerator';
-import { hashGenerator } from '../../../../src/auth/infrastructure/helpers/generators/randomHashGenerator';
+import { build } from '../../../server/serverBuild';
+import { REQUEST_OTP_ENDPOINT } from '../requestOtp';
+import { userRepository } from '../../../database/repository/SQLiteUserRepository';
+import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
+import { codeGenerator } from '../../../helpers/generators/randomCodeGenerator';
+import { hashGenerator } from '../../../helpers/generators/randomHashGenerator';
 import { FastifyInstance } from 'fastify/types/instance';
-import { phoneValidator } from '../../../../src/auth/infrastructure/helpers/validators/blacklistPhoneValidator';
+import { phoneValidator } from '../../../helpers/validators/blacklistPhoneValidator';
 
+/**
+ * @group integration
+ */
 describe('requestOtp endpoint', () => {
   let app: FastifyInstance;
 

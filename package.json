@@ -29,6 +29,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "husky": "^9.1.7",
     "jest": "^30.0.5",
+    "jest-runner-groups": "^2.2.0",
     "lint-staged": "^16.1.4",
     "msw": "^2.10.4",
     "prettier": "^3.6.2",

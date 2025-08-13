@@ -1,10 +1,13 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../../../src/auth/infrastructure/server/serverBuild';
-import { otpRepository } from '../../../../src/auth/infrastructure/database/repository/SQLiteOtpRepository';
-import { tokenGenerator } from '../../../../src/auth/infrastructure/helpers/generators/fromHashTokenGenerator';
-import { VERIFY_OTP_ENDPOINT } from '../../../../src/auth/infrastructure/endpoints/verifyOtp/verifyOtp';
-import { tokenRepository } from '../../../../src/auth/infrastructure/database/repository/SQLiteTokenRepository';
+import { build } from '../../../server/serverBuild';
+import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
+import { tokenGenerator } from '../../../helpers/generators/fromHashTokenGenerator';
+import { VERIFY_OTP_ENDPOINT } from '../verifyOtp';
+import { tokenRepository } from '../../../database/repository/SQLiteTokenRepository';
 
+/**
+ * @group integration
+ */
 describe('verifyOtp endpoint', () => {
   let app: FastifyInstance;
 

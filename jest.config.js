@@ -4,12 +4,13 @@ const tsJestTransformCfg = createDefaultPreset().transform;
 
 /** @type {import('jest').Config} **/
 module.exports = {
+  runner: 'groups',
   testEnvironment: 'node',
   transform: {
     ...tsJestTransformCfg,
   },
-  roots: ['<rootDir>/src', '<rootDir>/tests'],
+  roots: ['<rootDir>/src'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
-  testMatch: ['**/?(*.)+(test|spec).ts'],
+  testMatch: ['**/__tests__/**/*.(test|spec).ts', '**/?(*.)+(test|spec).ts'],
   clearMocks: true,
 };
