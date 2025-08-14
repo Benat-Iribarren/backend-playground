@@ -1,9 +1,9 @@
 import db from '../dbClient';
-import { UserWithId, Phone, Nin } from '../../../domain/model/User';
+import { User, Phone, Nin } from '../../../domain/model/User';
 import { UserRepository } from '../../../domain/interfaces/repositories/UserRespository';
 
 export const userRepository: UserRepository = {
-  async getUser(nin: Nin, phone: Phone): Promise<UserWithId | null> {
+  async getUser(nin: Nin, phone: Phone): Promise<User | null> {
     const userRow = await db
       .selectFrom('user')
       .selectAll()

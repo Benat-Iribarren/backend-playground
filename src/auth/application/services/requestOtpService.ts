@@ -1,11 +1,4 @@
-import {
-  Phone,
-  User,
-  userDoesntExist,
-  UserId,
-  userIsBlocked,
-  UserWithId,
-} from '../../domain/model/User';
+import { Phone, User, UserId } from '../../domain/model/User';
 import {
   UserBlockedError,
   userBlockedErrorStatusMsg,
@@ -44,13 +37,13 @@ export async function processOtpRequest(
   input: RequestOtpInput,
 ): Promise<RequestOtpServiceErrors | RequestOtpResponse> {
   const { nin, phone } = input;
-  const userWithId: UserWithId | null = await userRepository.getUser(nin, phone);
+  const user: User | null = await userRepository.getUser(nin, phone);
 
-  if (userDoesntExist(userWithId)) {
+  if (userDoesntExist(user)) {
     return userNotFoundErrorStatusMsg;
   }
 
-  const { id: userId, ...user } = userWithId;
+  const { id: userId } = user;
   if (userIsBlocked(user)) {
     return userBlockedErrorStatusMsg;
   }
@@ -89,4 +82,12 @@ function generateOtp(
   const expirationDateString: ExpirationDate = generateOtpExpirationDate();
   const otp: Otp = { userId, hash, verificationCode, expirationDate: expirationDateString };
   return otp;
+}
+
+export function userDoesntExist(user: User | null): user is null {
+  return user === null;
+}
+
+export function userIsBlocked(user: User): boolean {
+  return user.isBlocked;
 }
