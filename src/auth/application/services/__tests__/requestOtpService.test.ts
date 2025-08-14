@@ -9,8 +9,10 @@ import { UserRepository } from '../../../domain/interfaces/repositories/UserResp
 import {
   userBlockedErrorStatusMsg,
   userNotFoundErrorStatusMsg,
+  userPhoneUnavailableForSmsErrorStatusMsg,
 } from '../../../domain/errors/userLoginErrors';
 import { UserWithId } from '../../../domain/model/User';
+import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValidator';
 
 /**
  * @group unitary
@@ -71,5 +73,31 @@ describe('requestOtp endpoint', () => {
     );
 
     expect(serviceResponse).resolves.toEqual(userBlockedErrorStatusMsg);
+  });
+
+  test('should return a user phone unavailable for sms error status message when the user phone is unavailable to be sent an sms', () => {
+    const nin = 'userNin';
+    const phone = 'unavailablePhone';
+    const userWithUnavailablePhone: UserWithId = { id: 1, nin, phone, isBlocked: false };
+
+    const mockUserRepository = {
+      getUser: jest.fn(async () => userWithUnavailablePhone),
+    } as UserRepository;
+
+    const mockPhoneValidator = {
+      validatePhone: jest.fn(() => false),
+    } as PhoneValidator;
+
+    const serviceResponse = processOtpRequest(
+      otpRepository,
+      { ...mockUserRepository },
+      codeGenerator,
+      hashGenerator,
+      { ...mockPhoneValidator },
+      nin,
+      phone,
+    );
+
+    expect(serviceResponse).resolves.toEqual(userPhoneUnavailableForSmsErrorStatusMsg);
   });
 });
