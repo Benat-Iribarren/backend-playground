@@ -13,6 +13,9 @@ import {
 } from '../../../domain/errors/userLoginErrors';
 import { UserWithId } from '../../../domain/model/User';
 import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValidator';
+import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
+import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
+import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
 
 /**
  * @group unitary
@@ -31,6 +34,43 @@ describe('requestOtp endpoint', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  test('should return a hash and a verification code when the user is correct', () => {
+    const nin = 'userNin';
+    const phone = 'userPhone';
+    const verificationCode = '123456';
+    const hash = 'hash';
+    const user: UserWithId = { id: 1, nin, phone, isBlocked: false };
+
+    const mockUserRepository = {
+      getUser: jest.fn(async () => user),
+    } as UserRepository;
+    const mockOtpRepository = {
+      ...otpRepository,
+      saveOtp: jest.fn(async () => {}),
+    } as OtpRepository;
+    const mockCodeGenerator = {
+      generateSixDigitCode: jest.fn(() => verificationCode),
+    } as CodeGenerator;
+    const mockHashGenerator = {
+      generateHash: jest.fn(() => hash),
+    } as HashGenerator;
+    const mockPhoneValidator = {
+      validatePhone: jest.fn(() => true),
+    } as PhoneValidator;
+
+    const serviceResponse = processOtpRequest(
+      { ...mockOtpRepository },
+      { ...mockUserRepository },
+      { ...mockCodeGenerator },
+      { ...mockHashGenerator },
+      { ...mockPhoneValidator },
+      nin,
+      phone,
+    );
+
+    expect(serviceResponse).resolves.toEqual({ hash, verificationCode });
   });
 
   test('should return a user not found error status message when the user does not exist', () => {
@@ -83,7 +123,6 @@ describe('requestOtp endpoint', () => {
     const mockUserRepository = {
       getUser: jest.fn(async () => userWithUnavailablePhone),
     } as UserRepository;
-
     const mockPhoneValidator = {
       validatePhone: jest.fn(() => false),
     } as PhoneValidator;
