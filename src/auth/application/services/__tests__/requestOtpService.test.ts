@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { build } from '../../../infrastructure/server/serverBuild';
 import { processOtpRequest } from '../requestOtpService';
-import { otpRepository } from '../../../infrastructure/database/repository/SQLiteOtpRepository';
+import { otpRepository } from '../../../infrastructure/database/repositories/SQLiteOtpRepository';
 import { codeGenerator } from '../../../infrastructure/helpers/generators/randomCodeGenerator';
 import { hashGenerator } from '../../../infrastructure/helpers/generators/randomHashGenerator';
 import { phoneValidator } from '../../../infrastructure/helpers/validators/blacklistPhoneValidator';

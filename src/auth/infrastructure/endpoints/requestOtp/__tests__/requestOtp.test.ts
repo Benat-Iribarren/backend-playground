@@ -1,7 +1,7 @@
 import { build } from '../../../server/serverBuild';
 import { REQUEST_OTP_ENDPOINT } from '../requestOtp';
-import { userRepository } from '../../../database/repository/SQLiteUserRepository';
-import { otpRepository } from '../../../database/repository/SQLiteOtpRepository';
+import { userRepository } from '../../../database/repositories/SQLiteUserRepository';
+import { otpRepository } from '../../../database/repositories/SQLiteOtpRepository';
 import { codeGenerator } from '../../../helpers/generators/randomCodeGenerator';
 import { hashGenerator } from '../../../helpers/generators/randomHashGenerator';
 import { FastifyInstance } from 'fastify/types/instance';
