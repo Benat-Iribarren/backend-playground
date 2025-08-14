@@ -6,8 +6,15 @@ import { codeGenerator } from '../../../infrastructure/helpers/generators/random
 import { hashGenerator } from '../../../infrastructure/helpers/generators/randomHashGenerator';
 import { phoneValidator } from '../../../infrastructure/helpers/validators/blacklistPhoneValidator';
 import { UserRepository } from '../../../domain/interfaces/repositories/UserRespository';
-import { userNotFoundErrorStatusMsg } from '../../../domain/errors/userLoginErrors';
+import {
+  userBlockedErrorStatusMsg,
+  userNotFoundErrorStatusMsg,
+} from '../../../domain/errors/userLoginErrors';
+import { UserWithId } from '../../../domain/model/User';
 
+/**
+ * @group unitary
+ */
 describe('requestOtp endpoint', () => {
   let app: FastifyInstance;
 
@@ -42,5 +49,27 @@ describe('requestOtp endpoint', () => {
     );
 
     expect(serviceResponse).resolves.toEqual(userNotFoundErrorStatusMsg);
+  });
+
+  test('should return a user blocked error status message when the user is blocked', () => {
+    const nin = 'userBlockedNin';
+    const phone = 'userBlockedPhone';
+    const blockedUser: UserWithId = { id: 1, nin, phone, isBlocked: true };
+
+    const mockUserRepository = {
+      getUser: jest.fn(async () => blockedUser),
+    } as UserRepository;
+
+    const serviceResponse = processOtpRequest(
+      otpRepository,
+      { ...mockUserRepository },
+      codeGenerator,
+      hashGenerator,
+      phoneValidator,
+      nin,
+      phone,
+    );
+
+    expect(serviceResponse).resolves.toEqual(userBlockedErrorStatusMsg);
   });
 });
