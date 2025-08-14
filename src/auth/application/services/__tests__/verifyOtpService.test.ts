@@ -7,7 +7,11 @@ import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRe
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
 import { TokenGenerator } from '../../../domain/interfaces/generators/TokenGenerator';
 import { isOtpExpired } from '../../../domain/model/Otp';
-import { expiredVerificationCodeErrorStatusMsg } from '../../../domain/errors/otpLoginError';
+import {
+  expiredVerificationCodeErrorStatusMsg,
+  otpNotFoundErrorStatusMsg,
+} from '../../../domain/errors/otpLoginError';
+import { tokenGenerator } from '../../../infrastructure/helpers/generators/fromHashTokenGenerator';
 
 jest.mock('../../../domain/model/Otp', () => ({
   ...jest.requireActual('../../../domain/model/Otp'),
@@ -37,7 +41,7 @@ describe('requestOtp endpoint', () => {
     const verificationCode = '123456';
     const hash = 'hash';
     const token = 'token';
-    const user = { userId: 1, verificationCode, hash, expirationDate: 'notExpiredDate' };
+    const otp = { userId: 1, verificationCode, hash, expirationDate: 'notExpiredDate' };
 
     const mockTokenRepository = {
       ...tokenRepository,
@@ -45,7 +49,7 @@ describe('requestOtp endpoint', () => {
     } as TokenRepository;
     const mockOtpRepository = {
       ...otpRepository,
-      getOtp: jest.fn(async () => user),
+      getOtp: jest.fn(async () => otp),
       deleteOtp: jest.fn(async () => {}),
     } as OtpRepository;
     const mockTokenGenerator = {
@@ -63,28 +67,42 @@ describe('requestOtp endpoint', () => {
     expect(serviceResponse).resolves.toEqual({ token });
   });
 
-  test('should return en expired verification code error status message when the verification code is expired', async () => {
+  test('should return an expired verification code error status message when the verification code is expired', async () => {
     const verificationCode = '123456';
     const hash = 'hash';
-    const token = 'token';
-    const user = { userId: 1, verificationCode, hash, expirationDate: 'notExpiredDate' };
+    const otp = { userId: 1, verificationCode, hash, expirationDate: 'notExpiredDate' };
     const mockOtpRepository = {
       ...otpRepository,
-      getOtp: jest.fn(async () => user),
+      getOtp: jest.fn(async () => otp),
       deleteOtp: jest.fn(async () => {}),
     } as OtpRepository;
-    const mockTokenGenerator = {
-      generateToken: jest.fn(() => token),
-    } as TokenGenerator;
     (isOtpExpired as jest.Mock).mockReturnValue(true);
 
     const serviceResponse = processOtpVerificationRequest(
       tokenRepository,
       { ...mockOtpRepository },
-      { ...mockTokenGenerator },
+      tokenGenerator,
       { verificationCode, hash },
     );
 
     expect(serviceResponse).resolves.toEqual(expiredVerificationCodeErrorStatusMsg);
+  });
+
+  test('should return an otp not found error status message when the otp does not exist', async () => {
+    const verificationCode = '123456';
+    const hash = 'hash';
+    const mockOtpRepository = {
+      ...otpRepository,
+      getOtp: jest.fn(async () => null),
+    } as OtpRepository;
+
+    const serviceResponse = processOtpVerificationRequest(
+      tokenRepository,
+      { ...mockOtpRepository },
+      tokenGenerator,
+      { verificationCode, hash },
+    );
+
+    expect(serviceResponse).resolves.toEqual(otpNotFoundErrorStatusMsg);
   });
 });
