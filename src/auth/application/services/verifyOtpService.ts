@@ -11,29 +11,33 @@ import {
   otpNotFoundErrorStatusMsg,
 } from '../../domain/errors/otpLoginError';
 
-type VerifyInput = Pick<Otp, 'verificationCode' | 'hash'>;
+type VerifyOtpInput = Pick<Otp, 'verificationCode' | 'hash'>;
+type VerifyOtpResponse = { token: Token };
+
 export type VerifyOtpServiceErrors = OtpNotFoundError | ExpiredVerificationCodeError;
 
 export async function processOtpVerificationRequest(
   tokenRepository: TokenRepository,
   otpRepository: OtpRepository,
   tokenGenerator: TokenGenerator,
-  input: VerifyInput,
-): Promise<VerifyOtpServiceErrors | { token: Token }> {
-  const otp: Otp | null = await otpRepository.getOtp(input.verificationCode, input.hash);
+  input: VerifyOtpInput,
+): Promise<VerifyOtpServiceErrors | VerifyOtpResponse> {
+  const { verificationCode, hash } = input;
+  const otp: Otp | null = await otpRepository.getOtp(verificationCode, hash);
 
-  if (!otp) {
+  if (otpDoesntExist(otp)) {
     return otpNotFoundErrorStatusMsg;
   }
 
-  otpRepository.deleteOtp(otp.userId);
+  const { userId } = otp;
+  otpRepository.deleteOtp(userId);
 
   if (isOtpExpired(otp)) {
     return expiredVerificationCodeErrorStatusMsg;
   }
 
-  const token: Token = tokenGenerator.generateToken(input.hash);
-  await saveToken(tokenRepository, otp.userId, token);
+  const token: Token = tokenGenerator.generateToken(hash);
+  await saveToken(tokenRepository, userId, token);
   return { token };
 }
 
@@ -43,4 +47,8 @@ async function saveToken(
   token: Token,
 ): Promise<void> {
   await tokenRepository.saveToken(userId, token);
+}
+
+function otpDoesntExist(otp: Otp | null): otp is null {
+  return otp === null;
 }

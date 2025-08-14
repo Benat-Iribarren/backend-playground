@@ -9,9 +9,9 @@ export type Nin = string;
 export type UserId = number;
 export type UserWithId = User & { id: UserId };
 
-export function userNotExists(user: UserWithId | null): user is null {
+export function userDoesntExist(user: UserWithId | null): user is null {
   return user === null;
 }
-export function isUserBlocked(user: User): boolean {
+export function userIsBlocked(user: User): boolean {
   return user.isBlocked;
 }

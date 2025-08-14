@@ -1,9 +1,9 @@
 import {
-  isUserBlocked,
-  Nin,
   Phone,
-  userNotExists as userAndIdNotExists,
+  User,
+  userDoesntExist,
   UserId,
+  userIsBlocked,
   UserWithId,
 } from '../../domain/model/User';
 import {
@@ -27,7 +27,8 @@ import {
 } from '../../domain/model/Otp';
 import { PhoneValidator } from '../../domain/interfaces/validators/PhoneValidator';
 
-type OtpResponse = Pick<Otp, 'hash' | 'verificationCode'>;
+type RequestOtpInput = Pick<User, 'nin' | 'phone'>;
+type RequestOtpResponse = Pick<Otp, 'hash' | 'verificationCode'>;
 
 export type RequestOtpServiceErrors =
   | UserPhoneUnavailableError
@@ -40,17 +41,17 @@ export async function processOtpRequest(
   codeGenerator: CodeGenerator,
   hashGenerator: HashGenerator,
   phoneValidator: PhoneValidator,
-  nin: Nin,
-  phone: Phone,
-): Promise<RequestOtpServiceErrors | OtpResponse> {
+  input: RequestOtpInput,
+): Promise<RequestOtpServiceErrors | RequestOtpResponse> {
+  const { nin, phone } = input;
   const userWithId: UserWithId | null = await userRepository.getUser(nin, phone);
 
-  if (userAndIdNotExists(userWithId)) {
+  if (userDoesntExist(userWithId)) {
     return userNotFoundErrorStatusMsg;
   }
 
   const { id: userId, ...user } = userWithId;
-  if (isUserBlocked(user)) {
+  if (userIsBlocked(user)) {
     return userBlockedErrorStatusMsg;
   }
 
@@ -66,7 +67,7 @@ async function getOtp(
   codeGenerator: CodeGenerator,
   hashGenerator: HashGenerator,
   userId: UserId,
-): Promise<OtpResponse> {
+): Promise<RequestOtpResponse> {
   const otp: Otp = generateOtp(userId, codeGenerator, hashGenerator);
   otpRepository.saveOtp(otp);
 

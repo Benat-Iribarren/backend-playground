@@ -68,8 +68,7 @@ function requestOtp(dependencies: RequestOtpDependencies) {
         dependencies.codeGenerator,
         dependencies.hashGenerator,
         dependencies.phoneValidator,
-        nin,
-        phone,
+        { nin, phone },
       );
 
       if (errorExists(body)) {
