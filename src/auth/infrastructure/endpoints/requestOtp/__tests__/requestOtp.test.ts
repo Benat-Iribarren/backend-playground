@@ -16,7 +16,7 @@ jest.mock('../../../../domain/model/Otp', () => ({
 /**
  * @group integration
  */
-describe('requestOtp endpoint', () => {
+describe('requestOtp endpoint integration tests', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

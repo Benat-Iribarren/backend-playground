@@ -58,13 +58,16 @@ endif
 	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test -e BACKEND_PORT=3001 -e BACKEND_COMMAND="npm run test:watch" backend sh -c "npm ci && npm run build && npm run test:watch"
 
 .PHONY: up-test
-up-test: ## Start test services in background
+up-test: ## Start test services in background (server stays running for manual testing)
 	@echo "Starting test services..."
 ifeq ($(OS),Windows_NT)
-	set NODE_ENV=test&& set BACKEND_PORT=3001&& set BACKEND_COMMAND=npm run test&& $(DOCKER_COMPOSE) --profile test up -d --build
+	set NODE_ENV=test&& set BACKEND_PORT=3001&& set BACKEND_COMMAND=npm start&& $(DOCKER_COMPOSE) --profile test up -d --build
 else
-	NODE_ENV=test BACKEND_PORT=3001 BACKEND_COMMAND="npm run test" $(DOCKER_COMPOSE) --profile test up -d --build
+	NODE_ENV=test BACKEND_PORT=3001 BACKEND_COMMAND="npm start" $(DOCKER_COMPOSE) --profile test up -d --build
 endif
+	@echo "Waiting for services to start..."
+	$(SLEEP) 5
+	@echo "Services should be running. Check with 'make logs-test' if there are issues."
 
 .PHONY: down-test
 down-test: ## Stop test services
@@ -76,17 +79,14 @@ logs-test: ## Show logs from test services
 	$(DOCKER_COMPOSE) --profile test logs -f
 
 .PHONY: db-init
-db-init: db-init-production ## Initialize production database (alias)
-
-.PHONY: db-init-production
-db-init-production: ## Initialize production database
+db-init: 
 	@echo "Initializing production database..."
-	$(DOCKER_COMPOSE) --profile production exec -e NODE_ENV=development -e DATABASE_FILE_PATH=./data/sequraBackendDB.sqlite backend sh -c "npx ts-node src/auth/infrastructure/database/initDatabase.ts"
+	$(DOCKER_COMPOSE) --profile production exec -e NODE_ENV=development -e DATABASE_FILE_PATH=./data/sequraBackendDB.sqlite backend sh -c "npx ts-node src/auth/infrastructure/database/initDatabase.ts" ## Initialize production database (alias)
 
 .PHONY: db-init-test
 db-init-test: ## Initialize test database (in-memory)
 	@echo "Initializing test database..."
-	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test backend sh -c "node scripts/initTestDatabase.js"
+	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test backend sh -c "npx ts-node src/auth/infrastructure/database/initDatabase.ts"
 
 .PHONY: down
 down: ## Stop all services

@@ -50,6 +50,4 @@ async function insertUserIntoDb(user: { nin: string; phone: string; isBlocked: b
       isBlocked: (user.isBlocked ? 1 : 0) as unknown as boolean,
     })
     .execute();
-
-  console.log(`Usuario ${user.nin} insertado.`);
 }

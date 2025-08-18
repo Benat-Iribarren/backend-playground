@@ -47,34 +47,39 @@ interface VerifyOtpDependencies {
 function verifyOtp(dependencies: VerifyOtpDependencies) {
   return async function (fastify: FastifyInstance) {
     fastify.post(VERIFY_OTP_ENDPOINT, verifyOtpSchema, async (request, reply) => {
-      const { hash, verificationCode } = request.body as VerifyOtpBody;
+      try {
+        const { hash, verificationCode } = request.body as VerifyOtpBody;
 
-      if (missingParameters(hash, verificationCode)) {
-        return reply
-          .status(statusToCode[missingHashOrCodeErrorStatusMsg])
-          .send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
+        if (missingParameters(hash, verificationCode)) {
+          return reply
+            .status(statusToCode[missingHashOrCodeErrorStatusMsg])
+            .send(statusToMessage[missingHashOrCodeErrorStatusMsg]);
+        }
+
+        if (await invalidParameters(hash, verificationCode)) {
+          return reply
+            .status(statusToCode[invalidHashOrCodeErrorStatusMsg])
+            .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
+        }
+
+        const body = await processOtpVerificationRequest(
+          dependencies.tokenRepository,
+          dependencies.otpRepository,
+          dependencies.tokenGenerator,
+          { hash, verificationCode },
+        );
+
+        if (errorExists(body)) {
+          return reply
+            .status(statusToCode[body as VerifyOtpServiceErrors])
+            .send(statusToMessage[body as VerifyOtpServiceErrors]);
+        }
+
+        return reply.status(statusToCode.SUCCESSFUL).send(body);
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({ error: 'Internal Server Error' });
       }
-
-      if (await invalidParameters(hash, verificationCode)) {
-        return reply
-          .status(statusToCode[invalidHashOrCodeErrorStatusMsg])
-          .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
-      }
-
-      const body = await processOtpVerificationRequest(
-        dependencies.tokenRepository,
-        dependencies.otpRepository,
-        dependencies.tokenGenerator,
-        { hash, verificationCode },
-      );
-
-      if (errorExists(body)) {
-        return reply
-          .status(statusToCode[body as VerifyOtpServiceErrors])
-          .send(statusToMessage[body as VerifyOtpServiceErrors]);
-      }
-
-      return reply.status(statusToCode.SUCCESSFUL).send(body);
     });
   };
 }

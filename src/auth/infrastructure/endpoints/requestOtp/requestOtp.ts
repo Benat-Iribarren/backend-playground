@@ -48,36 +48,41 @@ interface RequestOtpDependencies {
 function requestOtp(dependencies: RequestOtpDependencies) {
   return async function (fastify: FastifyInstance) {
     fastify.post(REQUEST_OTP_ENDPOINT, requestOtpSchema, async (request, reply) => {
-      const { nin, phone } = request.body as RequestOtpBody;
+      try {
+        const { nin, phone } = request.body as RequestOtpBody;
 
-      if (missingParameters(nin, phone)) {
-        return reply
-          .status(statusToCode[missingNinOrPhoneErrorStatusMsg])
-          .send(statusToMessage[missingNinOrPhoneErrorStatusMsg]);
+        if (missingParameters(nin, phone)) {
+          return reply
+            .status(statusToCode[missingNinOrPhoneErrorStatusMsg])
+            .send(statusToMessage[missingNinOrPhoneErrorStatusMsg]);
+        }
+
+        if (invalidParameters(nin, phone)) {
+          return reply
+            .status(statusToCode[invalidNinOrPhoneErrorStatusMsg])
+            .send(statusToMessage[invalidNinOrPhoneErrorStatusMsg]);
+        }
+
+        const body = await processOtpRequest(
+          dependencies.otpRepository,
+          dependencies.userRepository,
+          dependencies.codeGenerator,
+          dependencies.hashGenerator,
+          dependencies.phoneValidator,
+          { nin, phone },
+        );
+
+        if (errorExists(body)) {
+          return reply
+            .status(statusToCode[body as RequestOtpErrors])
+            .send(statusToMessage[body as RequestOtpErrors]);
+        }
+
+        return reply.status(statusToCode.SUCCESSFUL).send(body);
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({ error: 'Internal Server Error' });
       }
-
-      if (invalidParameters(nin, phone)) {
-        return reply
-          .status(statusToCode[invalidNinOrPhoneErrorStatusMsg])
-          .send(statusToMessage[invalidNinOrPhoneErrorStatusMsg]);
-      }
-
-      const body = await processOtpRequest(
-        dependencies.otpRepository,
-        dependencies.userRepository,
-        dependencies.codeGenerator,
-        dependencies.hashGenerator,
-        dependencies.phoneValidator,
-        { nin, phone },
-      );
-
-      if (errorExists(body)) {
-        return reply
-          .status(statusToCode[body as RequestOtpErrors])
-          .send(statusToMessage[body as RequestOtpErrors]);
-      }
-
-      return reply.status(statusToCode.SUCCESSFUL).send(body);
     });
   };
 }

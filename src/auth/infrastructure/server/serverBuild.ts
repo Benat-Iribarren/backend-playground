@@ -5,19 +5,16 @@ import { registerRoutes } from '../endpoints/routes';
 
 export function build(): FastifyInstance {
   const app = Fastify({
-    logger:
-      process.env.NODE_ENV !== 'test'
-        ? {
-            transport: {
-              target: 'pino-pretty',
-              options: {
-                colorize: true,
-                translateTime: 'SYS:standard',
-                ignore: 'pid,hostname',
-              },
-            },
-          }
-        : false,
+    logger: {
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:standard',
+          ignore: 'pid,hostname',
+        },
+      },
+    },
   });
 
   registerSwagger(app);
@@ -56,7 +53,9 @@ function registerSwaggerUI(app: FastifyInstance) {
 export const start = async (fastify: FastifyInstance, PORT: number) => {
   try {
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
+    console.log(`Server listening on http://0.0.0.0:${PORT}`);
   } catch (err) {
+    console.error('Error starting server:', err);
     fastify.log.error(err);
     process.exit(1);
   }
