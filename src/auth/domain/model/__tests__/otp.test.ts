@@ -5,7 +5,7 @@ import { generateOtpExpirationDate, isOtpExpired } from '../Otp';
 /**
  * @group unitary
  */
-describe('requestOtp endpoint', () => {
+describe('Otp model', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

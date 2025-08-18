@@ -21,7 +21,7 @@ jest.mock('../../../domain/model/Otp', () => ({
 /**
  * @group unitary
  */
-describe('requestOtp endpoint', () => {
+describe('verifyOtp service', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

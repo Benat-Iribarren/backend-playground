@@ -20,7 +20,7 @@ import { OtpRepository } from '../../../domain/interfaces/repositories/OtpReposi
 /**
  * @group unitary
  */
-describe('requestOtp endpoint', () => {
+describe('requestOtp service', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
