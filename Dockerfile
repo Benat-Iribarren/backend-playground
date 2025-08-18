@@ -6,6 +6,7 @@ RUN apk add --no-cache \
     python3 \
     make \
     g++ \
+    git \
     && apk upgrade --no-cache
 
 COPY package*.json ./

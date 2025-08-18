@@ -1,18 +1,16 @@
 # Makefile for Sequra Backend
 
 # Variables
-DOCKER_COMPOSE = docker-compose
+DOCKER_COMPOSE = docker compose
 DOCKER = docker
 
 # Detect OS for cross-platform compatibility
 ifeq ($(OS),Windows_NT)
-    # Windows
     SHELL := cmd
     SLEEP := timeout /T
     READ := set /p
     VOLUME_NAME := sequra-backend-sm_sqlite_data
 else
-    # Unix-like systems (Linux, macOS)
     SHELL := /bin/bash
     SLEEP := sleep
     READ := read
@@ -33,15 +31,62 @@ else
 endif
 
 # Docker commands
-.PHONY: db-init
-db-init: ## Create tables and execute seeders
-	@echo "Inicializando base de datos..."
-	$(DOCKER_COMPOSE) exec backend sh -c "npx ts-node src/auth/infrastructure/database/initDatabase.ts"
-
 .PHONY: up
 up: ## Start production/development services
-	@echo "Starting backend and db services..."
-	$(DOCKER_COMPOSE) up -d backend db
+	@echo "Starting production services..."
+	$(DOCKER_COMPOSE) --profile production up -d
+
+.PHONY: test
+test: ## Run test services (uses in-memory database and closes when tests finish)
+	@echo "Running tests..."
+ifeq ($(OS),Windows_NT)
+	set NODE_ENV=test&& set BACKEND_PORT=3001&& set BACKEND_COMMAND=npm run test&& $(DOCKER_COMPOSE) --profile test up -d --build
+else
+	NODE_ENV=test BACKEND_PORT=3001 BACKEND_COMMAND="npm run test" $(DOCKER_COMPOSE) --profile test up -d --build
+endif
+	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test -e BACKEND_PORT=3001 -e BACKEND_COMMAND="npm run test" backend sh -c "npm ci && npm run build && npm run test"
+	$(DOCKER_COMPOSE) --profile test down
+
+.PHONY: test-watch
+test-watch: ## Run tests in watch mode (uses in-memory database, stays open)
+	@echo "Running tests in watch mode..."
+ifeq ($(OS),Windows_NT)
+	set NODE_ENV=test&& set BACKEND_PORT=3001&& set BACKEND_COMMAND=npm run test:watch&& $(DOCKER_COMPOSE) --profile test up -d --build
+else
+	NODE_ENV=test BACKEND_PORT=3001 BACKEND_COMMAND="npm run test:watch" $(DOCKER_COMPOSE) --profile test up -d --build
+endif
+	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test -e BACKEND_PORT=3001 -e BACKEND_COMMAND="npm run test:watch" backend sh -c "npm ci && npm run build && npm run test:watch"
+
+.PHONY: up-test
+up-test: ## Start test services in background
+	@echo "Starting test services..."
+ifeq ($(OS),Windows_NT)
+	set NODE_ENV=test&& set BACKEND_PORT=3001&& set BACKEND_COMMAND=npm run test&& $(DOCKER_COMPOSE) --profile test up -d --build
+else
+	NODE_ENV=test BACKEND_PORT=3001 BACKEND_COMMAND="npm run test" $(DOCKER_COMPOSE) --profile test up -d --build
+endif
+
+.PHONY: down-test
+down-test: ## Stop test services
+	@echo "Stopping test services..."
+	$(DOCKER_COMPOSE) --profile test down
+
+.PHONY: logs-test
+logs-test: ## Show logs from test services
+	$(DOCKER_COMPOSE) --profile test logs -f
+
+.PHONY: db-init
+db-init: db-init-production ## Initialize production database (alias)
+
+.PHONY: db-init-production
+db-init-production: ## Initialize production database
+	@echo "Initializing production database..."
+	$(DOCKER_COMPOSE) --profile production exec -e NODE_ENV=development -e DATABASE_FILE_PATH=./data/sequraBackendDB.sqlite backend sh -c "npx ts-node src/auth/infrastructure/database/initDatabase.ts"
+
+.PHONY: db-init-test
+db-init-test: ## Initialize test database (in-memory)
+	@echo "Initializing test database..."
+	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test backend sh -c "node scripts/initTestDatabase.js"
 
 .PHONY: down
 down: ## Stop all services
@@ -53,8 +98,12 @@ logs: ## Show logs from all services
 	$(DOCKER_COMPOSE) logs -f
 
 .PHONY: shell
-shell: ## Open shell in backend container
-	$(DOCKER_COMPOSE) exec backend sh
+shell: ## Open shell in backend container (production)
+	$(DOCKER_COMPOSE) --profile production exec -e NODE_ENV=development -e DATABASE_FILE_PATH=./data/sequraBackendDB.sqlite backend sh
+
+.PHONY: shell-test
+shell-test: ## Open shell in backend container (test)
+	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test -e BACKEND_PORT=3001 backend sh
 
 .PHONY: build
 build: ## Build Docker images

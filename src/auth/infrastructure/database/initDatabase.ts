@@ -1,10 +1,21 @@
-import { createDatabaseFile } from './createDatabaseFile';
 import { createTables } from './createTables';
 import { seedUser } from './seeders/userSeeder';
+import fs from 'fs';
+
+const createDataDirectory = async () => {
+  // Skip directory creation for test environment (using in-memory database)
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
+
+  if (!fs.existsSync('./data')) {
+    fs.mkdirSync('./data', { recursive: true });
+  }
+};
 
 async function initDatabase() {
   try {
-    await createDatabaseFile();
+    await createDataDirectory();
     await createTables();
     await seedUser();
   } catch (error) {

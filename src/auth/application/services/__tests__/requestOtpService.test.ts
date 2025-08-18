@@ -11,11 +11,11 @@ import {
   userNotFoundErrorStatusMsg,
   userPhoneUnavailableForSmsErrorStatusMsg,
 } from '../../../domain/errors/userLoginErrors';
-import { User } from '../../../domain/model/User';
 import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValidator';
 import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
 import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
+import { User } from '../../../domain/model/User';
 
 /**
  * @group unitary

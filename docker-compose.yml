@@ -3,14 +3,20 @@ services:
     build: .
     container_name: sequra-backend
     ports:
-      - '3000:3000'
+      - '${BACKEND_PORT:-3000}:3000'
     volumes:
       - .:/app
       - /app/node_modules
       - ./data:/app/data
     depends_on:
       - db
-    command: sh -c "npm ci && npm run build && node dist/auth/infrastructure/server/index.js"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_FILE_PATH=${DATABASE_FILE_PATH:-./data/sequraBackendDB.sqlite}
+    command: sh -c "npm ci && npm run build && ${BACKEND_COMMAND:-node dist/auth/infrastructure/server/index.js}"
+    profiles:
+      - production
+      - test
 
   db:
     image: nouchka/sqlite3
