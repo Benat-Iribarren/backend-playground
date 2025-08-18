@@ -66,8 +66,7 @@ describe('requestOtp endpoint', () => {
       { ...mockCodeGenerator },
       { ...mockHashGenerator },
       { ...mockPhoneValidator },
-      nin,
-      phone,
+      { nin, phone },
     );
 
     expect(serviceResponse).resolves.toEqual({ hash, verificationCode });
@@ -86,8 +85,7 @@ describe('requestOtp endpoint', () => {
       codeGenerator,
       hashGenerator,
       phoneValidator,
-      nin,
-      phone,
+      { nin, phone },
     );
 
     expect(serviceResponse).resolves.toEqual(userNotFoundErrorStatusMsg);
@@ -108,8 +106,7 @@ describe('requestOtp endpoint', () => {
       codeGenerator,
       hashGenerator,
       phoneValidator,
-      nin,
-      phone,
+      { nin, phone },
     );
 
     expect(serviceResponse).resolves.toEqual(userBlockedErrorStatusMsg);
@@ -133,8 +130,7 @@ describe('requestOtp endpoint', () => {
       codeGenerator,
       hashGenerator,
       { ...mockPhoneValidator },
-      nin,
-      phone,
+      { nin, phone },
     );
 
     expect(serviceResponse).resolves.toEqual(userPhoneUnavailableForSmsErrorStatusMsg);

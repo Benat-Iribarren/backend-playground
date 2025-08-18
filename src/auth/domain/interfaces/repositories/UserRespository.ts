@@ -1,5 +1,5 @@
-import { UserWithId, Phone, Nin } from '../../model/User';
+import { User, Phone, Nin } from '../../model/User';
 
 export interface UserRepository {
-  getUser(nin: Nin, phone: Phone): Promise<UserWithId | null>;
+  getUser(nin: Nin, phone: Phone): Promise<User | null>;
 }
