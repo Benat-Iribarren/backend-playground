@@ -11,7 +11,7 @@ import {
   userNotFoundErrorStatusMsg,
   userPhoneUnavailableForSmsErrorStatusMsg,
 } from '../../../domain/errors/userLoginErrors';
-import { UserWithId } from '../../../domain/model/User';
+import { User } from '../../../domain/model/User';
 import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValidator';
 import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
 import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
@@ -41,7 +41,7 @@ describe('requestOtp endpoint', () => {
     const phone = 'userPhone';
     const verificationCode = '123456';
     const hash = 'hash';
-    const user: UserWithId = { id: 1, nin, phone, isBlocked: false };
+    const user: User = { id: 1, nin, phone, isBlocked: false };
 
     const mockUserRepository = {
       getUser: jest.fn(async () => user),
@@ -96,7 +96,7 @@ describe('requestOtp endpoint', () => {
   test('should return a user blocked error status message when the user is blocked', () => {
     const nin = 'userBlockedNin';
     const phone = 'userBlockedPhone';
-    const blockedUser: UserWithId = { id: 1, nin, phone, isBlocked: true };
+    const blockedUser: User = { id: 1, nin, phone, isBlocked: true };
 
     const mockUserRepository = {
       getUser: jest.fn(async () => blockedUser),
@@ -118,7 +118,7 @@ describe('requestOtp endpoint', () => {
   test('should return a user phone unavailable for sms error status message when the user phone is unavailable to be sent an sms', () => {
     const nin = 'userNin';
     const phone = 'unavailablePhone';
-    const userWithUnavailablePhone: UserWithId = { id: 1, nin, phone, isBlocked: false };
+    const userWithUnavailablePhone: User = { id: 1, nin, phone, isBlocked: false };
 
     const mockUserRepository = {
       getUser: jest.fn(async () => userWithUnavailablePhone),
