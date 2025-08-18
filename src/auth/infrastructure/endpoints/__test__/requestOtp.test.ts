@@ -1,0 +1,55 @@
+import { FastifyInstance } from 'fastify';
+import { build } from '../../server/serverBuild';
+import { createTables } from '../../database/createTables';
+import { seedUser } from '../../database/seeders/userSeeder';
+import { REQUEST_OTP_ENDPOINT } from '../requestOtp/requestOtp';
+
+/**
+ * @group e2e
+ */
+describe('requestOtp endpoint end-to-end tests', () => {
+  let app: FastifyInstance;
+
+  beforeAll(async () => {
+    app = build();
+    await app.ready();
+    if (process.env.NODE_ENV === 'test') {
+      try {
+        await createTables();
+        await seedUser();
+      } catch (error) {
+        console.error('Error setting up test database:', error);
+        throw error;
+      }
+    }
+  });
+
+  beforeEach(async () => {
+    jest.resetAllMocks();
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  test('should return hash and verification code for correct nin and phone', async () => {
+    const nin = '87654321Z';
+    const phone = '222222222';
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin, phone },
+    });
+
+    expect(response.statusCode).toBe(201);
+
+    const data = response.json();
+    expect(data).toEqual(
+      expect.objectContaining({
+        verificationCode: expect.any(String),
+        hash: expect.any(String),
+      }),
+    );
+  });
+});
