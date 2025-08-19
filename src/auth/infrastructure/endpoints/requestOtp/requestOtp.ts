@@ -26,7 +26,9 @@ const statusToMessage: { [K in RequestOtpErrors]: string | object } & {
   USER_BLOCKED: { error: 'User is blocked.' },
 };
 
-const statusToCode: { [K in RequestOtpErrors]: number } & { [key: string]: number } = {
+type StatusCode = 201 | 400 | 401 | 403;
+
+const statusToCode: { [K in RequestOtpErrors]: StatusCode } & { [key: string]: StatusCode } = {
   SUCCESSFUL: 201,
   MISSING_NIN_OR_PHONE: 400,
   INVALID_NIN_OR_PHONE: 400,

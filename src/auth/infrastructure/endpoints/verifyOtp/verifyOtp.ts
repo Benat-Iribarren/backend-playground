@@ -18,15 +18,17 @@ import { TokenGenerator } from '../../../domain/interfaces/generators/TokenGener
 
 export const VERIFY_OTP_ENDPOINT = '/auth/otp/verify';
 
-export const statusToMessage: { [K in VerifyOtpErrors]: string | object } = {
+const statusToMessage: { [K in VerifyOtpErrors]: string | object } = {
   MISSING_HASH_OR_CODE: { error: 'Missing hash or verification code.' },
   INVALID_HASH_OR_CODE: { error: 'Invalid hash or verification code.' },
   OTP_NOT_FOUND: { error: 'Incorrect hash or verification code.' },
   EXPIRED_VERIFICATION_CODE: { error: 'Incorrect hash or verification code.' },
 };
 
-export const statusToCode: { [K in VerifyOtpErrors]: number } & {
-  [key: string]: number;
+type StatusCode = 201 | 400 | 401;
+
+const statusToCode: { [K in VerifyOtpErrors]: StatusCode } & {
+  [key: string]: StatusCode;
 } = {
   SUCCESSFUL: 201,
   MISSING_HASH_OR_CODE: 400,
