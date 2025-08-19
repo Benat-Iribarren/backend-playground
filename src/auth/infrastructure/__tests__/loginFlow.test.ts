@@ -1,15 +1,12 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../server/serverBuild';
-import { createTables } from '../../database/createTables';
-import { seedUser } from '../../database/seeders/userSeeder';
+import { build } from '../server/serverBuild';
+import { createTables } from '../database/createTables';
+import { seedUser } from '../database/seeders/userSeeder';
 
-import { REQUEST_OTP_ENDPOINT } from '../requestOtp/requestOtp';
-import { VERIFY_OTP_ENDPOINT } from '../verifyOtp/verifyOtp';
+import { REQUEST_OTP_ENDPOINT } from '../endpoints/requestOtp/requestOtp';
+import { VERIFY_OTP_ENDPOINT } from '../endpoints/verifyOtp/verifyOtp';
 
-/**
- * @group e2e
- */
-describe('requestOtp endpoint end-to-end tests', () => {
+describe('loginFlow', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -20,7 +17,6 @@ describe('requestOtp endpoint end-to-end tests', () => {
         await createTables();
         await seedUser();
       } catch (error) {
-        console.error('Error setting up test database:', error);
         throw error;
       }
     }
@@ -34,7 +30,7 @@ describe('requestOtp endpoint end-to-end tests', () => {
     await app.close();
   });
 
-  test('should return a token when introducing a correct hash and verification code', async () => {
+  test('should complete the full login process with correct credentials', async () => {
     const nin = '87654321Z';
     const phone = '222222222';
 

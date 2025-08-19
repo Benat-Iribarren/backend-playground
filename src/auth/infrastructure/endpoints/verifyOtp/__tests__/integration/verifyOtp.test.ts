@@ -1,20 +1,17 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../../server/serverBuild';
-import { otpRepository } from '../../../database/repositories/SQLiteOtpRepository';
-import { tokenGenerator } from '../../../helpers/generators/fromHashTokenGenerator';
-import { VERIFY_OTP_ENDPOINT } from '../verifyOtp';
-import { tokenRepository } from '../../../database/repositories/SQLiteTokenRepository';
-import { isOtpExpired } from '../../../../domain/model/Otp';
+import { build } from '../../../../server/serverBuild';
+import { otpRepository } from '../../../../database/repositories/SQLiteOtpRepository';
+import { tokenGenerator } from '../../../../helpers/generators/fromHashTokenGenerator';
+import { VERIFY_OTP_ENDPOINT } from '../../verifyOtp';
+import { tokenRepository } from '../../../../database/repositories/SQLiteTokenRepository';
+import { isOtpExpired } from '../../../../../domain/model/Otp';
 
-jest.mock('../../../../domain/model/Otp', () => ({
-  ...jest.requireActual('../../../../domain/model/Otp'),
+jest.mock('../../../../../domain/model/Otp', () => ({
+  ...jest.requireActual('../../../../../domain/model/Otp'),
   isOtpExpired: jest.fn(() => false),
 }));
 
-/**
- * @group integration
- */
-describe('verifyOtp endpoint integration tests', () => {
+describe('verifyOtp', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

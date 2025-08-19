@@ -18,10 +18,7 @@ jest.mock('../../../domain/model/Otp', () => ({
   isOtpExpired: jest.fn(),
 }));
 
-/**
- * @group unitary
- */
-describe('verifyOtp service', () => {
+describe('verifyOtpService', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

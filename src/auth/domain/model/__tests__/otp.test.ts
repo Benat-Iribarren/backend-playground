@@ -2,10 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { build } from '../../../infrastructure/server/serverBuild';
 import { generateOtpExpirationDate, isOtpExpired } from '../Otp';
 
-/**
- * @group unitary
- */
-describe('Otp model', () => {
+describe('Otp', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

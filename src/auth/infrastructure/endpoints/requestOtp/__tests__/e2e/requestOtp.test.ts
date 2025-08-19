@@ -1,13 +1,10 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../server/serverBuild';
-import { createTables } from '../../database/createTables';
-import { seedUser } from '../../database/seeders/userSeeder';
-import { REQUEST_OTP_ENDPOINT } from '../requestOtp/requestOtp';
+import { build } from '../../../../server/serverBuild';
+import { createTables } from '../../../../database/createTables';
+import { seedUser } from '../../../../database/seeders/userSeeder';
+import { REQUEST_OTP_ENDPOINT } from '../../requestOtp';
 
-/**
- * @group e2e
- */
-describe('requestOtp endpoint end-to-end tests', () => {
+describe('requestOtp', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -18,7 +15,6 @@ describe('requestOtp endpoint end-to-end tests', () => {
         await createTables();
         await seedUser();
       } catch (error) {
-        console.error('Error setting up test database:', error);
         throw error;
       }
     }

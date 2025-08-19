@@ -1,22 +1,19 @@
-import { build } from '../../../server/serverBuild';
-import { REQUEST_OTP_ENDPOINT } from '../requestOtp';
-import { userRepository } from '../../../database/repositories/SQLiteUserRepository';
-import { otpRepository } from '../../../database/repositories/SQLiteOtpRepository';
-import { codeGenerator } from '../../../helpers/generators/randomCodeGenerator';
-import { hashGenerator } from '../../../helpers/generators/randomHashGenerator';
+import { build } from '../../../../server/serverBuild';
+import { REQUEST_OTP_ENDPOINT } from '../../requestOtp';
+import { userRepository } from '../../../../database/repositories/SQLiteUserRepository';
+import { otpRepository } from '../../../../database/repositories/SQLiteOtpRepository';
+import { codeGenerator } from '../../../../helpers/generators/randomCodeGenerator';
+import { hashGenerator } from '../../../../helpers/generators/randomHashGenerator';
 import { FastifyInstance } from 'fastify/types/instance';
-import { phoneValidator } from '../../../helpers/validators/blacklistPhoneValidator';
-import { generateOtpExpirationDate } from '../../../../domain/model/Otp';
+import { phoneValidator } from '../../../../helpers/validators/blacklistPhoneValidator';
+import { generateOtpExpirationDate } from '../../../../../domain/model/Otp';
 
-jest.mock('../../../../domain/model/Otp', () => ({
-  ...jest.requireActual('../../../../domain/model/Otp'),
+jest.mock('../../../../../domain/model/Otp', () => ({
+  ...jest.requireActual('../../../../../domain/model/Otp'),
   generateOtpExpirationDate: jest.fn(),
 }));
 
-/**
- * @group integration
- */
-describe('requestOtp endpoint integration tests', () => {
+describe('requestOtp', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

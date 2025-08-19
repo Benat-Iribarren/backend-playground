@@ -17,10 +17,7 @@ import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerat
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
 import { User } from '../../../domain/model/User';
 
-/**
- * @group unitary
- */
-describe('requestOtp service', () => {
+describe('requestOtpService', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
