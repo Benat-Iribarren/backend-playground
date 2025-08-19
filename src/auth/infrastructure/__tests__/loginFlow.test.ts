@@ -1,10 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { build } from '../server/serverBuild';
-import { createTables } from '../database/createTables';
-import { seedUser } from '../database/seeders/userSeeder';
-
 import { REQUEST_OTP_ENDPOINT } from '../endpoints/requestOtp/requestOtp';
 import { VERIFY_OTP_ENDPOINT } from '../endpoints/verifyOtp/verifyOtp';
+import { initTestDatabase } from '../database/initTestDatabase';
 
 describe('loginFlow', () => {
   let app: FastifyInstance;
@@ -12,13 +10,11 @@ describe('loginFlow', () => {
   beforeAll(async () => {
     app = build();
     await app.ready();
-    if (process.env.NODE_ENV === 'test') {
-      try {
-        await createTables();
-        await seedUser();
-      } catch (error) {
-        throw error;
-      }
+    try {
+      await initTestDatabase();
+    } catch (error) {
+      console.error('Error setting up test database:', error);
+      throw error;
     }
   });
 

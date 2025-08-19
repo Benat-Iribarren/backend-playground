@@ -3,11 +3,6 @@ import { seedUser } from './seeders/userSeeder';
 import fs from 'fs';
 
 const createDataDirectory = async () => {
-  // Skip directory creation for test environment (using in-memory database)
-  if (process.env.NODE_ENV === 'test') {
-    return;
-  }
-
   if (!fs.existsSync('./data')) {
     fs.mkdirSync('./data', { recursive: true });
   }

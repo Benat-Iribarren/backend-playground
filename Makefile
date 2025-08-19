@@ -88,7 +88,7 @@ db-init:
 .PHONY: db-init-test
 db-init-test: ## Initialize test database (in-memory)
 	@echo "Initializing test database..."
-	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test backend sh -c "npx ts-node src/auth/infrastructure/database/initDatabase.ts"
+	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test backend sh -c "npx ts-node src/auth/infrastructure/database/initTestDatabase.ts"
 
 .PHONY: down
 down: ## Stop all services
