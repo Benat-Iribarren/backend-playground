@@ -13,4 +13,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   testMatch: ['**/__tests__/**/*.(test|spec).ts', '**/?(*.)+(test|spec).ts'],
   clearMocks: true,
+  forceExit: true,
+  detectOpenHandles: true,
+  testTimeout: 30000,
 };

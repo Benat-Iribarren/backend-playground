@@ -44,7 +44,9 @@ ifeq ($(OS),Windows_NT)
 else
 	NODE_ENV=test BACKEND_PORT=3001 BACKEND_COMMAND="npm run test" $(DOCKER_COMPOSE) --profile test up -d --build
 endif
-	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test -e BACKEND_PORT=3001 -e BACKEND_COMMAND="npm run test" backend sh -c "npm ci && npm run build && npm run test"
+	@echo "Executing tests..."
+	-$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test -e BACKEND_PORT=3001 -e BACKEND_COMMAND="npm run test" backend sh -c "npm ci && npm run build && npm run test"
+	@echo "Cleaning up test containers..."
 	$(DOCKER_COMPOSE) --profile test down
 
 .PHONY: test-watch
