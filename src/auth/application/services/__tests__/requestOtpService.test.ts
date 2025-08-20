@@ -38,31 +38,39 @@ describe('requestOtpService', () => {
     const phone = 'userPhone';
     const verificationCode = '123456';
     const hash = 'hash';
-    const user: User = { id: 1, nin, phone, isBlocked: false };
+    const user: User = { id: 1, nin, isBlocked: false };
 
     const mockUserRepository = {
       getUser: jest.fn(async () => user),
+      isUserPhoneRegistered: jest.fn(async (userId, inputPhone) => {
+        return userId === user.id && inputPhone === phone;
+      }),
     } as UserRepository;
+
     const mockOtpRepository = {
-      ...otpRepository,
       saveOtp: jest.fn(async () => {}),
+      getOtp: jest.fn(),
+      deleteOtp: jest.fn(),
     } as OtpRepository;
+
     const mockCodeGenerator = {
       generateSixDigitCode: jest.fn(() => verificationCode),
     } as CodeGenerator;
+
     const mockHashGenerator = {
       generateHash: jest.fn(() => hash),
     } as HashGenerator;
+
     const mockPhoneValidator = {
       validatePhone: jest.fn(() => true),
     } as PhoneValidator;
 
     const serviceResponse = processOtpRequest(
-      { ...mockOtpRepository },
-      { ...mockUserRepository },
-      { ...mockCodeGenerator },
-      { ...mockHashGenerator },
-      { ...mockPhoneValidator },
+      mockOtpRepository,
+      mockUserRepository,
+      mockCodeGenerator,
+      mockHashGenerator,
+      mockPhoneValidator,
       { nin, phone },
     );
 
@@ -74,6 +82,7 @@ describe('requestOtpService', () => {
     const phone = 'nonExistingPhone';
     const mockUserRepository = {
       getUser: jest.fn(async () => null),
+      isUserPhoneRegistered: jest.fn(),
     } as UserRepository;
 
     const serviceResponse = processOtpRequest(
@@ -91,10 +100,11 @@ describe('requestOtpService', () => {
   test('should return a user blocked error status message when the user is blocked', () => {
     const nin = 'userBlockedNin';
     const phone = 'userBlockedPhone';
-    const blockedUser: User = { id: 1, nin, phone, isBlocked: true };
+    const blockedUser: User = { id: 1, nin, isBlocked: true };
 
     const mockUserRepository = {
       getUser: jest.fn(async () => blockedUser),
+      isUserPhoneRegistered: jest.fn(),
     } as UserRepository;
 
     const serviceResponse = processOtpRequest(
@@ -109,27 +119,35 @@ describe('requestOtpService', () => {
     expect(serviceResponse).resolves.toEqual(userBlockedErrorStatusMsg);
   });
 
-  test('should return a user phone unavailable for sms error status message when the user phone is unavailable to be sent an sms', () => {
+  test('should return a user phone unavailable for sms error status message when the user phone is unavailable to be sent an sms', async () => {
     const nin = 'userNin';
     const phone = 'unavailablePhone';
-    const userWithUnavailablePhone: User = { id: 1, nin, phone, isBlocked: false };
+    const user: User = { id: 1, nin, isBlocked: false };
 
     const mockUserRepository = {
-      getUser: jest.fn(async () => userWithUnavailablePhone),
+      getUser: jest.fn(async () => user),
+      isUserPhoneRegistered: jest.fn(async () => true),
     } as UserRepository;
+
     const mockPhoneValidator = {
       validatePhone: jest.fn(() => false),
     } as PhoneValidator;
 
-    const serviceResponse = processOtpRequest(
-      otpRepository,
-      { ...mockUserRepository },
+    const mockOtpRepository = {
+      saveOtp: jest.fn(),
+      getOtp: jest.fn(),
+      deleteOtp: jest.fn(),
+    } as OtpRepository;
+
+    const serviceResponse = await processOtpRequest(
+      mockOtpRepository,
+      mockUserRepository,
       codeGenerator,
       hashGenerator,
-      { ...mockPhoneValidator },
+      mockPhoneValidator,
       { nin, phone },
     );
 
-    expect(serviceResponse).resolves.toEqual(userPhoneUnavailableForSmsErrorStatusMsg);
+    expect(serviceResponse).toEqual(userPhoneUnavailableForSmsErrorStatusMsg);
   });
 });

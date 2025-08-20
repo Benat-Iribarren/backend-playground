@@ -1,4 +1,4 @@
-import { Phone, User, UserId } from '../../domain/model/User';
+import { Nin, Phone, User, UserId } from '../../domain/model/User';
 import {
   UserBlockedError,
   userBlockedErrorStatusMsg,
@@ -20,7 +20,10 @@ import {
 } from '../../domain/model/Otp';
 import { PhoneValidator } from '../../domain/interfaces/validators/PhoneValidator';
 
-type RequestOtpInput = Pick<User, 'nin' | 'phone'>;
+type RequestOtpInput = {
+  nin: Nin;
+  phone: Phone;
+};
 type RequestOtpResponse = Pick<Otp, 'hash' | 'verificationCode'>;
 
 export type RequestOtpServiceErrors =
@@ -37,7 +40,7 @@ export async function processOtpRequest(
   input: RequestOtpInput,
 ): Promise<RequestOtpServiceErrors | RequestOtpResponse> {
   const { nin, phone } = input;
-  const user: User | null = await userRepository.getUser(nin, phone);
+  const user: User | null = await userRepository.getUser(nin);
 
   if (userDoesntExist(user)) {
     return userNotFoundErrorStatusMsg;
@@ -47,8 +50,12 @@ export async function processOtpRequest(
   if (userIsBlocked(user)) {
     return userBlockedErrorStatusMsg;
   }
+  const userPhoneExist: boolean = await userRepository.isUserPhoneRegistered(user.id, phone);
 
-  if (userPhoneUnavailable(phoneValidator, user.phone)) {
+  if (userPhoneDoesNotExist(userPhoneExist)) {
+    return userNotFoundErrorStatusMsg;
+  }
+  if (userPhoneUnavailable(phoneValidator, phone)) {
     return userPhoneUnavailableForSmsErrorStatusMsg;
   }
 
@@ -66,6 +73,10 @@ async function getOtp(
 
   const { hash, verificationCode } = otp;
   return { hash, verificationCode };
+}
+
+function userPhoneDoesNotExist(userPhoneExist: boolean): boolean {
+  return !userPhoneExist;
 }
 
 function userPhoneUnavailable(phoneValidator: PhoneValidator, phone: Phone) {

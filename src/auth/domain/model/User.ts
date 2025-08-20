@@ -5,6 +5,5 @@ export type UserId = number;
 export interface User {
   id: UserId;
   nin: Nin;
-  phone: Phone;
   isBlocked: boolean;
 }

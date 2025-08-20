@@ -7,6 +7,7 @@ import { hashGenerator } from '../../../../helpers/generators/randomHashGenerato
 import { FastifyInstance } from 'fastify/types/instance';
 import { phoneValidator } from '../../../../helpers/validators/blacklistPhoneValidator';
 import { generateOtpExpirationDate } from '../../../../../domain/model/Otp';
+import { initTestDatabase } from '../../../../database/initTestDatabase';
 
 jest.mock('../../../../../domain/model/Otp', () => ({
   ...jest.requireActual('../../../../../domain/model/Otp'),
@@ -19,6 +20,7 @@ describe('requestOtp', () => {
   beforeAll(async () => {
     app = build();
     await app.ready();
+    await initTestDatabase();
   });
 
   beforeEach(async () => {
@@ -41,7 +43,6 @@ describe('requestOtp', () => {
     jest.spyOn(userRepository, 'getUser').mockResolvedValue({
       id: userId,
       nin: nin,
-      phone: phone,
       isBlocked: false,
     });
 
@@ -167,7 +168,6 @@ describe('requestOtp', () => {
     jest.spyOn(userRepository, 'getUser').mockResolvedValue({
       id: userId,
       nin: nin,
-      phone: phone,
       isBlocked: false,
     });
 
@@ -196,7 +196,6 @@ describe('requestOtp', () => {
     jest.spyOn(userRepository, 'getUser').mockResolvedValue({
       id: userId,
       nin: nin,
-      phone: phone,
       isBlocked: true,
     });
 
@@ -228,5 +227,28 @@ describe('requestOtp', () => {
     expect(response.statusCode).toBe(500);
     expect(data).toHaveProperty('error');
     expect(data.error).toBe('Internal Server Error');
+  });
+  test('should return incorrect nin or phone number error when phone is not registered', async () => {
+    const nin = '12345678A';
+    const phone = '999999999';
+    const userId = 1;
+
+    jest.spyOn(userRepository, 'getUser').mockResolvedValue({
+      id: userId,
+      nin,
+      isBlocked: false,
+    });
+    jest.spyOn(userRepository, 'isUserPhoneRegistered').mockResolvedValue(false);
+
+    const response = await app.inject({
+      method: 'POST',
+      url: REQUEST_OTP_ENDPOINT,
+      payload: { nin, phone },
+    });
+
+    const data = response.json();
+    expect(response.statusCode).toBe(401);
+    expect(data).toHaveProperty('error');
+    expect(data.error).toBe('Incorrect nin or phone number.');
   });
 });

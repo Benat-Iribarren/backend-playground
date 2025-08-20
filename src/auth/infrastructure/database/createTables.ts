@@ -4,10 +4,10 @@ import db from './dbClient';
 export const createTables = async () => {
   await sql`
   CREATE TABLE IF NOT EXISTS phone (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    phone TEXT NOT NULL,
-    userId INTEGER NOT NULL,
-    FOREIGN KEY (userId) REFERENCES user(id)
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      phoneNumber TEXT NOT NULL,
+      userId INTEGER NOT NULL,
+      FOREIGN KEY (userId) REFERENCES user(id)
   );
 `.execute(db);
 
@@ -15,7 +15,6 @@ export const createTables = async () => {
     CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nin TEXT NOT NULL,
-        phone TEXT NOT NULL,
         isBlocked BOOLEAN NOT NULL
     );
   `.execute(db);
