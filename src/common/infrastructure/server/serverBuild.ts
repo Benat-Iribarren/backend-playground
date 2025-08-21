@@ -1,7 +1,7 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
-import { registerRoutes } from '../../../auth/infrastructure/endpoints/routes';
+import { registerRoutes } from '../enpoints/routes';
 
 export function build(): FastifyInstance {
   const app = Fastify({

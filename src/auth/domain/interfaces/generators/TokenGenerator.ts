@@ -1,6 +1,6 @@
 import { Hash } from '../../model/Otp';
-import { Token } from '../../model/Token';
+import { TokenUser } from '../../../../common/domain/model/TokenUser';
 
 export interface TokenGenerator {
-  generateToken(hash: Hash): Token;
+  generateToken(hash: Hash): TokenUser;
 }

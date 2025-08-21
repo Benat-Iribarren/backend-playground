@@ -1,6 +1,6 @@
 import { build } from '../../../../../../common/infrastructure/server/serverBuild';
 import { REQUEST_OTP_ENDPOINT } from '../../requestOtp';
-import { userRepository } from '../../../../../../common/infrastructure/database/repositories/SQLiteUserRepository';
+import { userRepository } from '../../../../../../user/infrastructure/database/repositories/SQLiteUserRepository';
 import { otpRepository } from '../../../../database/repositories/SQLiteOtpRepository';
 import { codeGenerator } from '../../../../helpers/generators/randomCodeGenerator';
 import { hashGenerator } from '../../../../helpers/generators/randomHashGenerator';

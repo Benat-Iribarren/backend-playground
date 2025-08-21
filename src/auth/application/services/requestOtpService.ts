@@ -9,7 +9,7 @@ import {
   userPhoneUnavailableForSmsErrorStatusMsg,
 } from '../../domain/errors/userLoginErrors';
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
-import { UserRepository } from '@common/domain/interfaces/repositories/UserRespository';
+import { UserRepository } from '@src/user/domain/interfaces/repositories/UserRespository';
 import { CodeGenerator } from '../../domain/interfaces/generators/CodeGenerator';
 import { HashGenerator } from '../../domain/interfaces/generators/HashGenerator';
 import {

@@ -4,9 +4,9 @@
   "description": "",
   "main": "dist/common/infrastructure/server/index.js",
   "scripts": {
-    "dev": "nodemon --ext ts,tsx --watch src --exec ts-node src/common/infrastructure/server/index.ts",
+    "dev": "nodemon --ext ts,tsx --watch src --exec \"ts-node -r tsconfig-paths/register src/common/infrastructure/server/index.ts\"",
     "build": "tsc",
-    "start": "node dist/common/infrastructure/server/index.js",
+    "start": "node -r tsconfig-paths/register dist/common/infrastructure/server/index.js",
     "test": "cross-env NODE_ENV=test jest --passWithNoTests",
     "test:watch": "cross-env NODE_ENV=test jest --watchAll --passWithNoTests",
     "test:coverage": "cross-env NODE_ENV=test jest --coverage",
@@ -51,7 +51,8 @@
     "fastify": "^5.4.0",
     "kysely": "^0.28.3",
     "nodemon": "^3.1.10",
-    "pino-pretty": "^13.0.0"
+    "pino-pretty": "^13.0.0",
+    "tsconfig-paths": "^4.2.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

@@ -1,5 +1,5 @@
 import { isOtpExpired, Otp } from '../../domain/model/Otp';
-import { Token } from '../../domain/model/Token';
+import { TokenUser } from '../../../common/domain/model/TokenUser';
 import { TokenRepository } from '../../domain/interfaces/repositories/TokenRepository';
 import { UserId } from '@common/domain/model/UserParameters';
 import { TokenGenerator } from '../../domain/interfaces/generators/TokenGenerator';
@@ -12,7 +12,7 @@ import {
 } from '../../domain/errors/otpLoginError';
 
 type VerifyOtpInput = Pick<Otp, 'verificationCode' | 'hash'>;
-type VerifyOtpResponse = { token: Token };
+type VerifyOtpResponse = { token: TokenUser };
 
 export type VerifyOtpServiceErrors = OtpNotFoundError | ExpiredVerificationCodeError;
 
@@ -36,7 +36,7 @@ export async function processOtpVerificationRequest(
     return expiredVerificationCodeErrorStatusMsg;
   }
 
-  const token: Token = tokenGenerator.generateToken(hash);
+  const token: TokenUser = tokenGenerator.generateToken(hash);
   await saveToken(tokenRepository, userId, token);
   return { token };
 }
@@ -44,7 +44,7 @@ export async function processOtpVerificationRequest(
 async function saveToken(
   tokenRepository: TokenRepository,
   userId: UserId,
-  token: Token,
+  token: TokenUser,
 ): Promise<void> {
   await tokenRepository.saveToken(userId, token);
 }

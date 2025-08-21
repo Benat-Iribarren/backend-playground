@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
-import { Token } from '../../../domain/model/Token';
+import { TokenUser } from '../../../../common/domain/model/TokenUser';
 import {
   invalidHashOrCodeErrorStatusMsg,
   missingHashOrCodeErrorStatusMsg,
@@ -37,7 +37,7 @@ const statusToCode: { [K in VerifyOtpErrors]: StatusCode } & {
   EXPIRED_VERIFICATION_CODE: 401,
 };
 
-type VerificationResponse = VerifyOtpErrors | { token: Token };
+type VerificationResponse = VerifyOtpErrors | { token: TokenUser };
 type VerifyOtpBody = { hash: string; verificationCode: string };
 
 interface VerifyOtpDependencies {

@@ -6,7 +6,7 @@ module.exports = {
   moduleNameMapper: {
     '^@common/(.*)$': '<rootDir>/src/common/$1',
     '^@auth/(.*)$': '<rootDir>/src/auth/$1',
-    '^@profile/(.*)$': '<rootDir>/src/profile/$1',
+    '^@user/(.*)$': '<rootDir>/src/user/$1',
     '^@src/(.*)$': '<rootDir>/src/$1',
   },
   modulePaths: ['<rootDir>/src'],

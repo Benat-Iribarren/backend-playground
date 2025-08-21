@@ -1,10 +1,10 @@
 import db from '@common/infrastructure/database/dbClient';
-import { Token } from '../../../domain/model/Token';
+import { TokenUser } from '@common/domain/model/TokenUser';
 import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRepository';
 import { UserId } from '@common/domain/model/UserParameters';
 
 export const tokenRepository: TokenRepository = {
-  async saveToken(userId: UserId, token: Token) {
+  async saveToken(userId: UserId, token: TokenUser) {
     const existing = await db
       .selectFrom('token')
       .select('userId')

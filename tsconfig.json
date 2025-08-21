@@ -11,7 +11,7 @@
     "paths": {
       "@common/*": ["common/*"],
       "@auth/*": ["auth/*"],
-      "@profile/*": ["profile/*"],
+      "@user/*": ["user/*"],
       "@src/*": ["./*"]
     },
     "strict": true,

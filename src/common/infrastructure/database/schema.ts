@@ -1,5 +1,5 @@
 import { VerificationCode, Hash } from '../../../auth/domain/model/Otp';
-import { Token } from '../../../auth/domain/model/Token';
+import { TokenUser } from '../../domain/model/TokenUser';
 import { UserId, Phone } from '../../domain/model/UserParameters';
 import { UserAuth } from '../../../auth/domain/model/UserAuth';
 import { Generated } from 'kysely';
@@ -13,7 +13,7 @@ export interface otpTable {
 
 export interface tokenTable {
   userId: UserId;
-  token: Token;
+  token: TokenUser;
 }
 
 export interface userTable {
