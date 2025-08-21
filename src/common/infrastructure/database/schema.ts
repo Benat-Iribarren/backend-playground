@@ -1,5 +1,5 @@
-import { VerificationCode, Hash } from '../../domain/model/Otp';
-import { Token } from '../../domain/model/Token';
+import { VerificationCode, Hash } from '../../../auth/domain/model/Otp';
+import { Token } from '../../../auth/domain/model/Token';
 import { AuthUser, UserId, Phone } from '../../domain/model/User';
 import { Generated } from 'kysely';
 

@@ -1,19 +1,21 @@
-const { createDefaultPreset } = require('ts-jest');
-
-const tsJestTransformCfg = createDefaultPreset().transform;
-
-/** @type {import('jest').Config} **/
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  runner: 'groups',
+  preset: 'ts-jest',
   testEnvironment: 'node',
-  transform: {
-    ...tsJestTransformCfg,
+  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  moduleNameMapper: {
+    '^@common/(.*)$': '<rootDir>/src/common/$1',
+    '^@auth/(.*)$': '<rootDir>/src/auth/$1',
+    '^@profile/(.*)$': '<rootDir>/src/profile/$1',
+    '^@src/(.*)$': '<rootDir>/src/$1',
   },
-  roots: ['<rootDir>/src'],
-  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
-  testMatch: ['**/__tests__/**/*.(test|spec).ts', '**/?(*.)+(test|spec).ts'],
-  clearMocks: true,
-  forceExit: true,
-  detectOpenHandles: true,
-  testTimeout: 30000,
+  modulePaths: ['<rootDir>/src'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/**/index.ts',
+    '!src/**/__tests__/**',
+    '!src/**/*.spec.ts',
+  ],
+  coverageDirectory: 'coverage',
 };

@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../server/serverBuild';
-import { REQUEST_OTP_ENDPOINT } from '../endpoints/requestOtp/requestOtp';
+import { build } from '../../../common/infrastructure/server/serverBuild';
+import { initTestDatabase } from '../.././../common/infrastructure/database/initTestDatabase';
 import { VERIFY_OTP_ENDPOINT } from '../endpoints/verifyOtp/verifyOtp';
-import { initTestDatabase } from '../database/initTestDatabase';
+import { REQUEST_OTP_ENDPOINT } from '../endpoints/requestOtp/requestOtp';
 
 describe('loginFlow', () => {
   let app: FastifyInstance;

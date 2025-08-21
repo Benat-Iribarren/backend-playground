@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../../infrastructure/server/serverBuild';
+import { build } from '../../../../common/infrastructure/server/serverBuild';
 import { processOtpVerificationRequest } from '../verifyOtpService';
 import { tokenRepository } from '../../../infrastructure/database/repositories/SQLiteTokenRepository';
 import { otpRepository } from '../../../infrastructure/database/repositories/SQLiteOtpRepository';

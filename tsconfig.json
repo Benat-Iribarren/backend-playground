@@ -7,6 +7,13 @@
     "isolatedModules": true,
     "outDir": "dist",
     "rootDir": "src",
+    "baseUrl": "./src",
+    "paths": {
+      "@common/*": ["common/*"],
+      "@auth/*": ["auth/*"],
+      "@profile/*": ["profile/*"],
+      "@src/*": ["./*"]
+    },
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

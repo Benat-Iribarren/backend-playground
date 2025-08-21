@@ -1,7 +1,7 @@
-import db from '../dbClient';
+import db from '@common/infrastructure/database/dbClient';
 import { Token } from '../../../domain/model/Token';
 import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRepository';
-import { UserId } from '../../../domain/model/User';
+import { UserId } from '@common/domain/model/User';
 
 export const tokenRepository: TokenRepository = {
   async saveToken(userId: UserId, token: Token) {

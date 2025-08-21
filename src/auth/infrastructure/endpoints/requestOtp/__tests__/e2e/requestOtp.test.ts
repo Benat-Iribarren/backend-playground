@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
-
-import { build } from '../../../../server/serverBuild';
-import { initTestDatabase } from '../../../../database/initTestDatabase';
+import { build } from '../../../../../../common/infrastructure/server/serverBuild';
+import { initTestDatabase } from '../../../../../../common/infrastructure/database/initTestDatabase';
 import { REQUEST_OTP_ENDPOINT } from '../../requestOtp';
 
 describe('requestOtp', () => {

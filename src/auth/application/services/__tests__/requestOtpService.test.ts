@@ -1,11 +1,11 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../../infrastructure/server/serverBuild';
+import { build } from '../../../../common/infrastructure/server/serverBuild';
 import { processOtpRequest } from '../requestOtpService';
 import { otpRepository } from '../../../infrastructure/database/repositories/SQLiteOtpRepository';
 import { codeGenerator } from '../../../infrastructure/helpers/generators/randomCodeGenerator';
 import { hashGenerator } from '../../../infrastructure/helpers/generators/randomHashGenerator';
 import { phoneValidator } from '../../../infrastructure/helpers/validators/blacklistPhoneValidator';
-import { UserRepository } from '../../../domain/interfaces/repositories/UserRespository';
+import { UserRepository } from '../../../../common/domain/interfaces/repositories/UserRespository';
 import {
   userBlockedErrorStatusMsg,
   userNotFoundErrorStatusMsg,
@@ -15,7 +15,7 @@ import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValid
 import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
 import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
-import { AuthUser } from '../../../domain/model/User';
+import { AuthUser } from '../../../../common/domain/model/User';
 
 describe('requestOtpService', () => {
   let app: FastifyInstance;

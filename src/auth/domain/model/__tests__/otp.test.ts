@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../../infrastructure/server/serverBuild';
+import { build } from '../../../../common/infrastructure/server/serverBuild';
 import { generateOtpExpirationDate, isOtpExpired } from '../Otp';
 
 describe('Otp', () => {

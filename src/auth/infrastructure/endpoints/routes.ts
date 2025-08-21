@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import requestOtp from './requestOtp/requestOtp';
 import { otpRepository } from '../database/repositories/SQLiteOtpRepository';
-import { userRepository } from '../database/repositories/SQLiteUserRepository';
+import { userRepository } from '@common/infrastructure/database/repositories/SQLiteUserRepository';
 import { codeGenerator } from '../helpers/generators/randomCodeGenerator';
 import { hashGenerator } from '../helpers/generators/randomHashGenerator';
 import { phoneValidator } from '../helpers/validators/blacklistPhoneValidator';

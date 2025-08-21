@@ -1,4 +1,4 @@
-import { Nin, Phone, AuthUser, UserId } from '../../domain/model/User';
+import { Nin, Phone, AuthUser, UserId } from '@common/domain/model/User';
 import {
   UserBlockedError,
   userBlockedErrorStatusMsg,
@@ -8,7 +8,7 @@ import {
   userPhoneUnavailableForSmsErrorStatusMsg,
 } from '../../domain/errors/userLoginErrors';
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
-import { UserRepository } from '../../domain/interfaces/repositories/UserRespository';
+import { UserRepository } from '@common/domain/interfaces/repositories/UserRespository';
 import { CodeGenerator } from '../../domain/interfaces/generators/CodeGenerator';
 import { HashGenerator } from '../../domain/interfaces/generators/HashGenerator';
 import {
