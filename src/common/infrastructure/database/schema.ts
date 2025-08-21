@@ -1,6 +1,7 @@
 import { VerificationCode, Hash } from '../../../auth/domain/model/Otp';
 import { Token } from '../../../auth/domain/model/Token';
-import { AuthUser, UserId, Phone } from '../../domain/model/User';
+import { UserId, Phone } from '../../domain/model/UserParameters';
+import { UserAuth } from '../../../auth/domain/model/UserAuth';
 import { Generated } from 'kysely';
 
 export interface otpTable {
@@ -17,7 +18,7 @@ export interface tokenTable {
 
 export interface userTable {
   id: Generated<number>;
-  nin: AuthUser['nin'];
+  nin: UserAuth['nin'];
   isBlocked: boolean;
 }
 

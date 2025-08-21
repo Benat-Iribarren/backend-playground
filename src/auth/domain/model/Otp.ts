@@ -1,4 +1,4 @@
-import { UserId } from '@common/domain/model/User';
+import { UserId } from '@common/domain/model/UserParameters';
 
 export type VerificationCode = string;
 export type Hash = string;

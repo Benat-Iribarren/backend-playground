@@ -1,4 +1,4 @@
-import { Phone } from '@common/domain/model/User';
+import { Phone } from '@common/domain/model/UserParameters';
 
 export interface PhoneValidator {
   validatePhone(phone: Phone): boolean;

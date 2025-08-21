@@ -15,7 +15,7 @@ import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValid
 import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
 import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
-import { AuthUser } from '../../../../common/domain/model/User';
+import { UserAuth } from '../../../domain/model/UserAuth';
 
 describe('requestOtpService', () => {
   let app: FastifyInstance;
@@ -38,7 +38,7 @@ describe('requestOtpService', () => {
     const phone = 'userPhone';
     const verificationCode = '123456';
     const hash = 'hash';
-    const user: AuthUser = { id: 1, nin, isBlocked: false };
+    const user: UserAuth = { id: 1, nin, isBlocked: false };
 
     const mockUserRepository = {
       getUser: jest.fn(async () => user),
@@ -100,7 +100,7 @@ describe('requestOtpService', () => {
   test('should return a user blocked error status message when the user is blocked', () => {
     const nin = 'userBlockedNin';
     const phone = 'userBlockedPhone';
-    const blockedUser: AuthUser = { id: 1, nin, isBlocked: true };
+    const blockedUser: UserAuth = { id: 1, nin, isBlocked: true };
 
     const mockUserRepository = {
       getUser: jest.fn(async () => blockedUser),
@@ -122,7 +122,7 @@ describe('requestOtpService', () => {
   test('should return a user phone unavailable for sms error status message when the user phone is unavailable to be sent an sms', async () => {
     const nin = 'userNin';
     const phone = 'unavailablePhone';
-    const user: AuthUser = { id: 1, nin, isBlocked: false };
+    const user: UserAuth = { id: 1, nin, isBlocked: false };
 
     const mockUserRepository = {
       getUser: jest.fn(async () => user),

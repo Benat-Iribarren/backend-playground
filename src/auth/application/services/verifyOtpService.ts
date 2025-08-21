@@ -1,7 +1,7 @@
 import { isOtpExpired, Otp } from '../../domain/model/Otp';
 import { Token } from '../../domain/model/Token';
 import { TokenRepository } from '../../domain/interfaces/repositories/TokenRepository';
-import { UserId } from '@common/domain/model/User';
+import { UserId } from '@common/domain/model/UserParameters';
 import { TokenGenerator } from '../../domain/interfaces/generators/TokenGenerator';
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
 import {

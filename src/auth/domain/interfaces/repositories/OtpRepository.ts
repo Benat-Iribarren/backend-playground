@@ -1,5 +1,5 @@
 import { Hash, Otp, VerificationCode } from '../../model/Otp';
-import { UserId } from '@common/domain/model/User';
+import { UserId } from '@common/domain/model/UserParameters';
 
 export interface OtpRepository {
   saveOtp(otp: Otp): Promise<void>;
