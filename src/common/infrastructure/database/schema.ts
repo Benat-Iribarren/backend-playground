@@ -20,6 +20,8 @@ export interface userTable {
   id: Generated<number>;
   nin: UserAuth['nin'];
   isBlocked: boolean;
+  fullName: string;
+  email: string;
 }
 
 export interface phoneTable {

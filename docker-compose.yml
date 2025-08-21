@@ -13,10 +13,17 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - DATABASE_FILE_PATH=${DATABASE_FILE_PATH:-./data/sequraBackendDB.sqlite}
-    command: sh -c "npm ci && npm run build && ${BACKEND_COMMAND:-node dist/auth/infrastructure/server/index.js}"
+    command: >
+      sh -c "npm ci &&
+             if [ \"$NODE_ENV\" = \"development\" ]; then
+               npm run dev;
+             else
+               npm run build && ${BACKEND_COMMAND:-node dist/common/infrastructure/server/index.js};
+             fi"
     profiles:
       - production
       - test
+      - development
 
   db:
     image: nouchka/sqlite3

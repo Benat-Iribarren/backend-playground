@@ -15,7 +15,9 @@ export const createTables = async () => {
     CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nin TEXT NOT NULL,
-        isBlocked BOOLEAN NOT NULL
+        isBlocked BOOLEAN NOT NULL,
+        fullName TEXT NOT NULL,
+        email TEXT NOT NULL
     );
   `.execute(db);
 

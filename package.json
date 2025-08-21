@@ -2,15 +2,15 @@
   "name": "sequra-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/auth/infrastructure/server/index.js",
+  "main": "dist/common/infrastructure/server/index.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/auth/infrastructure/server/index.ts",
+    "dev": "nodemon --ext ts,tsx --watch src --exec ts-node src/common/infrastructure/server/index.ts",
     "build": "tsc",
-    "start": "node dist/auth/infrastructure/server/index.js",
+    "start": "node dist/common/infrastructure/server/index.js",
     "test": "cross-env NODE_ENV=test jest --passWithNoTests",
     "test:watch": "cross-env NODE_ENV=test jest --watchAll --passWithNoTests",
     "test:coverage": "cross-env NODE_ENV=test jest --coverage",
-    "seed:user": "ts-node src/auth/infrastructure/database/seeders/userSeeder.ts"
+    "seed:user": "ts-node src/common/infrastructure/database/seeders/userSeeder.ts"
   },
   "keywords": [],
   "author": "",
