@@ -1,7 +1,7 @@
 import { TokenUser } from '@common/domain/model/TokenUser';
-import { UserProfile } from '@src/user/domain/model/UserProfile';
+import { UserProfile } from '@user/domain/model/UserProfile';
 import { TokenReader } from '@auth/domain/interfaces/repositories/TokenReader';
-import { UserRepository } from '@src/user/domain/interfaces/repositories/UserRespository';
+import { UserRepository } from '@user/domain/interfaces/repositories/UserRespository';
 
 export const tokenNotFoundErrorStatusMsg = 'TOKEN_NOT_FOUND' as const;
 export const userNotFoundErrorStatusMsg = 'USER_NOT_FOUND' as const;

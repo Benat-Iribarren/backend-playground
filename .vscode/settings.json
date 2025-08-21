@@ -1,0 +1,7 @@
+{
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.includeCompletion": true,
+  "typescript.suggest.includeCompletionsForImportStatements": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

@@ -3,9 +3,9 @@ import {
   getProfileService,
   tokenNotFoundErrorStatusMsg,
   userNotFoundErrorStatusMsg,
-} from '@src/user/application/services/getProfileService';
+} from '@user/application/services/getProfileService';
 import { tokenReader } from '@auth/infrastructure/database/repositories/SQLiteTokenReader';
-import { userRepository } from '@src/user/infrastructure/database/repositories/SQLiteUserRepository';
+import { userRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
 import { getProfileSchema } from './schema';
 import { extractBearer } from '@user/infrastructure/helpers/extractBearer';
 

@@ -1,4 +1,4 @@
-import { TokenUser } from '../../../../common/domain/model/TokenUser';
+import { TokenUser } from '@common/domain/model/TokenUser';
 import { UserId } from '@common/domain/model/UserParameters';
 
 export interface TokenRepository {

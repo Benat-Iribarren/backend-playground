@@ -5,7 +5,7 @@
   "main": "dist/common/infrastructure/server/index.js",
   "scripts": {
     "dev": "nodemon --ext ts,tsx --watch src --exec \"ts-node -r tsconfig-paths/register src/common/infrastructure/server/index.ts\"",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
     "start": "node -r tsconfig-paths/register dist/common/infrastructure/server/index.js",
     "test": "cross-env NODE_ENV=test jest --passWithNoTests",
     "test:watch": "cross-env NODE_ENV=test jest --watchAll --passWithNoTests",

@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { verifyOtpSchema } from './schema';
-import { TokenUser } from '../../../../common/domain/model/TokenUser';
+import { TokenUser } from '@common/domain/model/TokenUser';
 import {
   invalidHashOrCodeErrorStatusMsg,
   missingHashOrCodeErrorStatusMsg,

@@ -1,8 +1,23 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+/** @type {import('jest').Config} */
 module.exports = {
   preset: 'ts-jest',
+  runner: 'groups',
   testEnvironment: 'node',
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  roots: ['<rootDir>/src'],
+  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  testMatch: ['**/__tests__/**/*.(test|spec).ts', '**/?(*.)+(test|spec).ts'],
+  clearMocks: true,
+  forceExit: true,
+  detectOpenHandles: true,
+  testTimeout: 30000,
+  transform: {
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        tsconfig: './tsconfig.jest.json',
+      },
+    ],
+  },
   moduleNameMapper: {
     '^@common/(.*)$': '<rootDir>/src/common/$1',
     '^@auth/(.*)$': '<rootDir>/src/auth/$1',

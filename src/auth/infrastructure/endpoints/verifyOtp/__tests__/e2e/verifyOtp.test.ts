@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../../../../../common/infrastructure/server/serverBuild';
+import { build } from '@common/infrastructure/server/serverBuild';
 import { VERIFY_OTP_ENDPOINT } from '../../verifyOtp';
-import { createTables } from '../../../../../../common/infrastructure/database/createTables';
-import { seedUser } from '../../../../../../common/infrastructure/database/seeders/userSeeder';
+import { createTables } from '@common/infrastructure/database/createTables';
+import { seedUser } from '@common/infrastructure/database/seeders/userSeeder';
 import {
   ExpirationDate,
   generateOtpExpirationDate,

@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { build } from '../../../common/infrastructure/server/serverBuild';
-import { initTestDatabase } from '../.././../common/infrastructure/database/initTestDatabase';
+import { build } from '@common/infrastructure/server/serverBuild';
+import { initTestDatabase } from '@common/infrastructure/database/initTestDatabase';
 import { VERIFY_OTP_ENDPOINT } from '../endpoints/verifyOtp/verifyOtp';
 import { REQUEST_OTP_ENDPOINT } from '../endpoints/requestOtp/requestOtp';
 

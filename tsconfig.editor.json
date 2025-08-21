@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
     "baseUrl": "./src",
     "types": ["node", "jest"],
     "paths": {
@@ -11,6 +10,6 @@
       "@src/*": ["./*"]
     }
   },
-  "include": ["src/**/*", "src/**/__tests__/**/*", "src/**/*.test.ts", "src/**/*.spec.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

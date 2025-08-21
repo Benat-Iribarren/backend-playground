@@ -1,6 +1,6 @@
 import { TokenGenerator } from '../../../domain/interfaces/generators/TokenGenerator';
 import { Hash } from '../../../domain/model/Otp';
-import { TokenUser } from '../../../../common/domain/model/TokenUser';
+import { TokenUser } from '@common/domain/model/TokenUser';
 import crypto from 'crypto';
 
 export const tokenGenerator: TokenGenerator = {

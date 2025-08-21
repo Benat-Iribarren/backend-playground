@@ -1,13 +1,13 @@
-import { build } from '../../../../../../common/infrastructure/server/serverBuild';
+import { build } from '@common/infrastructure/server/serverBuild';
 import { REQUEST_OTP_ENDPOINT } from '../../requestOtp';
-import { userRepository } from '../../../../../../user/infrastructure/database/repositories/SQLiteUserRepository';
+import { userRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
 import { otpRepository } from '../../../../database/repositories/SQLiteOtpRepository';
 import { codeGenerator } from '../../../../helpers/generators/randomCodeGenerator';
 import { hashGenerator } from '../../../../helpers/generators/randomHashGenerator';
 import { FastifyInstance } from 'fastify/types/instance';
 import { phoneValidator } from '../../../../helpers/validators/blacklistPhoneValidator';
 import { generateOtpExpirationDate } from '../../../../../domain/model/Otp';
-import { initTestDatabase } from '../../../../../../common/infrastructure/database/initTestDatabase';
+import { initTestDatabase } from '@common/infrastructure/database/initTestDatabase';
 
 jest.mock('../../../../../domain/model/Otp', () => ({
   ...jest.requireActual('../../../../../domain/model/Otp'),
