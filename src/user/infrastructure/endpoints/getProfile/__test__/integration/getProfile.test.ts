@@ -1,11 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import { build } from '@src/common/infrastructure/server/serverBuild';
 import { GET_PROFILE_ENDPOINT } from '../../getProfile';
-import { tokenReader } from '@auth/infrastructure/database/repositories/SQLiteTokenReader';
 import { userRepository } from '@src/user/infrastructure/database/repositories/SQLiteUserRepository';
+import { tokenRepository } from '@auth/infrastructure/database/repositories/SQLiteTokenRepository';
 
-jest.mock('@auth/infrastructure/database/repositories/SQLiteTokenReader', () => ({
-  tokenReader: { getUserIdByToken: jest.fn() },
+jest.mock('@auth/infrastructure/database/repositories/SQLiteTokenRepository', () => ({
+  tokenRepository: { getUserIdByToken: jest.fn() },
 }));
 jest.mock('@src/user/infrastructure/database/repositories/SQLiteUserRepository', () => ({
   userRepository: { getProfile: jest.fn() },
@@ -37,15 +37,13 @@ describe('getProfile', () => {
       email: 'usuario.uno@example.com',
     };
 
-    jest.spyOn(tokenReader, 'getUserIdByToken').mockResolvedValue(userId);
+    jest.spyOn(tokenRepository, 'getUserIdByToken').mockResolvedValue(userId);
     jest.spyOn(userRepository, 'getProfile').mockResolvedValue(profile as any);
 
     const response = await app.inject({
       method: 'GET',
       url: GET_PROFILE_ENDPOINT,
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+      headers: { authorization: `Bearer ${token}` },
     });
 
     expect(response.statusCode).toBe(200);
@@ -56,33 +54,28 @@ describe('getProfile', () => {
     const token = 'valid-token';
     const userId = 1;
 
-    jest.spyOn(tokenReader, 'getUserIdByToken').mockResolvedValue(userId);
+    jest.spyOn(tokenRepository, 'getUserIdByToken').mockResolvedValue(userId);
     jest.spyOn(userRepository, 'getProfile').mockResolvedValue(null);
 
     const response = await app.inject({
       method: 'GET',
       url: GET_PROFILE_ENDPOINT,
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+      headers: { authorization: `Bearer ${token}` },
     });
 
     expect(response.statusCode).toBe(404);
     expect(response.json()).toEqual({ error: 'User not found.' });
   });
 
-  test('should return a unauthorized error when token does not exists', async () => {
+  test('should return a unauthorized error when token does not exist', async () => {
     const token = 'not-valid-token';
 
-    jest.spyOn(tokenReader, 'getUserIdByToken').mockResolvedValue(null);
-    jest.spyOn(userRepository, 'getProfile').mockResolvedValue(null);
+    jest.spyOn(tokenRepository, 'getUserIdByToken').mockResolvedValue(null);
 
     const response = await app.inject({
       method: 'GET',
       url: GET_PROFILE_ENDPOINT,
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+      headers: { authorization: `Bearer ${token}` },
     });
 
     expect(response.statusCode).toBe(401);
@@ -94,8 +87,10 @@ describe('getProfile', () => {
       method: 'GET',
       url: GET_PROFILE_ENDPOINT,
     });
+
     expect(response.statusCode).toBe(400);
     const body = response.json();
     expect(body.error).toBe('Bad Request');
+    expect(tokenRepository.getUserIdByToken).not.toHaveBeenCalled();
   });
 });

@@ -12,6 +12,7 @@ import { tokenRepository } from '@auth/infrastructure/database/repositories/SQLi
 import registerGetProfile from '@user/infrastructure/endpoints/getProfile/getProfile';
 import { userRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
 
+import authPlugin from '@auth/infrastructure/http/authenticate';
 export function registerRoutes(fastify: FastifyInstance) {
   // --- AUTH ---
   fastify.register(
@@ -33,5 +34,8 @@ export function registerRoutes(fastify: FastifyInstance) {
   );
 
   // --- USER ---
-  fastify.register(registerGetProfile());
+  fastify.register(async (app) => {
+    app.register(authPlugin);
+    app.register(registerGetProfile());
+  });
 }

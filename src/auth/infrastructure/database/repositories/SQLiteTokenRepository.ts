@@ -29,4 +29,12 @@ export const tokenRepository: TokenRepository = {
         .execute();
     }
   },
+  async getUserIdByToken(token: TokenUser): Promise<UserId | null> {
+    const row = await db
+      .selectFrom('token')
+      .select('userId')
+      .where('token', '=', token)
+      .executeTakeFirst();
+    return row?.userId ?? null;
+  },
 };

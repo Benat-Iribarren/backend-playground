@@ -1,19 +1,14 @@
 import {
   getProfileService,
-  tokenNotFoundErrorStatusMsg,
   userNotFoundErrorStatusMsg,
 } from '@user/application/services/getProfileService';
-import { TokenReader } from '@auth/domain/interfaces/repositories/TokenReader';
 import { UserRepository } from '@user/domain/interfaces/repositories/UserRespository';
 import { UserProfile } from '@user/domain/model/UserProfile';
 
-describe('getProfileService', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
+describe('getProfileService (userId)', () => {
+  beforeEach(() => jest.resetAllMocks());
 
-  test('should return the user profile when token exists for a valid user', async () => {
-    const token = 'valid-token';
+  test('should return the user profile when user exists', async () => {
     const userId = 1;
     const profile: UserProfile = {
       id: userId,
@@ -22,59 +17,26 @@ describe('getProfileService', () => {
       email: 'user1@example.com',
     };
 
-    const mockTokenReader: TokenReader = {
-      getUserIdByToken: jest.fn(async () => userId),
-    };
-
-    const mockUserRepository: UserRepository = {
+    const mockRepo: UserRepository = {
       getUser: jest.fn(),
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(async () => profile),
     };
 
-    await expect(
-      getProfileService(mockTokenReader, mockUserRepository, { token }),
-    ).resolves.toEqual(profile);
-
-    expect(mockTokenReader.getUserIdByToken).toHaveBeenCalledWith(token);
-    expect(mockUserRepository.getProfile).toHaveBeenCalledWith(userId);
+    await expect(getProfileService(mockRepo, { userId })).resolves.toEqual(profile);
+    expect(mockRepo.getProfile).toHaveBeenCalledWith(userId);
   });
 
-  test('should return a user not found error when token exists but user does not', async () => {
-    const token = 'valid-token';
-    const userId = -1;
+  test('should return USER_NOT_FOUND when repo returns null', async () => {
+    const userId = 99;
 
-    const mockTokenReader: TokenReader = {
-      getUserIdByToken: jest.fn(async () => userId),
-    };
-    const mockUserRepository: UserRepository = {
+    const mockRepo: UserRepository = {
       getUser: jest.fn(),
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(async () => null),
     };
-    await expect(
-      getProfileService(mockTokenReader, mockUserRepository, { token }),
-    ).resolves.toEqual(userNotFoundErrorStatusMsg);
 
-    expect(mockTokenReader.getUserIdByToken).toHaveBeenCalledWith(token);
-    expect(mockUserRepository.getProfile).toHaveBeenCalledWith(userId);
-  });
-
-  test('should return a token not found error when token does not exist', async () => {
-    const token = 'invalid-token';
-    const mockTokenReader: TokenReader = {
-      getUserIdByToken: jest.fn(async () => null),
-    };
-    const mockUserRepository: UserRepository = {
-      getUser: jest.fn(),
-      isUserPhoneRegistered: jest.fn(),
-      getProfile: jest.fn(),
-    };
-    await expect(
-      getProfileService(mockTokenReader, mockUserRepository, { token }),
-    ).resolves.toEqual(tokenNotFoundErrorStatusMsg);
-
-    expect(mockTokenReader.getUserIdByToken).toHaveBeenCalledWith(token);
-    expect(mockUserRepository.getProfile).not.toHaveBeenCalled();
+    await expect(getProfileService(mockRepo, { userId })).resolves.toBe(userNotFoundErrorStatusMsg);
+    expect(mockRepo.getProfile).toHaveBeenCalledWith(userId);
   });
 });
