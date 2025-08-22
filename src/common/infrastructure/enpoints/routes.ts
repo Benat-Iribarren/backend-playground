@@ -9,6 +9,7 @@ import { phoneValidator } from '@auth/infrastructure/helpers/validators/blacklis
 import { tokenGenerator } from '@auth/infrastructure/helpers/generators/fromHashTokenGenerator';
 import { tokenRepository } from '@auth/infrastructure/database/repositories/SQLiteTokenRepository';
 
+import registerUpdateProfile from '@user/infrastructure/endpoints/updateProfile/updateProfile';
 import registerGetProfile from '@user/infrastructure/endpoints/getProfile/getProfile';
 import { userRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
 
@@ -37,5 +38,6 @@ export function registerRoutes(fastify: FastifyInstance) {
   fastify.register(async (app) => {
     app.register(authenticateUser);
     app.register(registerGetProfile());
+    app.register(registerUpdateProfile());
   });
 }

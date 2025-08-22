@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { requestOtpSchema } from './schema';
-import { isValidNin } from '../../../domain/helpers/validators/ninValidator';
-import { isValidPhone } from '../../../domain/helpers/validators/phoneValidator';
+import { isValidNin } from '../../../../common/domain/helpers/validators/ninValidator';
+import { isValidPhone } from '../../../../common/domain/helpers/validators/phoneValidator';
 import { processOtpRequest } from '../../../application/services/requestOtpService';
 import {
   invalidNinOrPhoneErrorStatusMsg,
