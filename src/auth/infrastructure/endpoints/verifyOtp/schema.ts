@@ -1,4 +1,4 @@
-import { errorSchema } from '../../../../common/infrastructure/enpoints/errorSchema';
+import { errorSchema } from '../../../../common/infrastructure/endpoints/errorSchema';
 
 export const verifyOtpSchema = {
   schema: {
