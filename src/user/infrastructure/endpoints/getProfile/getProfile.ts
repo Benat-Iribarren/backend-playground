@@ -12,7 +12,7 @@ import { extractBearer } from '@user/infrastructure/helpers/extractBearer';
 export const GET_PROFILE_ENDPOINT = '/user/profile';
 
 const statusToMessage = {
-  [tokenNotFoundErrorStatusMsg]: { error: 'Invalid or missing token.' },
+  [tokenNotFoundErrorStatusMsg]: { error: 'Unauthorized.' },
   [userNotFoundErrorStatusMsg]: { error: 'User not found.' },
 } as const;
 
