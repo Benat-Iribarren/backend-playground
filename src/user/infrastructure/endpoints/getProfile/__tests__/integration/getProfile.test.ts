@@ -11,7 +11,7 @@ jest.mock('@src/user/infrastructure/database/repositories/SQLiteUserRepository',
   userRepository: { getProfile: jest.fn() },
 }));
 
-describe('getProfile', () => {
+describe('getProfile integration', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

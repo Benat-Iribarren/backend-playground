@@ -5,7 +5,7 @@ import {
 import { UserRepository } from '@user/domain/interfaces/repositories/UserRespository';
 import { UserProfile } from '@user/domain/model/UserProfile';
 
-describe('getProfileService (userId)', () => {
+describe('getProfileService', () => {
   beforeEach(() => jest.resetAllMocks());
 
   test('should return the user profile when user exists', async () => {
