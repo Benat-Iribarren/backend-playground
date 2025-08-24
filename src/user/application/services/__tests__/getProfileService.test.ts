@@ -21,6 +21,7 @@ describe('getProfileService', () => {
       getUser: jest.fn(),
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(async () => profile),
+      updateProfile: jest.fn(),
     };
 
     await expect(getProfileService(mockRepo, { userId })).resolves.toEqual(profile);
@@ -34,6 +35,7 @@ describe('getProfileService', () => {
       getUser: jest.fn(),
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(async () => null),
+      updateProfile: jest.fn(),
     };
 
     await expect(getProfileService(mockRepo, { userId })).resolves.toBe(userNotFoundErrorStatusMsg);

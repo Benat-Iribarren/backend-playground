@@ -1,4 +1,3 @@
-// src/common/infrastructure/database/seeders/userSeeder.ts
 import db from '../dbClient';
 
 export async function seedUser() {

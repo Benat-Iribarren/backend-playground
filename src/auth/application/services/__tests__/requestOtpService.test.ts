@@ -25,6 +25,7 @@ describe('requestOtpService', () => {
 
     const mockUserRepository: UserRepository = {
       getUser: jest.fn(async () => user),
+      updateProfile: jest.fn(),
       isUserPhoneRegistered: jest.fn(async (userId, inputPhone) => {
         return userId === user.id && inputPhone === phone;
       }),
@@ -69,6 +70,7 @@ describe('requestOtpService', () => {
 
     const mockUserRepository: UserRepository = {
       getUser: jest.fn(async () => null),
+      updateProfile: jest.fn(),
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(),
     };
@@ -102,6 +104,7 @@ describe('requestOtpService', () => {
 
     const mockUserRepository: UserRepository = {
       getUser: jest.fn(async () => blockedUser),
+      updateProfile: jest.fn(),
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(),
     };
@@ -135,6 +138,7 @@ describe('requestOtpService', () => {
 
     const mockUserRepository: UserRepository = {
       getUser: jest.fn(async () => user),
+      updateProfile: jest.fn(),
       isUserPhoneRegistered: jest.fn(async () => true),
       getProfile: jest.fn(),
     };
