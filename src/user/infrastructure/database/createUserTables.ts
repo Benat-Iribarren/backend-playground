@@ -6,7 +6,7 @@ export const createUserTables = async () => {
   CREATE TABLE IF NOT EXISTS card (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       userId INTEGER NOT NULL,
-      last4 TEXT NOT NULL,
+      lastFourDigits TEXT NOT NULL,
       brand TEXT NOT NULL,
       expiryMonth INTEGER NOT NULL,
       expiryYear INTEGER NOT NULL,

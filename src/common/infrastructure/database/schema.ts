@@ -24,6 +24,17 @@ export interface userTable {
   email: string;
 }
 
+export interface cardTable {
+  id: Generated<number>;
+  userId: UserId;
+  lastFourDigits: string;
+  brand: string;
+  expiryMonth: number;
+  expiryYear: number;
+  token: string;
+  isPrimary: boolean;
+}
+
 export interface phoneTable {
   id: Generated<number>;
   userId: UserId;
@@ -34,5 +45,6 @@ export interface Database {
   otp: otpTable;
   token: tokenTable;
   user: userTable;
+  card: cardTable;
   phone: phoneTable;
 }
