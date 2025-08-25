@@ -1,42 +1,35 @@
 import { FastifyInstance } from 'fastify';
 import { updateProfileSchema } from './schema';
 import { userRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
-import {
-  updateProfileService,
-  successfulStatusMsg,
-  userNotFoundErrorStatusMsg,
-  emptyPatchErrorStatusMsg,
-} from '@user/application/services/updateProfileService';
+import { updateProfileService } from '@user/application/services/updateProfileService';
 import { UserProfile } from '@user/domain/model/UserProfile';
 import { isValidNin } from '@common/domain/helpers/validators/ninValidator';
 import { isValidEmail } from '@user/domain/helpers/validators/emailValidator';
+import {
+  UpdateProfileErrors,
+  successfulStatusMsg,
+  userNotFoundErrorStatusMsg,
+  emptyPatchErrorStatusMsg,
+  invalidParametersErrorStatusMsg,
+} from './errors';
 
 export const UPDATE_PROFILE_ENDPOINT = '/user/profile';
 
 type UpdateProfileBody = Partial<Pick<UserProfile, 'fullName' | 'nin' | 'email'>>;
 
-type UpdateProfileErrors =
-  | typeof successfulStatusMsg
-  | typeof userNotFoundErrorStatusMsg
-  | typeof emptyPatchErrorStatusMsg
-  | 'INVALID_PARAMETERS_FORMAT';
-
-const statusToMessage: { [K in UpdateProfileErrors]: string | object } & {
-  [key: string]: string | object;
-} = {
-  [successfulStatusMsg]: { message: 'Profile updated successfully.' },
+const statusToMessage: { [K in UpdateProfileErrors]: { error: string } } = {
   [userNotFoundErrorStatusMsg]: { error: 'User not found.' },
   [emptyPatchErrorStatusMsg]: { error: 'Missing profile parameters.' },
-  INVALID_PARAMETERS_FORMAT: { error: 'Invalid parameters format.' },
+  [invalidParametersErrorStatusMsg]: { error: 'Invalid parameters format.' },
 };
 
 type StatusCode = 200 | 400 | 404;
 
-const statusToCode: { [K in UpdateProfileErrors]: StatusCode } & { [key: string]: StatusCode } = {
+const statusToCode: { [K in UpdateProfileErrors | typeof successfulStatusMsg]: StatusCode } = {
   [successfulStatusMsg]: 200,
   [userNotFoundErrorStatusMsg]: 404,
   [emptyPatchErrorStatusMsg]: 400,
-  INVALID_PARAMETERS_FORMAT: 400,
+  [invalidParametersErrorStatusMsg]: 400,
 };
 
 interface UpdateProfileDependencies {
@@ -58,8 +51,8 @@ function updateProfile(dependencies: UpdateProfileDependencies = { userRepositor
 
         if (invalidParameters(body)) {
           return reply
-            .status(statusToCode.INVALID_PARAMETERS_FORMAT)
-            .send(statusToMessage.INVALID_PARAMETERS_FORMAT);
+            .status(statusToCode[invalidParametersErrorStatusMsg])
+            .send(statusToMessage[invalidParametersErrorStatusMsg]);
         }
 
         const result = await updateProfileService(dependencies.userRepository, {
@@ -67,9 +60,15 @@ function updateProfile(dependencies: UpdateProfileDependencies = { userRepositor
           data: body,
         });
 
+        if (result === successfulStatusMsg) {
+          return reply
+            .status(statusToCode[result])
+            .send({ message: 'Profile updated successfully.' });
+        }
+
         return reply.status(statusToCode[result]).send(statusToMessage[result]);
       } catch (error) {
-        fastify.log.error(error);
+        request.log.error(error);
         return reply.status(500).send({ error: 'Internal Server Error' });
       }
     });

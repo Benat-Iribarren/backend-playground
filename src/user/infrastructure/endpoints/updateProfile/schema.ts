@@ -7,6 +7,7 @@ export const updateProfileSchema = {
       properties: {
         authorization: { type: 'string', description: 'Bearer token' },
       },
+      required: ['authorization'],
     },
     body: {
       type: 'object',
