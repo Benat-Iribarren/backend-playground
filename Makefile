@@ -81,14 +81,19 @@ logs-test: ## Show logs from test services
 	$(DOCKER_COMPOSE) --profile test logs -f
 
 .PHONY: db-init
-db-init: 
+db-init:
 	@echo "Initializing production database..."
-	$(DOCKER_COMPOSE) --profile production exec -e NODE_ENV=development -e DATABASE_FILE_PATH=./data/sequraBackendDB.sqlite backend sh -c "npx ts-node src/common/infrastructure/database/initDatabase.ts" ## Initialize production database (alias)
+	$(DOCKER_COMPOSE) --profile production exec \
+		-e NODE_ENV=development \
+		-e DATABASE_FILE_PATH=./data/sequraBackendDB.sqlite \
+		backend sh -c "npx ts-node -r tsconfig-paths/register src/common/infrastructure/database/initDatabase.ts"
 
 .PHONY: db-init-test
-db-init-test: ## Initialize test database (in-memory)
+db-init-test:
 	@echo "Initializing test database..."
-	$(DOCKER_COMPOSE) --profile test exec -e NODE_ENV=test backend sh -c "npx ts-node src/common/infrastructure/database/initTestDatabase.ts"
+	$(DOCKER_COMPOSE) --profile test exec \
+		-e NODE_ENV=test \
+		backend sh -c "npx ts-node -r tsconfig-paths/register src/common/infrastructure/database/initTestDatabase.ts"
 
 .PHONY: down
 down: ## Stop all services
