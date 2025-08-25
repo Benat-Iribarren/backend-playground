@@ -2,7 +2,7 @@ import { isOtpExpired, Otp } from '../../domain/model/Otp';
 import { TokenUser } from '../../../common/domain/model/TokenUser';
 import { TokenRepository } from '../../domain/interfaces/repositories/TokenRepository';
 import { UserId } from '@common/domain/model/UserParameters';
-import { TokenGenerator } from '../../domain/interfaces/generators/TokenGenerator';
+import { TokenGenerator } from '@common/domain/interfaces/generators/TokenGenerator';
 import { OtpRepository } from '../../domain/interfaces/repositories/OtpRepository';
 import {
   ExpiredVerificationCodeError,

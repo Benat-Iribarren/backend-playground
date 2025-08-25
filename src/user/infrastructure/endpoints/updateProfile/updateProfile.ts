@@ -9,7 +9,7 @@ import {
 } from '@user/application/services/updateProfileService';
 import { UserProfile } from '@user/domain/model/UserProfile';
 import { isValidNin } from '@common/domain/helpers/validators/ninValidator';
-import { isValidEmail } from '@user/domain/helpers/emailValidator';
+import { isValidEmail } from '@user/domain/helpers/validators/emailValidator';
 
 export const UPDATE_PROFILE_ENDPOINT = '/user/profile';
 

@@ -5,13 +5,13 @@ import { tokenRepository } from '../../../infrastructure/database/repositories/S
 import { otpRepository } from '../../../infrastructure/database/repositories/SQLiteOtpRepository';
 import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRepository';
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
-import { TokenGenerator } from '../../../domain/interfaces/generators/TokenGenerator';
+import { TokenGenerator } from '../../../../common/domain/interfaces/generators/TokenGenerator';
 import { isOtpExpired } from '../../../domain/model/Otp';
 import {
   expiredVerificationCodeErrorStatusMsg,
   otpNotFoundErrorStatusMsg,
 } from '../../../domain/errors/otpLoginError';
-import { tokenGenerator } from '../../../infrastructure/helpers/generators/fromHashTokenGenerator';
+import { tokenGenerator } from '../../../../common/infrastructure/helpers/generators/TokenGenerator';
 
 jest.mock('../../../domain/model/Otp', () => ({
   ...jest.requireActual('../../../domain/model/Otp'),

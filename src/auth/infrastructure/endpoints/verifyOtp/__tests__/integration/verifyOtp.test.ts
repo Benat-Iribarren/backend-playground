@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { build } from '@common/infrastructure/server/serverBuild';
 import { otpRepository } from '../../../../database/repositories/SQLiteOtpRepository';
-import { tokenGenerator } from '../../../../helpers/generators/fromHashTokenGenerator';
+import { tokenGenerator } from '../../../../../../common/infrastructure/helpers/generators/TokenGenerator';
 import { VERIFY_OTP_ENDPOINT } from '../../verifyOtp';
 import { tokenRepository } from '../../../../database/repositories/SQLiteTokenRepository';
 import { isOtpExpired } from '../../../../../domain/model/Otp';

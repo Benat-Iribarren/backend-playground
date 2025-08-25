@@ -14,7 +14,7 @@ import { invalidHash } from '../../../domain/helpers/validators/hashValidator';
 import { invalidVerificationCode } from '../../../domain/helpers/validators/verificationCodeValidator';
 import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRepository';
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
-import { TokenGenerator } from '../../../domain/interfaces/generators/TokenGenerator';
+import { TokenGenerator } from '../../../../common/domain/interfaces/generators/TokenGenerator';
 
 export const VERIFY_OTP_ENDPOINT = '/auth/otp/verify';
 
