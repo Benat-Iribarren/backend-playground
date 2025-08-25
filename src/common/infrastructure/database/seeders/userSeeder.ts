@@ -12,32 +12,38 @@ export async function seedUser() {
   }
 }
 
-function getUsers() {
+function getUsers(): Array<{
+  nin: string;
+  phones: { [key: string]: { isPrimary: boolean } };
+  isBlocked: boolean;
+  fullName: string;
+  email: string;
+}> {
   return [
     {
       nin: '87654321Z',
-      phones: ['222222222', '888888888'],
+      phones: { '222222222': { isPrimary: true }, '888888888': { isPrimary: false } },
       isBlocked: false,
       fullName: 'Usuario Uno',
       email: 'usuario1@example.com',
     },
     {
       nin: '12345678A',
-      phones: ['666666666', '777777777'],
+      phones: { '666666666': { isPrimary: true }, '777777777': { isPrimary: false } },
       isBlocked: false,
       fullName: 'Usuario Dos',
       email: 'usuario2@example.com',
     },
     {
       nin: '12345678B',
-      phones: ['111111111', '111111121'],
+      phones: { '111111111': { isPrimary: true }, '111111121': { isPrimary: false } },
       isBlocked: false,
       fullName: 'Usuario Tres',
       email: 'usuario3@example.com',
     },
     {
       nin: '87654321A',
-      phones: ['666666667'],
+      phones: { '666666667': { isPrimary: true } },
       isBlocked: true,
       fullName: 'Usuario Bloqueado',
       email: 'bloqueado@example.com',
@@ -51,7 +57,7 @@ async function selectUser(nin: string) {
 
 async function insertUserAndPhones(
   nin: string,
-  phones: string[],
+  phones: { [key: string]: { isPrimary: boolean } },
   isBlocked: boolean,
   fullName: string,
   email: string,
@@ -68,9 +74,10 @@ async function insertUserAndPhones(
     .executeTakeFirst();
 
   if (inserted?.id) {
-    const phoneInserts = phones.map((phoneNumber) => ({
+    const phoneInserts = Object.entries(phones).map(([phoneNumber, { isPrimary }]) => ({
       userId: inserted.id,
       phoneNumber,
+      isPrimary: isPrimary ? 1 : 0,
     }));
 
     await db.insertInto('phone').values(phoneInserts).execute();

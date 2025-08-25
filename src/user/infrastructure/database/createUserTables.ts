@@ -21,6 +21,7 @@ export const createUserTables = async () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       phoneNumber TEXT NOT NULL,
       userId INTEGER NOT NULL,
+      isPrimary BOOLEAN NOT NULL,
       FOREIGN KEY (userId) REFERENCES user(id)
   );
 `.execute(db);
