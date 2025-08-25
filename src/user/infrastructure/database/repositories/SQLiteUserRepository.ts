@@ -41,7 +41,7 @@ export const userRepository: UserRepository = {
       return false;
     }
 
-    const updates: Record<string, unknown> = {};
+    const updates: Record<string, string> = {};
     if (fullName) {
       updates.fullName = fullName;
     }
