@@ -1,6 +1,7 @@
 import db from '@common/infrastructure/database/dbClient';
 import { CardRepository } from '@user/domain/interfaces/repositories/CardRepository';
 import { Card } from '@src/user/domain/model/Card';
+import { UserId } from '@common/domain/model/UserParameters';
 
 export const cardRepository: CardRepository = {
   async addCard(card: Card): Promise<Card | null> {
@@ -10,5 +11,11 @@ export const cardRepository: CardRepository = {
       .values(row as any)
       .execute();
     return card;
+  },
+
+  async getCards(userId: UserId): Promise<Card[] | null> {
+    const cards = await db.selectFrom('card').selectAll().where('userId', '=', userId).execute();
+
+    return cards.length > 0 ? cards : null;
   },
 };
