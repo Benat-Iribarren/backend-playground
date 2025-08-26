@@ -46,22 +46,6 @@ const statusToCode: { [K in AddCardErrors]: StatusCode } & { [key: string]: Stat
   [persistenceErrorStatusMsg]: 500,
 };
 
-function invalidExpiry(expiry: string): boolean {
-  const date = /^(\d{2})\/(\d{2}|\d{4})$/.exec(expiry);
-  if (!date) {
-    return true;
-  }
-  const month = Number(date[1]);
-  const year = Number(date[2].length === 2 ? `20${date[2]}` : date[2]);
-  if (Number.isNaN(month) || Number.isNaN(year)) {
-    return true;
-  }
-  if (month < 1 || month > 12) {
-    return true;
-  }
-  return false;
-}
-
 interface AddCardDependencies {
   cardRepository: CardRepository;
   tokenGenerator: TokenGenerator;
@@ -79,14 +63,13 @@ function addCard(deps: AddCardDependencies) {
         }
 
         const { cardNumber, expiry } = request.body as AddCardBody;
-
-        if (!cardNumber || !expiry) {
+        if (missingParameters(cardNumber, expiry)) {
           return reply
             .status(statusToCode[missingCardOrExpiryErrorStatusMsg])
             .send(statusToMessage[missingCardOrExpiryErrorStatusMsg]);
         }
 
-        if (!isValidCardNumber(cardNumber) || invalidExpiry(expiry)) {
+        if (invalidParameters(cardNumber, expiry)) {
           return reply
             .status(statusToCode[invalidCardOrExpiryErrorStatusMsg])
             .send(statusToMessage[invalidCardOrExpiryErrorStatusMsg]);
@@ -130,7 +113,31 @@ function addCard(deps: AddCardDependencies) {
   };
 }
 
-export default addCard;
+function missingParameters(cardNumber: string, expiry: string) {
+  return !cardNumber || !expiry;
+}
+
+function invalidParameters(cardNumber: string, expiry: string) {
+  return !isValidCardNumber(cardNumber) || invalidExpiry(expiry);
+}
+
+function invalidExpiry(expiry: string): boolean {
+  const date = /^(\d{2})\/(\d{2}|\d{4})$/.exec(expiry);
+  if (!date) {
+    return true;
+  }
+  const month = Number(date[1]);
+  const year = Number(date[2].length === 2 ? `20${date[2]}` : date[2]);
+  if (Number.isNaN(month) || Number.isNaN(year)) {
+    return true;
+  }
+  if (month < 1 || month > 12) {
+    return true;
+  }
+  return false;
+}
+
 function extractExpiryYear(yy: string) {
   return Number(yy.length === 2 ? `20${yy}` : yy);
 }
+export default addCard;

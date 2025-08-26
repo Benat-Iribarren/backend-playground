@@ -3,7 +3,6 @@ import { updateProfileSchema } from './schema';
 import { userRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
 import { updateProfileService } from '@user/application/services/updateProfileService';
 import { UserProfile } from '@user/domain/model/UserProfile';
-import { isValidNin } from '@common/domain/helpers/validators/ninValidator';
 import { isValidEmail } from '@user/domain/helpers/validators/emailValidator';
 import {
   UpdateProfileErrors,
@@ -15,7 +14,7 @@ import {
 
 export const UPDATE_PROFILE_ENDPOINT = '/user/profile';
 
-type UpdateProfileBody = Partial<Pick<UserProfile, 'fullName' | 'nin' | 'email'>>;
+type UpdateProfileBody = Partial<Pick<UserProfile, 'fullName' | 'email'>>;
 
 const statusToMessage: { [K in UpdateProfileErrors]: { error: string } } = {
   [userNotFoundErrorStatusMsg]: { error: 'User not found.' },
@@ -76,17 +75,18 @@ function updateProfile(dependencies: UpdateProfileDependencies = { userRepositor
 }
 
 function missingParameters(body: UpdateProfileBody): boolean {
-  return !body.fullName && !body.nin && !body.email;
+  return !body.fullName && !body.email;
 }
 
 function invalidParameters(body: UpdateProfileBody): boolean {
+  const keys = Object.keys(body);
+  if (keys.some((k) => k !== 'fullName' && k !== 'email')) {
+    return true;
+  }
   if (
     body.fullName !== undefined &&
     (typeof body.fullName !== 'string' || body.fullName.trim() === '')
   ) {
-    return true;
-  }
-  if (body.nin !== undefined && !isValidNin(body.nin)) {
     return true;
   }
   if (body.email !== undefined && !isValidEmail(body.email)) {

@@ -13,7 +13,6 @@ export const updateProfileSchema = {
       type: 'object',
       properties: {
         fullName: { type: 'string', maxLength: 100 },
-        nin: { type: 'string' },
         email: { type: 'string', maxLength: 100 },
       },
       additionalProperties: false,

@@ -7,7 +7,7 @@ export const emptyPatchErrorStatusMsg = 'EMPTY_PATCH' as const;
 
 type UpdateProfileInput = {
   userId: number;
-  data: Partial<Pick<UserProfile, 'fullName' | 'nin' | 'email'>>;
+  data: Partial<Pick<UserProfile, 'fullName' | 'email'>>;
 };
 
 export type UpdateProfileServiceResult =

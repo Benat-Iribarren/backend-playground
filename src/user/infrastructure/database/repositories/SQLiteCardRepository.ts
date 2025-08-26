@@ -4,16 +4,7 @@ import { Card } from '@src/user/domain/model/Card';
 
 export const cardRepository: CardRepository = {
   async addCard(card: Card): Promise<Card | null> {
-    const row = {
-      userId: Number(card.userId),
-      lastFourDigits: String(card.lastFourDigits),
-      brand: String(card.brand),
-      expiryMonth: Number(card.expiryMonth),
-      expiryYear: Number(card.expiryYear),
-      token: String(card.token),
-      isPrimary: (card.isPrimary ? 1 : 0) as unknown as boolean,
-    };
-
+    const row = { ...card, isPrimary: card.isPrimary ? 1 : 0 };
     await db
       .insertInto('card')
       .values(row as any)
