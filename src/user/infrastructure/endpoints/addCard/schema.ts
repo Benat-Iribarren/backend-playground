@@ -37,7 +37,6 @@ export const addCardSchema = {
       },
       400: errorSchema,
       401: errorSchema,
-      404: errorSchema,
       500: errorSchema,
     },
   },

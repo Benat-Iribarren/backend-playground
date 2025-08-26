@@ -15,6 +15,7 @@ import { userRepository } from '@user/infrastructure/database/repositories/SQLit
 import authenticateUser from '@auth/infrastructure/http/authenticate';
 import addCard from '@user/infrastructure/endpoints/addCard/addCard';
 import { cardRepository } from '@user/infrastructure/database/repositories/SQLiteCardRepository';
+import registerGetCards from '@user/infrastructure/endpoints/getCards/getCards';
 
 export function registerRoutes(fastify: FastifyInstance) {
   // --- AUTH ---
@@ -47,5 +48,6 @@ export function registerRoutes(fastify: FastifyInstance) {
         tokenGenerator,
       }),
     );
+    app.register(registerGetCards());
   });
 }

@@ -13,7 +13,7 @@ export const cardRepository: CardRepository = {
     return card;
   },
 
-  async getCards(userId: UserId): Promise<Card[] | null> {
+  async getCardsByUserId(userId: UserId): Promise<Card[] | null> {
     const cards = await db.selectFrom('card').selectAll().where('userId', '=', userId).execute();
 
     return cards.length > 0 ? cards : null;
