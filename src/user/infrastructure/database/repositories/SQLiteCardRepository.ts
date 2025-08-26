@@ -6,10 +6,24 @@ import { UserId } from '@common/domain/model/UserParameters';
 export const cardRepository: CardRepository = {
   async addCard(card: Card): Promise<Card | null> {
     const row = { ...card, isPrimary: card.isPrimary ? 1 : 0 };
-    await db
-      .insertInto('card')
-      .values(row as any)
-      .execute();
+    const existingCard = await db
+      .selectFrom('card')
+      .select('token')
+      .where('token', '=', card.token)
+      .executeTakeFirst();
+
+    if (existingCard) {
+      await db
+        .updateTable('card')
+        .set(row as any)
+        .where('token', '=', card.token)
+        .execute();
+    } else {
+      await db
+        .insertInto('card')
+        .values(row as any)
+        .execute();
+    }
     return card;
   },
 
