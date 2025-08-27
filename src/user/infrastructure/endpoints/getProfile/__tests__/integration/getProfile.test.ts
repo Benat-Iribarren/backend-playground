@@ -38,7 +38,7 @@ describe('getProfile integration', () => {
     };
 
     jest.spyOn(tokenRepository, 'getUserIdByToken').mockResolvedValue(userId);
-    jest.spyOn(userRepository, 'getProfile').mockResolvedValue(profile as any);
+    jest.spyOn(userRepository, 'getProfile').mockResolvedValue(profile);
 
     const response = await app.inject({
       method: 'GET',
