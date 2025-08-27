@@ -19,7 +19,7 @@ type UpdateProfileBody = Partial<Pick<UserProfile, 'fullName' | 'email'>>;
 const statusToMessage: { [K in UpdateProfileErrors]: { error: string } } = {
   [userNotFoundErrorStatusMsg]: { error: 'User not found.' },
   [emptyPatchErrorStatusMsg]: { error: 'Missing profile parameters.' },
-  [invalidParametersErrorStatusMsg]: { error: 'Invalid parameters format.' },
+  [invalidParametersErrorStatusMsg]: { error: 'Invalid parameters.' },
 };
 
 type StatusCode = 200 | 400 | 404;
