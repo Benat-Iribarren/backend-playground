@@ -2,8 +2,13 @@ import db from '@common/infrastructure/database/dbClient';
 import { CardRepository } from '@user/domain/interfaces/repositories/CardRepository';
 import { Card } from '@src/user/domain/model/Card';
 import { UserId } from '@common/domain/model/UserParameters';
+import { CardToken } from '@src/user/domain/model/Card';
 
 export const cardRepository: CardRepository = {
+  async deleteCard(token: CardToken): Promise<void> {
+    await db.deleteFrom('card').where('token', '=', token).executeTakeFirst();
+  },
+
   async addCard(card: Card): Promise<Card | null> {
     const row = { ...card, isPrimary: card.isPrimary ? 1 : 0 };
     const existingCard = await db
