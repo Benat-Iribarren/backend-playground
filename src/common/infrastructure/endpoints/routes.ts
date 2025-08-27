@@ -16,6 +16,7 @@ import authenticateUser from '@auth/infrastructure/http/authenticate';
 import addCard from '@user/infrastructure/endpoints/addCard/addCard';
 import { cardRepository } from '@user/infrastructure/database/repositories/SQLiteCardRepository';
 import registerGetCards from '@user/infrastructure/endpoints/getCards/getCards';
+import { registerDeleteCard } from '@user/infrastructure/endpoints/deleteCard/deleteCard';
 
 export function registerRoutes(fastify: FastifyInstance) {
   // --- AUTH ---
@@ -49,5 +50,6 @@ export function registerRoutes(fastify: FastifyInstance) {
       }),
     );
     app.register(registerGetCards());
+    app.register(registerDeleteCard);
   });
 }

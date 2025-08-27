@@ -11,6 +11,7 @@ function createMockRepo(overrides: Partial<CardRepository> = {}): CardRepository
   return {
     addCard: jest.fn(),
     getCardsByUserId: jest.fn(),
+    deleteCardByTokenAndUserId: jest.fn(),
     ...overrides,
   };
 }

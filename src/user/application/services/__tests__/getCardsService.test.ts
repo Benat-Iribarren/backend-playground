@@ -5,6 +5,7 @@ function createMockRepo(): jest.Mocked<CardRepository> {
   return {
     addCard: jest.fn(),
     getCardsByUserId: jest.fn(),
+    deleteCardByTokenAndUserId: jest.fn(),
   };
 }
 

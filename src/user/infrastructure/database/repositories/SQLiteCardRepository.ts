@@ -5,8 +5,12 @@ import { UserId } from '@common/domain/model/UserParameters';
 import { CardToken } from '@src/user/domain/model/Card';
 
 export const cardRepository: CardRepository = {
-  async deleteCard(token: CardToken): Promise<void> {
-    await db.deleteFrom('card').where('token', '=', token).executeTakeFirst();
+  async deleteCardByTokenAndUserId(userId: UserId, token: CardToken): Promise<void> {
+    await db
+      .deleteFrom('card')
+      .where('token', '=', token)
+      .where('userId', '=', userId)
+      .executeTakeFirst();
   },
 
   async addCard(card: Card): Promise<Card | null> {

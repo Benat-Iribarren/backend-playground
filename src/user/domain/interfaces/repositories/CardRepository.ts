@@ -1,7 +1,7 @@
 import { UserId } from '@common/domain/model/UserParameters';
 import { Card, CardToken } from '@src/user/domain/model/Card';
 export interface CardRepository {
-  deleteCard(token: CardToken): Promise<void>;
+  deleteCardByTokenAndUserId(userId: UserId, token: CardToken): Promise<void>;
   addCard(card: Card): Promise<Card | null>;
   getCardsByUserId(userId: UserId): Promise<Card[] | null>;
 }
