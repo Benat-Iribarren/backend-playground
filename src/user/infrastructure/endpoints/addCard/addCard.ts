@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { addCardSchema } from './schema';
 import { CardRepository } from '@user/domain/interfaces/repositories/CardRepository';
 import { TokenGenerator } from '@common/domain/interfaces/generators/TokenGenerator';
-import { processCardAdderRequest } from '@user/application/services/addCardService';
+import { processAddCard } from '@user/application/services/addCardService';
 import { isValidCardNumber } from '@user/domain/helpers/validators/cardNumberValidator';
 import {
   AddCardErrors,
@@ -23,7 +23,7 @@ type AddCardSuccessBody = {
     lastFourDigits: string;
     brand: string;
     expiry: string;
-    primary: boolean;
+    isPrimary: boolean;
   };
 };
 
@@ -79,7 +79,7 @@ function addCard(deps: AddCardDependencies) {
         const expiryMonth = Number(mm);
         const expiryYear = extractExpiryYear(yy);
 
-        const result = await processCardAdderRequest(deps.cardRepository, deps.tokenGenerator, {
+        const result = await processAddCard(deps.cardRepository, deps.tokenGenerator, {
           userId,
           cardNumber,
           expiryMonth,
@@ -100,7 +100,7 @@ function addCard(deps: AddCardDependencies) {
             lastFourDigits: result.lastFourDigits,
             brand: result.brand,
             expiry,
-            primary: result.isPrimary,
+            isPrimary: result.isPrimary,
           },
         };
 

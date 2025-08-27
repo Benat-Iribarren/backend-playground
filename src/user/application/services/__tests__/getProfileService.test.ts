@@ -1,5 +1,5 @@
 import {
-  getProfileService,
+  processProfileGet,
   userNotFoundErrorStatusMsg,
 } from '@user/application/services/getProfileService';
 import { UserRepository } from '@user/domain/interfaces/repositories/UserRespository';
@@ -24,11 +24,11 @@ describe('getProfileService', () => {
       updateProfile: jest.fn(),
     };
 
-    await expect(getProfileService(mockRepo, { userId })).resolves.toEqual(profile);
+    await expect(processProfileGet(mockRepo, { userId })).resolves.toEqual(profile);
     expect(mockRepo.getProfile).toHaveBeenCalledWith(userId);
   });
 
-  test('should return USER_NOT_FOUND when repo returns null', async () => {
+  test('should return user not found error when repo returns null', async () => {
     const userId = 99;
 
     const mockRepo: UserRepository = {
@@ -38,7 +38,7 @@ describe('getProfileService', () => {
       updateProfile: jest.fn(),
     };
 
-    await expect(getProfileService(mockRepo, { userId })).resolves.toBe(userNotFoundErrorStatusMsg);
+    await expect(processProfileGet(mockRepo, { userId })).resolves.toBe(userNotFoundErrorStatusMsg);
     expect(mockRepo.getProfile).toHaveBeenCalledWith(userId);
   });
 });

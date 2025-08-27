@@ -57,7 +57,7 @@ describe('POST /user/card (integration)', () => {
         lastFourDigits: '1111',
         brand: 'VISA',
         expiry: '12/99',
-        primary: false,
+        isPrimary: false,
       },
     });
 

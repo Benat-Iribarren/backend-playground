@@ -15,7 +15,7 @@ export type UpdateProfileServiceResult =
   | typeof userNotFoundErrorStatusMsg
   | typeof emptyPatchErrorStatusMsg;
 
-export async function updateProfileService(
+export async function processUpdateProfile(
   userRepository: UserRepository,
   { userId, data }: UpdateProfileInput,
 ): Promise<UpdateProfileServiceResult> {

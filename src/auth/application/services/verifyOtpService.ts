@@ -16,7 +16,7 @@ type VerifyOtpResponse = { token: TokenUser };
 
 export type VerifyOtpServiceErrors = OtpNotFoundError | ExpiredVerificationCodeError;
 
-export async function processOtpVerificationRequest(
+export async function processVerifyOtp(
   tokenRepository: TokenRepository,
   otpRepository: OtpRepository,
   tokenGenerator: TokenGenerator,

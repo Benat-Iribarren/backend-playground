@@ -7,7 +7,7 @@ import {
   VerifyOtpErrors,
 } from './errors';
 import {
-  processOtpVerificationRequest,
+  processVerifyOtp,
   VerifyOtpServiceErrors,
 } from '../../../application/services/verifyOtpService';
 import { invalidHash } from '../../../domain/helpers/validators/hashValidator';
@@ -64,7 +64,7 @@ function verifyOtp(dependencies: VerifyOtpDependencies) {
             .send(statusToMessage[invalidHashOrCodeErrorStatusMsg]);
         }
 
-        const body = await processOtpVerificationRequest(
+        const body = await processVerifyOtp(
           dependencies.tokenRepository,
           dependencies.otpRepository,
           dependencies.tokenGenerator,

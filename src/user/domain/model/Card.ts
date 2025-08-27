@@ -5,13 +5,15 @@ export type ExpiryYear = number;
 export type CardToken = string;
 export type IsPrimary = boolean;
 export type CardNumber = string;
+export type Expiry = string;
 export type Card = {
-  userId: number;
+  userId?: number;
   id?: number;
   lastFourDigits: LastFourDigits;
   brand: Brand;
-  expiryMonth: ExpiryMonth;
-  expiryYear: ExpiryYear;
+  expiryMonth?: ExpiryMonth;
+  expiryYear?: ExpiryYear;
+  expiry?: Expiry;
   token: CardToken;
   isPrimary: IsPrimary;
 };

@@ -54,7 +54,7 @@ describe('addCard e2e', () => {
         lastFourDigits: '1111',
         brand: 'VISA',
         expiry: '12/99',
-        primary: false,
+        isPrimary: false,
       }),
     );
     expect(typeof body.card.token).toBe('string');

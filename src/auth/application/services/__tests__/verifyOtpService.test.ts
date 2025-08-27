@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { build } from '@common/infrastructure/server/serverBuild';
-import { processOtpVerificationRequest } from '../verifyOtpService';
+import { processVerifyOtp } from '../verifyOtpService';
 import { tokenRepository } from '../../../infrastructure/database/repositories/SQLiteTokenRepository';
 import { otpRepository } from '../../../infrastructure/database/repositories/SQLiteOtpRepository';
 import { TokenRepository } from '../../../domain/interfaces/repositories/TokenRepository';
@@ -54,7 +54,7 @@ describe('verifyOtpService', () => {
     } as TokenGenerator;
     (isOtpExpired as jest.Mock).mockReturnValue(false);
 
-    const serviceResponse = processOtpVerificationRequest(
+    const serviceResponse = processVerifyOtp(
       { ...mockTokenRepository },
       { ...mockOtpRepository },
       { ...mockTokenGenerator },
@@ -75,7 +75,7 @@ describe('verifyOtpService', () => {
     } as OtpRepository;
     (isOtpExpired as jest.Mock).mockReturnValue(true);
 
-    const serviceResponse = processOtpVerificationRequest(
+    const serviceResponse = processVerifyOtp(
       tokenRepository,
       { ...mockOtpRepository },
       tokenGenerator,
@@ -93,7 +93,7 @@ describe('verifyOtpService', () => {
       getOtp: jest.fn(async () => null),
     } as OtpRepository;
 
-    const serviceResponse = processOtpVerificationRequest(
+    const serviceResponse = processVerifyOtp(
       tokenRepository,
       { ...mockOtpRepository },
       tokenGenerator,

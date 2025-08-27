@@ -1,5 +1,5 @@
 import {
-  updateProfileService,
+  processUpdateProfile,
   successfulStatusMsg,
   userNotFoundErrorStatusMsg,
   emptyPatchErrorStatusMsg,
@@ -22,7 +22,7 @@ describe('updateProfileService', () => {
       updateProfile: jest.fn().mockResolvedValue(true),
     };
 
-    const result = await updateProfileService(mockRepo, { userId, data });
+    const result = await processUpdateProfile(mockRepo, { userId, data });
 
     expect(result).toBe(successfulStatusMsg);
     expect(mockRepo.updateProfile).toHaveBeenCalledWith(userId, data);
@@ -39,13 +39,13 @@ describe('updateProfileService', () => {
       updateProfile: jest.fn().mockResolvedValue(false),
     };
 
-    const result = await updateProfileService(mockRepo, { userId, data });
+    const result = await processUpdateProfile(mockRepo, { userId, data });
 
     expect(result).toBe(userNotFoundErrorStatusMsg);
     expect(mockRepo.updateProfile).toHaveBeenCalledWith(userId, data);
   });
 
-  test('should return empty patch when no profile fields are provided', async () => {
+  test('should return missing params error for given empty body data', async () => {
     const userId = 1;
     const data = {};
 
@@ -56,7 +56,7 @@ describe('updateProfileService', () => {
       updateProfile: jest.fn(),
     };
 
-    const result = await updateProfileService(mockRepo, { userId, data });
+    const result = await processUpdateProfile(mockRepo, { userId, data });
 
     expect(result).toBe(emptyPatchErrorStatusMsg);
     expect(mockRepo.updateProfile).not.toHaveBeenCalled();

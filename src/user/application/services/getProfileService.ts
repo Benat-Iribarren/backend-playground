@@ -7,7 +7,7 @@ type GetProfileInput = { userId: number };
 type GetProfileResponse = UserProfile;
 export type GetProfileServiceErrors = typeof userNotFoundErrorStatusMsg;
 
-export async function getProfileService(
+export async function processProfileGet(
   userRepository: UserRepository,
   { userId }: GetProfileInput,
 ): Promise<GetProfileServiceErrors | GetProfileResponse> {

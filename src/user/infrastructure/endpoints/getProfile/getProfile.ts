@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { getProfileService } from '@user/application/services/getProfileService';
+import { processProfileGet } from '@user/application/services/getProfileService';
 import { userRepository as defaultUserRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
 import { getProfileSchema } from './schema';
 import { GetProfileErrors, userNotFoundErrorStatusMsg, unauthorizedErrorStatusMsg } from './errors';
@@ -29,7 +29,7 @@ export default function registerGetProfile(deps: Deps = { userRepository: defaul
     fastify.get(GET_PROFILE_ENDPOINT, getProfileSchema, async (request, reply) => {
       try {
         const userId = request.userId!;
-        const result = await getProfileService(deps.userRepository, { userId });
+        const result = await processProfileGet(deps.userRepository, { userId });
         if (typeof result !== 'object') {
           return reply.status(statusToCode[result]).send(statusToMessage[result]);
         }

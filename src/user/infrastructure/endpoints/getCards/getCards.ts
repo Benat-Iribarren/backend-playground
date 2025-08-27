@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { getCardsService } from '@user/application/services/getCardsService';
+import { processListUserCards } from '@user/application/services/getCardsService';
 import { cardRepository as defaultCardRepository } from '@user/infrastructure/database/repositories/SQLiteCardRepository';
 import { getCardsSchema } from './schema';
 
@@ -12,14 +12,14 @@ export default function registerGetCards(deps: Deps = { cardRepository: defaultC
     fastify.get(GET_CARDS_ENDPOINT, getCardsSchema, async (request, reply) => {
       try {
         const userId = request.userId!;
-        const cards = await getCardsService(deps.cardRepository, { userId });
+        const cards = await processListUserCards(deps.cardRepository, { userId });
         const body = {
           cards: cards.map((card) => ({
             token: card.token,
             lastFourDigits: card.lastFourDigits,
             brand: card.brand,
-            expiry: unifyExpiryMonthWithYear(card.expiryMonth, card.expiryYear),
-            primary: card.isPrimary,
+            expiry: unifyExpiryMonthWithYear(card.expiryMonth!, card.expiryYear!),
+            isPrimary: card.isPrimary,
           })),
         };
         return reply.status(200).send(body);

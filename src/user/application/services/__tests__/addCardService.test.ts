@@ -1,4 +1,4 @@
-import { processCardAdderRequest } from '../addCardService';
+import { processAddCard } from '../addCardService';
 import { CardRepository } from '@user/domain/interfaces/repositories/CardRepository';
 import { TokenGenerator } from '@common/domain/interfaces/generators/TokenGenerator';
 import { detectCardBrand } from '@user/domain/helpers/validators/detectCardBrand';
@@ -6,6 +6,14 @@ import { detectCardBrand } from '@user/domain/helpers/validators/detectCardBrand
 jest.mock('@user/domain/helpers/validators/detectCardBrand', () => ({
   detectCardBrand: jest.fn(),
 }));
+
+function createMockRepo(overrides: Partial<CardRepository> = {}): CardRepository {
+  return {
+    addCard: jest.fn(),
+    getCardsByUserId: jest.fn(),
+    ...overrides,
+  };
+}
 
 describe('addCardService', () => {
   beforeEach(() => {
@@ -26,12 +34,14 @@ describe('addCardService', () => {
       token: 'tok12345',
       isPrimary: false,
     };
-    const mockRepo: CardRepository = { addCard: jest.fn().mockResolvedValue(repoReturn as any) };
+    const mockRepo: CardRepository = createMockRepo({
+      addCard: jest.fn().mockResolvedValue(repoReturn),
+    });
     const mockTokenGen: TokenGenerator = {
-      generateToken: jest.fn().mockReturnValue('tok12345') as any,
+      generateToken: jest.fn().mockReturnValue('tok12345'),
     };
 
-    const result = await processCardAdderRequest(mockRepo, mockTokenGen, input);
+    const result = await processAddCard(mockRepo, mockTokenGen, input);
 
     expect(mockTokenGen.generateToken).toHaveBeenCalledWith('4111111111111111');
     expect(mockTokenGen.generateToken).toHaveBeenCalledTimes(1);
@@ -50,28 +60,32 @@ describe('addCardService', () => {
   test('should return null when repository returns null', async () => {
     const cardNumber = '4111111111111111';
     const input = { userId: 1, cardNumber, expiryMonth: 12, expiryYear: 2099, isPrimary: false };
-    const mockRepo: CardRepository = { addCard: jest.fn().mockResolvedValue(null) };
+    const mockRepo: CardRepository = createMockRepo({
+      addCard: jest.fn().mockResolvedValue(null),
+    });
     const mockTokenGen: TokenGenerator = {
-      generateToken: jest.fn().mockReturnValue('tok12345') as any,
+      generateToken: jest.fn().mockReturnValue('tok12345'),
     };
 
-    const result = await processCardAdderRequest(mockRepo, mockTokenGen, input);
+    const result = await processAddCard(mockRepo, mockTokenGen, input);
 
     expect(mockTokenGen.generateToken).toHaveBeenCalledWith('4111111111111111');
     expect(mockRepo.addCard).toHaveBeenCalled();
     expect(result).toBeNull();
   });
 
-  test('should use brand detector and not leak cardNumber to repository payload', async () => {
+  test('should use function detectCardBrand and not leak card numbers into repository payload', async () => {
     (detectCardBrand as jest.Mock).mockReturnValue('VISA');
     const cardNumber = '4111111111111111';
     const input = { userId: 1, cardNumber, expiryMonth: 12, expiryYear: 2099, isPrimary: true };
-    const mockRepo: CardRepository = { addCard: jest.fn().mockResolvedValue({} as any) };
+    const mockRepo: CardRepository = createMockRepo({
+      addCard: jest.fn().mockResolvedValue({}),
+    });
     const mockTokenGen: TokenGenerator = {
-      generateToken: jest.fn().mockReturnValue('tok12345') as any,
+      generateToken: jest.fn().mockReturnValue('tok12345'),
     };
 
-    await processCardAdderRequest(mockRepo, mockTokenGen, input);
+    await processAddCard(mockRepo, mockTokenGen, input);
 
     const arg = (mockRepo.addCard as jest.Mock).mock.calls[0][0];
     expect(detectCardBrand).toHaveBeenCalledWith('4111111111111111');
@@ -85,27 +99,31 @@ describe('addCardService', () => {
   test('should extract the last four digits of the cardNumber', async () => {
     const cardNumber = '4111111111111111';
     const input = { userId: 1, cardNumber, expiryMonth: 12, expiryYear: 2099, isPrimary: false };
-    const mockRepo: CardRepository = { addCard: jest.fn().mockResolvedValue({} as any) };
+    const mockRepo: CardRepository = createMockRepo({
+      addCard: jest.fn().mockResolvedValue({}),
+    });
     const mockTokenGen: TokenGenerator = {
-      generateToken: jest.fn().mockReturnValue('tok12345') as any,
+      generateToken: jest.fn().mockReturnValue('tok12345'),
     };
 
-    await processCardAdderRequest(mockRepo, mockTokenGen, input);
+    await processAddCard(mockRepo, mockTokenGen, input);
 
     const arg = (mockRepo.addCard as jest.Mock).mock.calls[0][0];
     expect(arg.lastFourDigits).toBe('1111');
   });
 
-  test('should propagate repository errors', async () => {
+  test('should return repository errors', async () => {
     const cardNumber = '4111111111111111';
     const input = { userId: 1, cardNumber, expiryMonth: 12, expiryYear: 2099, isPrimary: false };
-    const mockRepo: CardRepository = { addCard: jest.fn().mockRejectedValue(new Error('db')) };
-    const mockTokenGen: TokenGenerator = { generateToken: jest.fn().mockReturnValue('tok') as any };
+    const mockRepo: CardRepository = createMockRepo({
+      addCard: jest.fn().mockRejectedValue(new Error('db')),
+    });
+    const mockTokenGen: TokenGenerator = { generateToken: jest.fn().mockReturnValue('tok') };
 
-    await expect(processCardAdderRequest(mockRepo, mockTokenGen, input)).rejects.toThrow('db');
+    await expect(processAddCard(mockRepo, mockTokenGen, input)).rejects.toThrow('db');
   });
 
-  test('should propagate token generator errors', async () => {
+  test('should return token generator errors', async () => {
     const input = {
       userId: 1,
       cardNumber: '4111111111111111',
@@ -113,13 +131,15 @@ describe('addCardService', () => {
       expiryYear: 2099,
       isPrimary: false,
     };
-    const mockRepo: CardRepository = { addCard: jest.fn() as any };
+    const mockRepo: CardRepository = createMockRepo({
+      addCard: jest.fn(),
+    });
     const mockTokenGen: TokenGenerator = {
       generateToken: jest.fn(() => {
         throw new Error('tok');
-      }) as any,
+      }),
     };
 
-    await expect(processCardAdderRequest(mockRepo, mockTokenGen, input)).rejects.toThrow('tok');
+    await expect(processAddCard(mockRepo, mockTokenGen, input)).rejects.toThrow('tok');
   });
 });

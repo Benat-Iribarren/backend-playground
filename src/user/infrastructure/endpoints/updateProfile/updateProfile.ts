@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { updateProfileSchema } from './schema';
 import { userRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
-import { updateProfileService } from '@user/application/services/updateProfileService';
+import { processUpdateProfile } from '@user/application/services/updateProfileService';
 import { UserProfile } from '@user/domain/model/UserProfile';
 import { isValidEmail } from '@user/domain/helpers/validators/emailValidator';
 import {
@@ -54,7 +54,7 @@ function updateProfile(dependencies: UpdateProfileDependencies = { userRepositor
             .send(statusToMessage[invalidParametersErrorStatusMsg]);
         }
 
-        const result = await updateProfileService(dependencies.userRepository, {
+        const result = await processUpdateProfile(dependencies.userRepository, {
           userId,
           data: body,
         });

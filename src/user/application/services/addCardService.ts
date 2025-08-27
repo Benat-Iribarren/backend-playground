@@ -21,7 +21,7 @@ type addCardInput = {
   isPrimary: IsPrimary;
 };
 
-export async function processCardAdderRequest(
+export async function processAddCard(
   cardRepository: CardRepository,
   tokenGenerator: TokenGenerator,
   input: addCardInput,

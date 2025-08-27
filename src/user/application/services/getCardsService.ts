@@ -4,7 +4,7 @@ import { CardRepository } from '@user/domain/interfaces/repositories/CardReposit
 
 type GetCardsInput = { userId: UserId };
 
-export async function getCardsService(
+export async function processListUserCards(
   cardRepository: CardRepository,
   { userId }: GetCardsInput,
 ): Promise<Card[]> {
