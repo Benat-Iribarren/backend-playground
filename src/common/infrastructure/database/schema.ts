@@ -3,6 +3,7 @@ import { TokenUser } from '../../domain/model/TokenUser';
 import { UserId, Phone } from '../../domain/model/UserParameters';
 import { UserAuth } from '@auth/domain/model/UserAuth';
 import { Generated } from 'kysely';
+import { IsPrimary } from '@user/domain/model/Card';
 
 export interface otpTable {
   userId: UserId;
@@ -39,6 +40,7 @@ export interface phoneTable {
   id: Generated<number>;
   userId: UserId;
   phoneNumber: Phone;
+  isPrimary: IsPrimary;
 }
 
 export interface Database {

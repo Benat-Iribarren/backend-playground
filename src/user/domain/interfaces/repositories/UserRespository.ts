@@ -1,5 +1,5 @@
 import { UserAuth } from '@auth/domain/model/UserAuth';
-import { Phone, Nin, UserId } from '@common/domain/model/UserParameters';
+import { Phone, Nin, UserId, isPrimary } from '@common/domain/model/UserParameters';
 import { UserProfile } from '@src/user/domain/model/UserProfile';
 
 export interface UserRepository {
@@ -10,5 +10,5 @@ export interface UserRepository {
     patch: Partial<Pick<UserProfile, 'fullName' | 'nin' | 'email'>>,
   ): Promise<boolean>;
   isUserPhoneRegistered(userId: UserId, phone: Phone): Promise<boolean>;
-  getPhones(userId: UserId): Promise<Phone[] | null>;
+  getPhones(userId: UserId): Promise<{ phoneNumber: Phone; isPrimary: isPrimary }[] | null>;
 }

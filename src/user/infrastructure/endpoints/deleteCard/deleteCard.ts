@@ -8,7 +8,7 @@ export const DELETE_CARD_ENDPOINT = '/user/card/:cardToken' as const;
 type Headers = { authorization: string };
 type Params = { cardToken: string };
 
-export function registerDeleteCard(app: FastifyInstance) {
+export default function registerDeleteCard(app: FastifyInstance) {
   app.delete<{ Headers: Headers; Params: Params }>(
     DELETE_CARD_ENDPOINT,
     deleteCardSchema,

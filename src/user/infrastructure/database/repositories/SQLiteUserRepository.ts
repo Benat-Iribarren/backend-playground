@@ -1,20 +1,19 @@
 import db from '@common/infrastructure/database/dbClient';
-import { Phone, Nin, UserId } from '@common/domain/model/UserParameters';
+import { Phone, Nin, UserId, isPrimary } from '@common/domain/model/UserParameters';
 import { UserRepository } from '../../../domain/interfaces/repositories/UserRespository';
 import { UserAuth } from '@auth/domain/model/UserAuth';
 import { UserProfile } from '@src/user/domain/model/UserProfile';
 
 export const userRepository: UserRepository = {
-  async getPhones(userId: UserId): Promise<Phone[] | null> {
-    const rows = await db
-      .selectFrom('phone')
-      .select('phoneNumber')
-      .where('userId', '=', userId)
-      .execute();
+  async getPhones(userId: UserId): Promise<{ phoneNumber: Phone; isPrimary: isPrimary }[] | null> {
+    const rows = await db.selectFrom('phone').selectAll().where('userId', '=', userId).execute();
     if (!rows || rows.length === 0) {
       return null;
     }
-    return rows.map((row) => row.phoneNumber);
+    return rows.map((row) => ({
+      phoneNumber: row.phoneNumber,
+      isPrimary: row.isPrimary,
+    }));
   },
   async getUser(nin: Nin): Promise<UserAuth | null> {
     const row = await db.selectFrom('user').selectAll().where('nin', '=', nin).executeTakeFirst();
