@@ -7,13 +7,10 @@ export const deleteCardSchema = {
       properties: { authorization: { type: 'string' } },
       required: ['authorization'],
     },
-    body: {
+    params: {
       type: 'object',
-      properties: {
-        token: { type: 'string', minLength: 1 },
-      },
-      required: ['token'],
-      additionalProperties: false,
+      properties: { cardToken: { type: 'string', minLength: 1 } },
+      required: ['cardToken'],
     },
     response: {
       204: { type: 'null' },

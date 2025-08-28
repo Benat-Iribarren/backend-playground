@@ -3,13 +3,13 @@ import { deleteCardSchema } from './schema';
 import { tokenRepository } from '@auth/infrastructure/database/repositories/SQLiteTokenRepository';
 import { cardRepository } from '@user/infrastructure/database/repositories/SQLiteCardRepository';
 
-export const DELETE_CARD_ENDPOINT = '/user/card';
+export const DELETE_CARD_ENDPOINT = '/user/card/:cardToken' as const; // <-- URL con param
 
 type Headers = { authorization: string };
-type Body = { token: string };
+type Params = { cardToken: string };
 
 export function registerDeleteCard(app: FastifyInstance) {
-  app.delete<{ Headers: Headers; Body: Body }>(
+  app.delete<{ Headers: Headers; Params: Params }>(
     DELETE_CARD_ENDPOINT,
     deleteCardSchema,
     async (request, reply) => {
@@ -22,8 +22,8 @@ export function registerDeleteCard(app: FastifyInstance) {
           return reply.code(401).send({ error: 'Unauthorized.' });
         }
 
-        const { token } = request.body;
-        await cardRepository.deleteCardByTokenAndUserId(userId, token);
+        const { cardToken } = request.params as Params;
+        await cardRepository.deleteCardByTokenAndUserId(userId, cardToken);
 
         return reply.code(204).send();
       } catch (err) {

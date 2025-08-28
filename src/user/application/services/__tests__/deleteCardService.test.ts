@@ -1,42 +1,33 @@
 import { processDeleteUserCard } from '../deleteCardService';
 import { CardRepository } from '@user/domain/interfaces/repositories/CardRepository';
-import { detectCardBrand } from '@user/domain/helpers/validators/detectCardBrand';
 import { UserId } from '@common/domain/model/UserParameters';
-
-jest.mock('@user/domain/helpers/validators/detectCardBrand', () => ({
-  detectCardBrand: jest.fn(),
-}));
 
 function createMockRepo(overrides: Partial<CardRepository> = {}): CardRepository {
   return {
     addCard: jest.fn(),
     getCardsByUserId: jest.fn(),
-    deleteCardByTokenAndUserId: jest.fn(),
+    deleteCardByTokenAndUserId: jest.fn().mockResolvedValue(undefined),
     ...overrides,
   };
 }
 
 describe('deleteCardService', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-    (detectCardBrand as jest.Mock).mockReturnValue('VISA');
-  });
+  beforeEach(() => jest.resetAllMocks());
+
   const userId: UserId = 1;
-  test('should return 201 when valid user token and card token is given', async () => {
+
+  test('should call repository with userId and token and resolve', async () => {
     const token = 'valid-token';
-    const mockDelete = jest.fn();
-    const mockRepo: CardRepository = createMockRepo({
-      deleteCardByTokenAndUserId: mockDelete,
-    });
+    const mockRepo = createMockRepo();
 
     const result = await processDeleteUserCard(mockRepo, { userId, token });
 
-    expect(mockDelete).toHaveBeenCalledWith(userId, token);
-    expect(mockDelete).toHaveBeenCalledTimes(1);
+    expect(mockRepo.deleteCardByTokenAndUserId).toHaveBeenCalledWith(userId, token);
+    expect(mockRepo.deleteCardByTokenAndUserId).toHaveBeenCalledTimes(1);
     expect(result).toBeUndefined();
   });
 
-  test('should return repository errors', async () => {
+  test('should propagate repository errors', async () => {
     const token = 'tok-error';
     const mockError = new Error('db failure');
     const mockRepo = createMockRepo({
