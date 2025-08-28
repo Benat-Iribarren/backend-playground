@@ -1,19 +1,18 @@
 import { Brand, CardNumber } from '@user/domain/model/Card';
 
 export function detectCardBrand(cardNumber: CardNumber): Brand {
-  if (/^4[0-9]{12}(?:[0-9]{3})?$/.test(cardNumber)) {
+  const digits = String(cardNumber).replace(/\D+/g, '');
+
+  if (/^4\d{12}(\d{3})?$/.test(digits)) {
     return 'VISA';
   }
-  if (
-    /^5[1-5][0-9]{14}$/.test(cardNumber) ||
-    /^2(2[2-9][0-9]|[3-6][0-9]{2}|7[01][0-9]|720)[0-9]{12}$/.test(cardNumber)
-  ) {
+  if (/^(?:5[1-5]\d{14}|2(?:2[2-9]\d|[3-6]\d{2}|7[01]\d|720)\d{12})$/.test(digits)) {
     return 'MASTERCARD';
   }
-  if (/^3[47][0-9]{13}$/.test(cardNumber)) {
+  if (/^3[47]\d{13}$/.test(digits)) {
     return 'AMEX';
   }
-  if (/^6(?:011|5[0-9]{2})[0-9]{12}$/.test(cardNumber)) {
+  if (/^6(?:011|5\d{2})\d{12}$/.test(digits)) {
     return 'DISCOVER';
   }
   return 'UNKNOWN';
