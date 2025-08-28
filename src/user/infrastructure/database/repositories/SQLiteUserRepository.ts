@@ -5,6 +5,17 @@ import { UserAuth } from '@auth/domain/model/UserAuth';
 import { UserProfile } from '@src/user/domain/model/UserProfile';
 
 export const userRepository: UserRepository = {
+  async getPhones(userId: UserId): Promise<Phone[] | null> {
+    const rows = await db
+      .selectFrom('phone')
+      .select('phoneNumber')
+      .where('userId', '=', userId)
+      .execute();
+    if (!rows || rows.length === 0) {
+      return null;
+    }
+    return rows.map((row) => row.phoneNumber);
+  },
   async getUser(nin: Nin): Promise<UserAuth | null> {
     const row = await db.selectFrom('user').selectAll().where('nin', '=', nin).executeTakeFirst();
     if (!row) {

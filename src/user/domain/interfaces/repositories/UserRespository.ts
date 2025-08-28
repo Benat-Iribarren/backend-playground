@@ -10,4 +10,5 @@ export interface UserRepository {
     patch: Partial<Pick<UserProfile, 'fullName' | 'nin' | 'email'>>,
   ): Promise<boolean>;
   isUserPhoneRegistered(userId: UserId, phone: Phone): Promise<boolean>;
+  getPhones(userId: UserId): Promise<Phone[] | null>;
 }

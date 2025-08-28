@@ -20,6 +20,7 @@ describe('updateProfileService', () => {
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(),
       updateProfile: jest.fn().mockResolvedValue(true),
+      getPhones: jest.fn(),
     };
 
     const result = await processUpdateProfile(mockRepo, { userId, data });
@@ -37,6 +38,7 @@ describe('updateProfileService', () => {
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(),
       updateProfile: jest.fn().mockResolvedValue(false),
+      getPhones: jest.fn(),
     };
 
     const result = await processUpdateProfile(mockRepo, { userId, data });
@@ -54,6 +56,7 @@ describe('updateProfileService', () => {
       isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(),
       updateProfile: jest.fn(),
+      getPhones: jest.fn(),
     };
 
     const result = await processUpdateProfile(mockRepo, { userId, data });
