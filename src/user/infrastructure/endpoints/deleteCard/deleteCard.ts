@@ -3,7 +3,7 @@ import { deleteCardSchema } from './schema';
 import { tokenRepository } from '@auth/infrastructure/database/repositories/SQLiteTokenRepository';
 import { cardRepository } from '@user/infrastructure/database/repositories/SQLiteCardRepository';
 
-export const DELETE_CARD_ENDPOINT = '/user/card/:cardToken' as const; // <-- URL con param
+export const DELETE_CARD_ENDPOINT = '/user/card/:cardToken' as const;
 
 type Headers = { authorization: string };
 type Params = { cardToken: string };

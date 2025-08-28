@@ -12,7 +12,7 @@ jest.mock('@user/infrastructure/database/repositories/SQLiteCardRepository', () 
   cardRepository: { addCard: jest.fn() },
 }));
 
-describe('POST /user/card (integration)', () => {
+describe('addCard integration', () => {
   let app: FastifyInstance;
   const {
     cardRepository,
@@ -31,7 +31,7 @@ describe('POST /user/card (integration)', () => {
     await app.close();
   });
 
-  it('should return success message and card data for valid user token and payload', async () => {
+  it('should return card data for valid user token and payload', async () => {
     cardRepository.addCard.mockResolvedValue({
       userId: 1,
       lastFourDigits: '1111',
