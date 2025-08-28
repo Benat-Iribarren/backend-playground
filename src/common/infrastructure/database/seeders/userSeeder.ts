@@ -1,20 +1,20 @@
 import db from '../dbClient';
+import { sql } from 'kysely';
 
 export async function seedUser() {
   const users = getUsers();
 
   for (const { nin, phones, isBlocked, fullName, email } of users) {
     const userExists = await selectUser(nin);
-
     if (!userExists) {
-      await insertUserAndPhones(nin, phones, isBlocked, fullName, email);
+      await insertUserAndPhones({ nin, phones, isBlocked, fullName, email });
     }
   }
 }
 
 function getUsers(): Array<{
   nin: string;
-  phones: { [key: string]: { isPrimary: boolean } };
+  phones: Record<string, { isPrimary: boolean }>;
   isBlocked: boolean;
   fullName: string;
   email: string;
@@ -52,34 +52,40 @@ function getUsers(): Array<{
 }
 
 async function selectUser(nin: string) {
-  return await db.selectFrom('user').select('nin').where('nin', '=', nin).executeTakeFirst();
+  return db.selectFrom('user').select('nin').where('nin', '=', nin).executeTakeFirst();
 }
 
-async function insertUserAndPhones(
-  nin: string,
-  phones: { [key: string]: { isPrimary: boolean } },
-  isBlocked: boolean,
-  fullName: string,
-  email: string,
-) {
+async function insertUserAndPhones(args: {
+  nin: string;
+  phones: Record<string, { isPrimary: boolean }>;
+  isBlocked: boolean;
+  fullName: string;
+  email: string;
+}) {
+  const { nin, phones, isBlocked, fullName, email } = args;
+
   const inserted = await db
     .insertInto('user')
     .values({
       nin,
-      isBlocked: (isBlocked ? 1 : 0) as unknown as boolean,
+      isBlocked: sql<boolean>`${isBlocked ? 1 : 0}`,
       fullName,
       email,
     })
     .returning(['id'])
     .executeTakeFirst();
 
-  if (inserted?.id) {
-    const phoneInserts = Object.entries(phones).map(([phoneNumber, { isPrimary }]) => ({
-      userId: inserted.id,
-      phoneNumber,
-      isPrimary: isPrimary ? 1 : 0,
-    }));
+  if (!inserted?.id) {
+    return;
+  }
 
+  const phoneInserts = Object.entries(phones).map(([phoneNumber, { isPrimary }]) => ({
+    userId: inserted.id!,
+    phoneNumber,
+    isPrimary: sql<boolean>`${isPrimary ? 1 : 0}`,
+  }));
+
+  if (phoneInserts.length > 0) {
     await db.insertInto('phone').values(phoneInserts).execute();
   }
 }
