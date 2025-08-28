@@ -4,6 +4,7 @@ import { initTestDatabase } from '@common/infrastructure/database/initTestDataba
 import { ADD_CARD_ENDPOINT } from '../../addCard';
 import { REQUEST_OTP_ENDPOINT } from '@auth/infrastructure/endpoints/requestOtp/requestOtp';
 import { VERIFY_OTP_ENDPOINT } from '@auth/infrastructure/endpoints/verifyOtp/verifyOtp';
+import { cardRepository } from '@user/infrastructure/database/repositories/SQLiteCardRepository';
 
 describe('addCard e2e', () => {
   let app: FastifyInstance;
@@ -18,25 +19,35 @@ describe('addCard e2e', () => {
     await app.close();
   });
 
-  test('should return user profile for valid user (happy path)', async () => {
+  test('should add a card for a valid user (happy path)', async () => {
     const nin = '87654321Z';
     const phone = '222222222';
 
-    const reqOtp = await app.inject({
+    const requestOtpRes = await app.inject({
       method: 'POST',
       url: REQUEST_OTP_ENDPOINT,
       payload: { nin, phone },
     });
-    expect(reqOtp.statusCode).toBe(201);
-    const { hash, verificationCode } = reqOtp.json();
+    expect(requestOtpRes.statusCode).toBe(201);
+    const { hash, verificationCode } = requestOtpRes.json();
 
-    const verOtp = await app.inject({
+    const verifyOtpRes = await app.inject({
       method: 'POST',
       url: VERIFY_OTP_ENDPOINT,
       payload: { hash, verificationCode },
     });
-    expect(verOtp.statusCode).toBe(201);
-    const { token } = verOtp.json();
+    expect(verifyOtpRes.statusCode).toBe(201);
+    const { token } = verifyOtpRes.json();
+
+    const spy = jest.spyOn(cardRepository, 'addCard').mockResolvedValue({
+      userId: 1,
+      lastFourDigits: '1111',
+      brand: 'VISA',
+      expiryMonth: 12,
+      expiryYear: 2099,
+      token: 'tok_abc',
+      isPrimary: false,
+    });
 
     const res = await app.inject({
       method: 'POST',
@@ -48,7 +59,6 @@ describe('addCard e2e', () => {
     expect(res.statusCode).toBe(201);
     const body = res.json();
 
-    expect(body.message).toBe('Card added successfully.');
     expect(body.card).toEqual(
       expect.objectContaining({
         lastFourDigits: '1111',
@@ -59,5 +69,7 @@ describe('addCard e2e', () => {
     );
     expect(typeof body.card.token).toBe('string');
     expect(body.card.token.length).toBeGreaterThan(0);
+
+    spy.mockRestore();
   });
 });

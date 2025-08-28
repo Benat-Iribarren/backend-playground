@@ -33,7 +33,7 @@ export const addCardSchema = {
             required: ['token', 'lastFourDigits', 'brand', 'expiry', 'isPrimary'],
           },
         },
-        required: ['message', 'card'],
+        required: ['card'],
       },
       400: errorSchema,
       401: errorSchema,

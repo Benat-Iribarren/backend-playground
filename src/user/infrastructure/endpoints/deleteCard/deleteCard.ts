@@ -11,7 +11,7 @@ type Body = { token: string };
 export function registerDeleteCard(app: FastifyInstance) {
   app.delete<{ Headers: Headers; Body: Body }>(
     DELETE_CARD_ENDPOINT,
-    deleteCardSchema as any,
+    deleteCardSchema,
     async (request, reply) => {
       try {
         const bearer = request.headers.authorization;

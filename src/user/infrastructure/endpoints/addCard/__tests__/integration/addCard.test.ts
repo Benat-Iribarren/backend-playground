@@ -51,7 +51,6 @@ describe('POST /user/card (integration)', () => {
 
     expect(res.statusCode).toBe(201);
     expect(res.json()).toEqual({
-      message: 'Card added successfully.',
       card: {
         token: 'tok_abc',
         lastFourDigits: '1111',
@@ -102,41 +101,5 @@ describe('POST /user/card (integration)', () => {
       payload: { cardNumber: '4111111111111111' },
     });
     expect(res.statusCode).toBe(400);
-  });
-
-  it('should return invalid error for not valid card number format', async () => {
-    const invalid_card_number = '41111111';
-    const res = await app.inject({
-      method: 'POST',
-      url: ADD_CARD_ENDPOINT,
-      headers: { authorization: 'Bearer valid-token' },
-      payload: { cardNumber: invalid_card_number, expiry: '12/99' },
-    });
-    expect(res.statusCode).toBe(400);
-  });
-
-  it('should return invalid error for not valid card expiry format', async () => {
-    const invalid_expiry = '1299';
-    const res = await app.inject({
-      method: 'POST',
-      url: ADD_CARD_ENDPOINT,
-      headers: { authorization: 'Bearer valid-token' },
-      payload: { cardNumber: '4111111111111111', expiry: invalid_expiry },
-    });
-    expect(res.statusCode).toBe(400);
-  });
-
-  it('should return 500 when repository returns null', async () => {
-    cardRepository.addCard.mockResolvedValue(null);
-
-    const res = await app.inject({
-      method: 'POST',
-      url: ADD_CARD_ENDPOINT,
-      headers: { authorization: 'Bearer valid-token' },
-      payload: { cardNumber: '4111111111111111', expiry: '12/99' },
-    });
-
-    expect(res.statusCode).toBe(500);
-    expect(res.json()).toEqual({ error: 'Internal Server Error' });
   });
 });

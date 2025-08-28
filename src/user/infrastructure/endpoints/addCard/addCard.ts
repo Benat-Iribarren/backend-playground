@@ -17,7 +17,6 @@ export const ADD_CARD_ENDPOINT = '/user/card';
 type AddCardBody = { cardNumber: string; expiry: string };
 
 type AddCardSuccessBody = {
-  message: string;
   card: {
     token: string;
     lastFourDigits: string;
@@ -94,7 +93,6 @@ function addCard(deps: AddCardDependencies) {
         }
 
         const body: AddCardSuccessBody = {
-          message: 'Card added successfully.',
           card: {
             token: result.token,
             lastFourDigits: result.lastFourDigits,
