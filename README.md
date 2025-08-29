@@ -6,7 +6,7 @@ La idea es mantener un código modular, desacoplado y fácil de mantener, aplica
 
 El objetivo no es solo levantar un backend funcional, sino hacerlo de manera que el proyecto pueda evolucionar sin generar deuda técnica, asegurando mantenibilidad a largo plazo.
 
-##📐Principios aplicados📐
+## 📐Principios aplicados📐
 
 Arquitectura Hexagonal: separación clara entre dominio, aplicación e infraestructura.
 
