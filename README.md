@@ -1,3 +1,24 @@
+#   🛠️BACKEND-PLAYGROUND🛠️
+
+Este proyecto es un entorno de práctica y experimentación backend construido siguiendo buenas prácticas de Arquitectura Hexagonal, vertical slicing y Domain-Driven Design (DDD) ligero.
+
+La idea es mantener un código modular, desacoplado y fácil de mantener, aplicando principios de código sostenible y buenas prácticas de testing automatizado.
+
+El objetivo no es solo levantar un backend funcional, sino hacerlo de manera que el proyecto pueda evolucionar sin generar deuda técnica, asegurando mantenibilidad a largo plazo.
+
+##📐Principios aplicados📐
+
+Arquitectura Hexagonal: separación clara entre dominio, aplicación e infraestructura.
+
+Vertical Slicing: cada caso de uso aislado en su propio módulo (endpoints, servicios, repositorios).
+
+Domain-Driven Design (DDD) ligero: el dominio es la fuente de verdad de las reglas de negocio.
+
+Clean Code & Testing: código enfocado en la simplicidad, acompañado de tests unitarios, de integración y E2E.
+
+Automatización con Makefile: para simplificar comandos de Docker, tests y base de datos.
+
+Entornos reproducibles con Docker: separación entre entorno de desarrollo y test.
 ## 🐋Levantar el entorno Docker🐋
 
 1. Instalar Docker y Docker Desktop
