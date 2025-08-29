@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { processGetPhones } from '@user/application/services/getPhonesService';
-import { userRepository as defaultUserRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
+import { phoneRepository as defaultPhoneRepository } from '@user/infrastructure/database/repositories/SQLitePhoneRepository';
 import { getPhonesSchema } from './schema';
 import { GetPhonesErrors, unauthorizedErrorStatusMsg } from './errors';
 
@@ -18,15 +18,17 @@ const statusToCode: { [K in GetPhonesErrors | 'SUCCESSFUL']: StatusCode } = {
 };
 
 interface Deps {
-  userRepository: typeof defaultUserRepository;
+  phoneRepository: typeof defaultPhoneRepository;
 }
 
-export default function registerGetPhones(deps: Deps = { userRepository: defaultUserRepository }) {
+export default function registerGetPhones(
+  deps: Deps = { phoneRepository: defaultPhoneRepository },
+) {
   return async function (fastify: FastifyInstance) {
     fastify.get(GET_PHONES_ENDPOINT, getPhonesSchema, async (request, reply) => {
       try {
         const userId = request.userId!;
-        const result = await processGetPhones(deps.userRepository, { userId });
+        const result = await processGetPhones(deps.phoneRepository, { userId });
 
         if (typeof result !== 'object') {
           return reply.status(statusToCode[result]).send(statusToMessage[result]);

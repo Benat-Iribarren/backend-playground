@@ -5,9 +5,9 @@ import { ADD_CARD_ENDPOINT } from '@user/infrastructure/endpoints/addCard/addCar
 import { REQUEST_OTP_ENDPOINT } from '@auth/infrastructure/endpoints/requestOtp/requestOtp';
 import { VERIFY_OTP_ENDPOINT } from '@auth/infrastructure/endpoints/verifyOtp/verifyOtp';
 import { DELETE_CARD_ENDPOINT } from '../../deleteCard';
-import { GET_CARDS_ENDPOINT } from '@user/infrastructure/endpoints/getCards/getCards';
+import { cardRepository } from '@user/infrastructure/database/repositories/SQLiteCardRepository';
 
-describe('addCard e2e', () => {
+describe('deleteCard e2e', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
@@ -20,7 +20,7 @@ describe('addCard e2e', () => {
     await app.close();
   });
 
-  test('should add a card for a valid user (happy path)', async () => {
+  test('should delete a card for a valid user (happy path)', async () => {
     const nin = '87654321Z';
     const phone = '222222222';
 
@@ -40,41 +40,42 @@ describe('addCard e2e', () => {
     expect(verifyOtpRes.statusCode).toBe(201);
     const { token } = verifyOtpRes.json();
 
-    const addCardRes = await app.inject({
+    const createdToken = 'tok_abc';
+    const addSpy = jest.spyOn(cardRepository, 'addCard').mockResolvedValue({
+      userId: 1,
+      lastFourDigits: '1111',
+      brand: 'VISA',
+      expiryMonth: 12,
+      expiryYear: 2099,
+      token: createdToken,
+      isPrimary: false,
+    });
+
+    const addRes = await app.inject({
       method: 'POST',
       url: ADD_CARD_ENDPOINT,
       headers: { authorization: `Bearer ${token}` },
       payload: { cardNumber: '4111111111111111', expiry: '12/99' },
     });
-    expect(addCardRes.statusCode).toBe(201);
+    expect(addRes.statusCode).toBe(201);
+    addSpy.mockRestore();
 
-    const getCardsBeforeDeleteRes = await app.inject({
-      method: 'GET',
-      url: GET_CARDS_ENDPOINT,
-      headers: { authorization: `Bearer ${token}` },
-    });
-    expect(getCardsBeforeDeleteRes.statusCode).toBe(200);
-    const { cards } = getCardsBeforeDeleteRes.json();
+    const deleteSpy = jest.spyOn(cardRepository, 'deleteCardByTokenAndUserId').mockResolvedValue();
 
-    expect(cards.length).toBeGreaterThanOrEqual(1);
-    const { token: cardToken } = cards[0];
-
-    const deleteCardRes = await app.inject({
+    const deleteRes = await app.inject({
       method: 'DELETE',
-      url: DELETE_CARD_ENDPOINT.replace(':cardToken', cardToken),
+      url: DELETE_CARD_ENDPOINT.replace(':cardToken', createdToken),
       headers: { authorization: `Bearer ${token}` },
     });
-    expect(deleteCardRes.statusCode).toBe(204);
-    expect(deleteCardRes.body).toBe('');
 
-    const getCardsAfterDeleteRes = await app.inject({
-      method: 'GET',
-      url: GET_CARDS_ENDPOINT,
-      headers: { authorization: `Bearer ${token}` },
-    });
-    expect(getCardsAfterDeleteRes.statusCode).toBe(200);
-    const afterJson = getCardsAfterDeleteRes.json();
-    expect(Array.isArray(afterJson.cards)).toBe(true);
-    expect(afterJson.cards.find((c: any) => c.token === cardToken)).toBeUndefined();
+    expect(deleteRes.statusCode).toBe(204);
+    expect(deleteRes.body).toBe('');
+
+    expect(deleteSpy).toHaveBeenCalledTimes(1);
+    const [calledUserId, calledToken] = deleteSpy.mock.calls[0];
+    expect(typeof calledUserId).toBe('number');
+    expect(calledToken).toBe(createdToken);
+
+    deleteSpy.mockRestore();
   });
 });

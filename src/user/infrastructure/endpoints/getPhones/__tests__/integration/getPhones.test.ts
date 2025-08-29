@@ -1,14 +1,14 @@
 import { build } from '@common/infrastructure/server/serverBuild';
 import { GET_PHONES_ENDPOINT } from '../../getPhones';
 import { tokenRepository } from '@auth/infrastructure/database/repositories/SQLiteTokenRepository';
-import { userRepository } from '@user/infrastructure/database/repositories/SQLiteUserRepository';
+import { phoneRepository } from '@user/infrastructure/database/repositories/SQLitePhoneRepository';
 import { FastifyInstance } from 'fastify';
 
 jest.mock('@auth/infrastructure/database/repositories/SQLiteTokenRepository', () => ({
   tokenRepository: { getUserIdByToken: jest.fn() },
 }));
-jest.mock('@user/infrastructure/database/repositories/SQLiteUserRepository', () => ({
-  userRepository: { getPhones: jest.fn() },
+jest.mock('@user/infrastructure/database/repositories/SQLitePhoneRepository', () => ({
+  phoneRepository: { getPhones: jest.fn() },
 }));
 
 describe('getPhones integration', () => {
@@ -54,7 +54,7 @@ describe('getPhones integration', () => {
     ];
 
     (tokenRepository.getUserIdByToken as jest.Mock).mockResolvedValue(userId);
-    (userRepository.getPhones as jest.Mock).mockResolvedValue(repoPhones);
+    (phoneRepository.getPhones as jest.Mock).mockResolvedValue(repoPhones);
 
     const response = await app.inject({
       method: 'GET',
@@ -65,7 +65,7 @@ describe('getPhones integration', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({ phones: publicPhones });
     expect(tokenRepository.getUserIdByToken).toHaveBeenCalledWith('valid-token');
-    expect(userRepository.getPhones).toHaveBeenCalledWith(userId);
+    expect(phoneRepository.getPhones).toHaveBeenCalledWith(userId);
   });
 
   test('should return an empty array if user token exists but user has not phones added', async () => {
@@ -73,7 +73,7 @@ describe('getPhones integration', () => {
     const userId = 1;
 
     (tokenRepository.getUserIdByToken as jest.Mock).mockResolvedValue(userId);
-    (userRepository.getPhones as jest.Mock).mockResolvedValue([]);
+    (phoneRepository.getPhones as jest.Mock).mockResolvedValue([]);
 
     const response = await app.inject({
       method: 'GET',
@@ -84,7 +84,7 @@ describe('getPhones integration', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({ phones: [] });
     expect(tokenRepository.getUserIdByToken).toHaveBeenCalledWith('valid-token');
-    expect(userRepository.getPhones).toHaveBeenCalledWith(userId);
+    expect(phoneRepository.getPhones).toHaveBeenCalledWith(userId);
   });
 
   test('should return a unauthorized error when token does not exist', async () => {
@@ -101,7 +101,7 @@ describe('getPhones integration', () => {
     expect(response.statusCode).toBe(401);
     expect(response.json()).toEqual({ error: 'Unauthorized.' });
     expect(tokenRepository.getUserIdByToken).toHaveBeenCalledWith('not-valid-token');
-    expect(userRepository.getPhones).not.toHaveBeenCalled();
+    expect(phoneRepository.getPhones).not.toHaveBeenCalled();
   });
 
   test('should return bad request error when token is not introduced', async () => {
@@ -114,6 +114,6 @@ describe('getPhones integration', () => {
     const body = response.json();
     expect(body.error).toBe('Bad Request');
     expect(tokenRepository.getUserIdByToken).not.toHaveBeenCalled();
-    expect(userRepository.getPhones).not.toHaveBeenCalled();
+    expect(phoneRepository.getPhones).not.toHaveBeenCalled();
   });
 });

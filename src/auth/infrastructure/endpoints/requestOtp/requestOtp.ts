@@ -13,6 +13,7 @@ import { UserRepository } from '@src/user/domain/interfaces/repositories/UserRes
 import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerator';
 import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
 import { PhoneValidator } from '../../../domain/interfaces/validators/PhoneValidator';
+import { PhoneRepository } from '@user/domain/interfaces/repositories/PhoneRepository';
 
 export const REQUEST_OTP_ENDPOINT = '/auth/otp';
 
@@ -45,6 +46,7 @@ interface RequestOtpDependencies {
   codeGenerator: CodeGenerator;
   hashGenerator: HashGenerator;
   phoneValidator: PhoneValidator;
+  phoneRepository: PhoneRepository;
 }
 
 function requestOtp(dependencies: RequestOtpDependencies) {
@@ -70,6 +72,7 @@ function requestOtp(dependencies: RequestOtpDependencies) {
           dependencies.userRepository,
           dependencies.codeGenerator,
           dependencies.hashGenerator,
+          dependencies.phoneRepository,
           dependencies.phoneValidator,
           { nin, phone },
         );

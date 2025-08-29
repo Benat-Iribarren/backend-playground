@@ -14,26 +14,39 @@ export const cardRepository: CardRepository = {
   },
 
   async addCard(card: Card): Promise<Card | null> {
-    const row = { ...card, isPrimary: card.isPrimary ? 1 : 0 };
-    const existingCard = await db
-      .selectFrom('card')
-      .select('token')
-      .where('token', '=', card.token)
-      .executeTakeFirst();
+    try {
+      if (!card.userId || !card.expiryMonth || !card.expiryYear) {
+        throw new Error('Missing required card fields: userId, expiryMonth, expiryYear');
+      }
 
-    if (existingCard) {
-      await db
-        .updateTable('card')
-        .set(row as any)
+      const existingCard = await db
+        .selectFrom('card')
+        .select('token')
         .where('token', '=', card.token)
-        .execute();
-    } else {
-      await db
-        .insertInto('card')
-        .values(row as any)
-        .execute();
+        .executeTakeFirst();
+
+      const dbCard = {
+        userId: card.userId,
+        lastFourDigits: card.lastFourDigits,
+        brand: card.brand,
+        expiryMonth: card.expiryMonth,
+        expiryYear: card.expiryYear,
+        token: card.token,
+        isPrimary: card.isPrimary,
+      };
+
+      if (existingCard) {
+        await db.updateTable('card').set(dbCard).where('token', '=', card.token).execute();
+      } else {
+        await db.insertInto('card').values(dbCard).execute();
+      }
+      return card;
+    } catch (error) {
+      // Log error for debugging - will remove after fixing
+      // eslint-disable-next-line no-console
+      console.error('SQLiteCardRepository.addCard error:', error);
+      throw error;
     }
-    return card;
   },
 
   async getCardsByUserId(userId: UserId): Promise<Card[] | null> {

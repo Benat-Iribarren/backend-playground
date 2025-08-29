@@ -10,6 +10,7 @@ import { CodeGenerator } from '../../../domain/interfaces/generators/CodeGenerat
 import { HashGenerator } from '../../../domain/interfaces/generators/HashGenerator';
 import { OtpRepository } from '../../../domain/interfaces/repositories/OtpRepository';
 import { UserAuth } from '../../../domain/model/UserAuth';
+import { PhoneRepository } from '@user/domain/interfaces/repositories/PhoneRepository';
 
 describe('requestOtpService', () => {
   beforeEach(() => {
@@ -26,10 +27,14 @@ describe('requestOtpService', () => {
     const mockUserRepository: UserRepository = {
       getUser: jest.fn(async () => user),
       updateProfile: jest.fn(),
+      getProfile: jest.fn(),
+    };
+
+    const mockPhoneRepository: PhoneRepository = {
       isUserPhoneRegistered: jest.fn(async (userId, inputPhone) => {
         return userId === user.id && inputPhone === phone;
       }),
-      getProfile: jest.fn(),
+      getPhones: jest.fn(),
     };
 
     const mockOtpRepository: OtpRepository = {
@@ -56,6 +61,7 @@ describe('requestOtpService', () => {
         mockUserRepository,
         mockCodeGenerator,
         mockHashGenerator,
+        mockPhoneRepository,
         mockPhoneValidator,
         { nin, phone },
       ),
@@ -71,8 +77,12 @@ describe('requestOtpService', () => {
     const mockUserRepository: UserRepository = {
       getUser: jest.fn(async () => null),
       updateProfile: jest.fn(),
-      isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(),
+    };
+
+    const mockPhoneRepository: PhoneRepository = {
+      isUserPhoneRegistered: jest.fn(),
+      getPhones: jest.fn(),
     };
 
     const mockOtpRepository: OtpRepository = {
@@ -91,6 +101,7 @@ describe('requestOtpService', () => {
         mockUserRepository,
         mockCodeGenerator,
         mockHashGenerator,
+        mockPhoneRepository,
         mockPhoneValidator,
         { nin, phone },
       ),
@@ -105,8 +116,12 @@ describe('requestOtpService', () => {
     const mockUserRepository: UserRepository = {
       getUser: jest.fn(async () => blockedUser),
       updateProfile: jest.fn(),
-      isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(),
+    };
+
+    const mockPhoneRepository: PhoneRepository = {
+      isUserPhoneRegistered: jest.fn(),
+      getPhones: jest.fn(),
     };
 
     const mockOtpRepository: OtpRepository = {
@@ -125,6 +140,7 @@ describe('requestOtpService', () => {
         mockUserRepository,
         mockCodeGenerator,
         mockHashGenerator,
+        mockPhoneRepository,
         mockPhoneValidator,
         { nin, phone },
       ),
@@ -139,8 +155,12 @@ describe('requestOtpService', () => {
     const mockUserRepository: UserRepository = {
       getUser: jest.fn(async () => user),
       updateProfile: jest.fn(),
-      isUserPhoneRegistered: jest.fn(async () => true),
       getProfile: jest.fn(),
+    };
+
+    const mockPhoneRepository: PhoneRepository = {
+      isUserPhoneRegistered: jest.fn(async () => true),
+      getPhones: jest.fn(),
     };
 
     const mockPhoneValidator: PhoneValidator = {
@@ -161,6 +181,7 @@ describe('requestOtpService', () => {
       mockUserRepository,
       mockCodeGenerator,
       mockHashGenerator,
+      mockPhoneRepository,
       mockPhoneValidator,
       { nin, phone },
     );

@@ -35,7 +35,9 @@ interface UpdateProfileDependencies {
   userRepository: typeof userRepository;
 }
 
-function updateProfile(dependencies: UpdateProfileDependencies = { userRepository }) {
+function updateProfile(
+  dependencies: UpdateProfileDependencies = { userRepository: userRepository },
+) {
   return async function (fastify: FastifyInstance) {
     fastify.put(UPDATE_PROFILE_ENDPOINT, updateProfileSchema, async (request, reply) => {
       try {

@@ -20,6 +20,7 @@ import {
   VerificationCode,
 } from '../../domain/model/Otp';
 import { PhoneValidator } from '../../domain/interfaces/validators/PhoneValidator';
+import { PhoneRepository } from '@user/domain/interfaces/repositories/PhoneRepository';
 
 type RequestOtpInput = {
   nin: Nin;
@@ -37,6 +38,7 @@ export async function processOtpRequest(
   userRepository: UserRepository,
   codeGenerator: CodeGenerator,
   hashGenerator: HashGenerator,
+  phoneRepository: PhoneRepository,
   phoneValidator: PhoneValidator,
   input: RequestOtpInput,
 ): Promise<RequestOtpServiceErrors | RequestOtpResponse> {
@@ -51,7 +53,7 @@ export async function processOtpRequest(
   if (userIsBlocked(user)) {
     return userBlockedErrorStatusMsg;
   }
-  const userPhoneExist: boolean = await userRepository.isUserPhoneRegistered(user.id, phone);
+  const userPhoneExist: boolean = await phoneRepository.isUserPhoneRegistered(user.id, phone);
 
   if (userPhoneDoesNotExist(userPhoneExist)) {
     return userNotFoundErrorStatusMsg;

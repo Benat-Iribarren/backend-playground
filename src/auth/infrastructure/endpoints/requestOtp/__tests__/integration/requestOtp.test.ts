@@ -8,6 +8,7 @@ import { FastifyInstance } from 'fastify/types/instance';
 import { phoneValidator } from '../../../../helpers/validators/blacklistPhoneValidator';
 import { generateOtpExpirationDate } from '../../../../../domain/model/Otp';
 import { initTestDatabase } from '@common/infrastructure/database/initTestDatabase';
+import { phoneRepository } from '@user/infrastructure/database/repositories/SQLitePhoneRepository';
 
 jest.mock('../../../../../domain/model/Otp', () => ({
   ...jest.requireActual('../../../../../domain/model/Otp'),
@@ -238,7 +239,7 @@ describe('requestOtp', () => {
       nin,
       isBlocked: false,
     });
-    jest.spyOn(userRepository, 'isUserPhoneRegistered').mockResolvedValue(false);
+    jest.spyOn(phoneRepository, 'isUserPhoneRegistered').mockResolvedValue(false);
 
     const response = await app.inject({
       method: 'POST',

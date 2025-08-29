@@ -19,7 +19,6 @@ describe('getProfileService', () => {
 
     const mockRepo: UserRepository = {
       getUser: jest.fn(),
-      isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(async () => profile),
       updateProfile: jest.fn(),
     };
@@ -33,7 +32,6 @@ describe('getProfileService', () => {
 
     const mockRepo: UserRepository = {
       getUser: jest.fn(),
-      isUserPhoneRegistered: jest.fn(),
       getProfile: jest.fn(async () => null),
       updateProfile: jest.fn(),
     };

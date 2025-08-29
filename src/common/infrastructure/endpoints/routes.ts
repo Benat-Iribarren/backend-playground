@@ -18,6 +18,7 @@ import { cardRepository } from '@user/infrastructure/database/repositories/SQLit
 import registerGetCards from '@user/infrastructure/endpoints/getCards/getCards';
 import registerDeleteCard from '@user/infrastructure/endpoints/deleteCard/deleteCard';
 import registerGetPhones from '@user/infrastructure/endpoints/getPhones/getPhones';
+import { phoneRepository } from '@user/infrastructure/database/repositories/SQLitePhoneRepository';
 
 export function registerRoutes(fastify: FastifyInstance) {
   // --- AUTH ---
@@ -27,6 +28,7 @@ export function registerRoutes(fastify: FastifyInstance) {
       userRepository,
       codeGenerator,
       hashGenerator,
+      phoneRepository,
       phoneValidator,
     }),
   );

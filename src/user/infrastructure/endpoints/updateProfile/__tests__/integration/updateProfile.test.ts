@@ -8,7 +8,7 @@ jest.mock('@auth/infrastructure/database/repositories/SQLiteTokenRepository', ()
   tokenRepository: { getUserIdByToken: jest.fn() },
 }));
 jest.mock('@src/user/infrastructure/database/repositories/SQLiteUserRepository', () => ({
-  userRepository: { updateProfile: jest.fn(), isUserPhoneRegistered: jest.fn() },
+  userRepository: { updateProfile: jest.fn() },
 }));
 
 describe('updateProfile integration', () => {

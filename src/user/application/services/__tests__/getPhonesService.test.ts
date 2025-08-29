@@ -1,7 +1,8 @@
+import { PhoneRepository } from '@user/domain/interfaces/repositories/PhoneRepository';
 import { processGetPhones } from '../getPhonesService';
 import { UserRepository } from '@user/domain/interfaces/repositories/UserRespository';
 
-function createMockRepo(): jest.Mocked<UserRepository> {
+function createMockRepo(): jest.Mocked<UserRepository & PhoneRepository> {
   return {
     getUser: jest.fn(),
     getProfile: jest.fn(),
